@@ -21,8 +21,15 @@ wheels/
 *.egg
 MANIFEST
 
-# Environment variables
+# API Keys y Secrets - NUNCA subir a GitHub
 .env
+.streamlit/secrets.toml
+secrets.toml
+*.key
+*_key.txt
+api_keys.json
+
+# Environment variables
 .venv
 env/
 venv/
@@ -31,7 +38,7 @@ env.bak/
 venv.bak/
 
 # Streamlit
-.streamlit/secrets.toml
+.streamlit/config.toml
 
 # IDE
 .vscode/
@@ -55,3 +62,8 @@ Thumbs.db
 *.xlsx
 data/temp/
 logs/
+
+# Test files
+test_*.py
+*_test.py
+tests/
