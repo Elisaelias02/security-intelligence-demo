@@ -1190,7 +1190,7 @@ def generate_attack_content_section(strategy):
     
     st.markdown("---")
     st.markdown("### 📧 Contenido de Ataque Generado")
-    st.error("**⚠️ CONTENIDO MALICIOSO PARA ANÁLISIS EDUCATIVO - NO USAR EN ATAQUES REALES**")
+    st.error("**⚠️ CONTENIDO MALICIOSO PARA ANÁLISIS**")
     
     # Obtener datos del perfil y empresa
     target_profile = st.session_state.get('profile_results', {})
