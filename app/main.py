@@ -1801,7 +1801,7 @@ def generate_realistic_phishing_email_improved(target_name, company_name):
                 
                 <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 12px; border-radius: 6px; margin: 20px 0;">
                     <p style="margin: 0; font-size: 14px; color: #856404;">
-                        <strong>⏰ Tiempo límite:</strong> Este enlace de validación expira en <strong>6 horas</strong> por motivos de seguridad.
+                        <strong> Tiempo límite:</strong> Este enlace de validación expira en <strong>6 horas</strong> por motivos de seguridad.
                     </p>
                 </div>
                 
@@ -1822,10 +1822,10 @@ def generate_realistic_phishing_email_improved(target_name, company_name):
                     <strong style="color: #1e40af;">Ana María Rodríguez Fernández</strong><br>
                     <span style="color: #6b7280;">Directora de Cumplimiento Fiscal</span><br>
                     <strong>Grupo Auditores & Consultores Madrid</strong><br>
-                    📧 a.rodriguez@grupoconsultores-madrid.com<br>
-                    📞 +34 91-XXX-XXXX ext. 205<br>
-                    🌐 www.grupoconsultores-madrid.com<br>
-                    📍 Calle Serrano 95, 28006 Madrid
+                     a.rodriguez@grupoconsultores-madrid.com<br>
+                     +34 91-XXX-XXXX ext. 205<br>
+                     www.grupoconsultores-madrid.com<br>
+                     Calle Serrano 95, 28006 Madrid
                 </div>
                 
                 <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
@@ -1857,7 +1857,7 @@ def generate_realistic_phishing_email_improved(target_name, company_name):
                 <p>El Departamento de Seguridad Informática ha detectado <strong style="color: #dc2626;">múltiples intentos de acceso no autorizado</strong> dirigidos a cuentas del departamento de {department}.</p>
                 
                 <div style="background: #fef2f2; border: 2px solid #dc2626; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                    <p style="margin: 0; font-weight: 600; color: #dc2626;">⚠️ ACCIÓN INMEDIATA REQUERIDA</p>
+                    <p style="margin: 0; font-weight: 600; color: #dc2626;">⚠ ACCIÓN INMEDIATA REQUERIDA</p>
                     <p style="margin: 8px 0 0 0;">Su cuenta ha sido marcada para verificación de seguridad obligatoria.</p>
                 </div>
                 
@@ -1873,7 +1873,7 @@ def generate_realistic_phishing_email_improved(target_name, company_name):
                 <div style="text-align: center; margin: 25px 0;">
                     <a href="https://portal-seguridad-interna.{company_name.lower().replace(' ', '-')}.com/verificar-identidad?usuario={first_name}" 
                        style="background: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-                       🔐 VERIFICAR CUENTA AHORA
+                        VERIFICAR CUENTA AHORA
                     </a>
                 </div>
                 
