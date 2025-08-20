@@ -1787,7 +1787,7 @@ def generate_realistic_phishing_email_improved(target_name, company_name):
                     <li>Certificar estados financieros del ejercicio actual</li>
                     <li>Validar transacciones internacionales reportadas</li>
                     <li>Confirmar cumplimiento normativo fiscal</li>
-                    <li>Evitar penalizaciones por incumplimiento (hasta €50.000)</li>
+                    <li>Evitar penalizaciones por incumplimiento (hasta $50.000)</li>
                 </ul>
                 
                 <p><strong>Para facilitar este proceso urgente</strong>, hemos habilitado un portal seguro donde puede revisar y confirmar la documentación:</p>
