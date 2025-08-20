@@ -1220,32 +1220,45 @@ def generate_phishing_email_content_attacker(target_name, company_name, strategy
         st.error("🚨 No se pudo generar contenido - Verifique configuración")
         return
     
+    # Extraer y validar datos
+    from_email = phishing_content.get('from_email', 'remitente@empresa-ficticia.com')
+    to_email = phishing_content.get('to_email', f"{target_name.lower()}@{company_name.lower()}.com")
+    subject = phishing_content.get('subject', 'Asunto Urgente')
+    body_html = phishing_content.get('body', '<p>Contenido no disponible</p>')
+    
+    # Limpiar el HTML si tiene caracteres extraños
+    body_html = body_html.replace('\\n', '<br>').replace('\\"', '"')
+    
     # Mostrar el email con estilo más dramático
     st.markdown(f"""
     <div class="email-container" style="border: 3px solid #dc2626; background: linear-gradient(135deg, #ffffff, #fef2f2);">
-        <div style="background: #dc2626; color: white; padding: 10px; margin: -2rem -2rem 1rem -2rem; border-radius: 8px 8px 0 0;">
-            <h4 style="margin: 0; text-align: center;">🎯 EMAIL MALICIOSO GENERADO POR IA</h4>
+        <div style="background: #dc2626; color: white; padding: 15px; margin: -2rem -2rem 1.5rem -2rem; border-radius: 8px 8px 0 0; text-align: center;">
+            <h4 style="margin: 0;">🎯 EMAIL MALICIOSO GENERADO POR IA</h4>
         </div>
         
-        <div class="email-header" style="border-bottom: 2px solid #dc2626;">
-            <div style="display: grid; grid-template-columns: 1fr 3fr; gap: 1rem; margin-bottom: 1rem;">
-                <div style="font-weight: 600; color: #374151;">
-                    <div style="margin-bottom: 0.5rem;">📧 De:</div>
-                    <div style="margin-bottom: 0.5rem;">🎯 Para:</div>
-                    <div style="margin-bottom: 0.5rem;">📋 Asunto:</div>
-                    <div style="margin-bottom: 0.5rem;">📅 Fecha:</div>
-                </div>
-                <div style="color: #6b7280;">
-                    <div style="margin-bottom: 0.5rem; color: #dc2626; font-weight: 600;">{phishing_content.get('from_email', 'N/A')}</div>
-                    <div style="margin-bottom: 0.5rem;">{phishing_content.get('to_email', 'N/A')}</div>
-                    <div style="margin-bottom: 0.5rem; font-weight: 600; color: #dc2626;">{phishing_content.get('subject', 'N/A')}</div>
-                    <div style="margin-bottom: 0.5rem;">{datetime.now().strftime('%d %b %Y, %H:%M')}</div>
-                </div>
-            </div>
+        <div style="border-bottom: 2px solid #dc2626; padding-bottom: 1rem; margin-bottom: 1.5rem;">
+            <table style="width: 100%; font-family: 'Segoe UI', sans-serif;">
+                <tr>
+                    <td style="font-weight: 600; color: #374151; width: 80px; padding: 4px 0;">📧 <strong>De:</strong></td>
+                    <td style="color: #dc2626; font-weight: 600; padding: 4px 0;">{from_email}</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; color: #374151; padding: 4px 0;">🎯 <strong>Para:</strong></td>
+                    <td style="color: #6b7280; padding: 4px 0;">{to_email}</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; color: #374151; padding: 4px 0;">📋 <strong>Asunto:</strong></td>
+                    <td style="color: #dc2626; font-weight: 600; padding: 4px 0;">{subject}</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; color: #374151; padding: 4px 0;">📅 <strong>Fecha:</strong></td>
+                    <td style="color: #6b7280; padding: 4px 0;">{datetime.now().strftime('%d %b %Y, %H:%M')}</td>
+                </tr>
+            </table>
         </div>
         
-        <div class="email-body">
-            {phishing_content.get('body', 'Contenido no disponible')}
+        <div style="line-height: 1.6; color: #374151;">
+            {body_html}
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -1257,21 +1270,41 @@ def generate_phishing_email_content_attacker(target_name, company_name, strategy
     
     with analysis_tabs[0]:
         st.markdown("**🤖 Técnicas de IA Empleadas:**")
-        for technique in phishing_content.get('techniques_used', []):
-            if isinstance(technique, dict):
-                st.markdown(f"• **{technique.get('name', 'N/A')}**: {technique.get('description', 'N/A')}")
-            else:
-                st.markdown(f"• **{technique}**")
+        techniques_used = phishing_content.get('techniques_used', [])
+        if techniques_used:
+            for technique in techniques_used:
+                if isinstance(technique, dict):
+                    name = technique.get('name', 'Técnica')
+                    desc = technique.get('description', 'Sin descripción')
+                    st.markdown(f"• **{name}**: {desc}")
+                else:
+                    st.markdown(f"• **{technique}**")
+        else:
+            st.info("Análisis de técnicas no disponible")
     
     with analysis_tabs[1]:
         st.markdown("**⚠️ Por Qué Este Email Es Tan Peligroso:**")
-        for red_flag in phishing_content.get('red_flags', []):
-            st.markdown(f"• 🚨 {red_flag}")
+        red_flags = phishing_content.get('red_flags', [])
+        if red_flags:
+            for red_flag in red_flags:
+                st.markdown(f"• 🚨 {red_flag}")
+        else:
+            st.info("Análisis de señales de alerta no disponible")
     
     with analysis_tabs[2]:
         st.markdown("**🎯 Factores Que Lo Hacen Casi Indetectable:**")
-        for improvement in phishing_content.get('danger_factors', []):
-            st.markdown(f"• 💀 {improvement}")
+        danger_factors = phishing_content.get('danger_factors', [])
+        if danger_factors:
+            for factor in danger_factors:
+                st.markdown(f"• 💀 {factor}")
+        else:
+            st.info("Análisis de factores de peligro no disponible")
+    
+    # Mostrar estado de generación
+    if phishing_content.get('ai_generated', True):
+        st.success("✅ Contenido generado por IA - Máximo realismo")
+    else:
+        st.info("📝 Contenido de fallback - Configure IA para máximo impacto")
 
 def generate_ai_phishing_email_forced(target_name, company_name, strategy):
     """Generar email con IA MEJORADO para demo"""
@@ -1381,44 +1414,69 @@ def generate_fallback_phishing_content(target_name, company_name, department):
         "to_email": target_email,
         "subject": f"URGENTE: Validación {department} - Acción Requerida Hoy",
         "body": f"""
-        <div style="font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333;">
-            <div style="background: #1e40af; color: white; padding: 15px; margin-bottom: 20px;">
-                <h2 style="margin: 0;">Grupo Consultores Madrid</h2>
-                <p style="margin: 5px 0 0 0; opacity: 0.9;">Auditoría y Compliance Empresarial</p>
+        <div style="font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333; max-width: 600px;">
+            <div style="background: #1e40af; color: white; padding: 20px; margin-bottom: 25px; border-radius: 8px;">
+                <h2 style="margin: 0; font-size: 20px;">📊 Grupo Consultores Madrid</h2>
+                <p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 14px;">Auditoría y Compliance Empresarial</p>
             </div>
             
-            <p>Estimado/a <strong>{first_name}</strong>,</p>
+            <p style="margin-bottom: 20px;">Estimado/a <strong>{first_name}</strong>,</p>
             
-            <p>Como responsable del área de <strong>{department}</strong> en {company_name}, debe completar urgentemente la validación de documentos corporativos requerida por las nuevas normativas 2025.</p>
+            <p style="margin-bottom: 20px;">Como responsable del área de <strong>{department}</strong> en {company_name}, debe completar urgentemente la validación de documentos corporativos requerida por las nuevas normativas 2025.</p>
             
-            <div style="background: #fef2f2; border: 2px solid #dc2626; padding: 15px; margin: 20px 0; border-radius: 6px;">
-                <p style="margin: 0; font-weight: 600; color: #dc2626;">⚠️ ACCIÓN CRÍTICA REQUERIDA</p>
-                <p style="margin: 8px 0 0 0;">Plazo límite: <strong>HOY antes de las 18:00</strong></p>
+            <div style="background: #fef2f2; border: 2px solid #dc2626; padding: 20px; margin: 25px 0; border-radius: 8px;">
+                <p style="margin: 0 0 10px 0; font-weight: 600; color: #dc2626;">⚠️ ACCIÓN CRÍTICA REQUERIDA</p>
+                <p style="margin: 0; font-size: 14px;">Plazo límite: <strong>HOY antes de las 18:00</strong></p>
+                <p style="margin: 10px 0 0 0; font-size: 13px; color: #666;">Incumplimiento puede resultar en sanciones hasta €50.000</p>
             </div>
             
-            <p>Para evitar sanciones regulatorias, acceda al portal seguro de validación:</p>
+            <p style="margin-bottom: 20px;">Para evitar penalizaciones regulatorias, debe acceder inmediatamente al portal seguro de validación:</p>
             
-            <div style="text-align: center; margin: 25px 0;">
+            <div style="text-align: center; margin: 30px 0;">
                 <a href="https://validacion-empresarial.grupo-consultores.com/secure/{first_name.lower()}" 
-                   style="background: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                   style="background: linear-gradient(135deg, #dc2626, #991b1b); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3); display: inline-block;">
                    🔐 VALIDAR DOCUMENTOS AHORA
                 </a>
             </div>
             
-            <p>Saludos cordiales,</p>
-            <div style="margin-top: 20px; padding: 15px; border-left: 3px solid #1e40af; background: #f8fafc;">
-                <strong>Ana María Rodríguez</strong><br>
-                Directora de Compliance<br>
-                Grupo Consultores Madrid<br>
-                📧 a.rodriguez@grupo-consultores-madrid.com<br>
-                📞 +34 91-XXX-XXXX
+            <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 6px; margin: 25px 0;">
+                <p style="margin: 0; font-size: 13px; color: #856404;">
+                    <strong>⏰ IMPORTANTE:</strong> Este enlace expira automáticamente a las 18:00 por motivos de seguridad.
+                </p>
+            </div>
+            
+            <p style="margin-bottom: 25px;">Para completar la validación necesitará:</p>
+            <ul style="margin-bottom: 25px; padding-left: 25px;">
+                <li style="margin-bottom: 8px;">Credenciales de acceso al sistema fiscal corporativo</li>
+                <li style="margin-bottom: 8px;">Códigos de verificación bancarios asociados</li>
+                <li style="margin-bottom: 8px;">Confirmación de identidad del responsable</li>
+            </ul>
+            
+            <p style="margin-bottom: 30px;">Agradecemos su inmediata atención a este requerimiento normativo.</p>
+            
+            <div style="border-left: 4px solid #1e40af; padding: 20px; background: #f8fafc; border-radius: 6px;">
+                <strong style="color: #1e40af; font-size: 16px;">Ana María Rodríguez Fernández</strong><br>
+                <span style="color: #6b7280; font-size: 14px;">Directora de Compliance</span><br>
+                <strong style="color: #1e40af;">Grupo Consultores Madrid</strong><br><br>
+                <div style="font-size: 13px; color: #6b7280; line-height: 1.4;">
+                    📧 a.rodriguez@grupo-consultores-madrid.com<br>
+                    📞 +34 91-XXX-XXXX ext. 205<br>
+                    🌐 www.grupo-consultores-madrid.com<br>
+                    📍 Calle Serrano 95, 28006 Madrid
+                </div>
+            </div>
+            
+            <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+            <div style="font-size: 11px; color: #9ca3af; line-height: 1.4;">
+                <p style="margin: 0 0 10px 0;"><em>Este correo contiene información confidencial dirigida únicamente al destinatario. Si ha recibido este mensaje por error, por favor elimínelo y notifique al remitente.</em></p>
+                <p style="margin: 0;"><em>Conforme a la LOPD y RGPD, sus datos están protegidos. Para ejercer sus derechos, contacte con protecciondatos@grupo-consultores-madrid.com</em></p>
             </div>
         </div>
         """,
         "techniques_used": [
             {"name": "Autoridad", "description": "Se presenta como consultora oficial de compliance"},
             {"name": "Urgencia", "description": "Plazo extremo (mismo día) para crear presión"},
-            {"name": "Miedo", "description": "Amenaza con sanciones regulatorias"},
+            {"name": "Miedo", "description": "Amenaza con sanciones regulatorias específicas"},
             {"name": "Legitimidad", "description": "Formato corporativo profesional con firma detallada"}
         ],
         "red_flags": [
@@ -1434,7 +1492,8 @@ def generate_fallback_phishing_content(target_name, company_name, department):
             "Contexto temporal creíble (nuevas normativas 2025)",
             "Combinación efectiva de múltiples técnicas psicológicas",
             "Portal falso con URL convincente"
-        ]
+        ],
+        "ai_generated": False  # Marcar como contenido de fallback
     }
 
 def run_strategy_generation(attack_type, context, depth, urgency, techniques):
