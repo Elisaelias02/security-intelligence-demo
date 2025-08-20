@@ -1849,7 +1849,7 @@ def generate_realistic_phishing_email_improved(target_name, company_name):
             "body": f"""
             <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333;">
                 <div style="background: #dc2626; color: white; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                    <h2 style="margin: 0; font-size: 18px;">🛡 ALERTA DE SEGURIDAD - {company_name.upper()}</h2>
+                    <h2 style="margin: 0; font-size: 18px;"> ALERTA DE SEGURIDAD - {company_name.upper()}</h2>
                 </div>
                 
                 <p>Estimado/a <strong>{first_name}</strong>,</p>
