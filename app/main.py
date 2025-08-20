@@ -291,69 +291,83 @@ def main():
     else:
         api_status = {'status': 'error', 'message': 'Agente Claude no disponible', 'api_available': False}
     
-    # Header principal
+    # Header principal - Estilo "sistema del atacante"
     st.markdown("""
     <div class="main-header">
-        <h1>Plataforma de Inteligencia en Seguridad</h1>
-        <div class="subtitle">Análisis Avanzado de Vulnerabilidades de Ingeniería Social</div>
-        <div class="badge">Potenciado por Inteligencia Artificial</div>
+        <h1>🎯 SISTEMA DE ATAQUE AVANZADO</h1>
+        <div class="subtitle">Plataforma de Ingeniería Social y Phishing Automatizado</div>
+        <div class="badge">IA Ofensiva • Workshop Demostrativo</div>
     </div>
     """, unsafe_allow_html=True)
     
     # Mostrar estado de API
     display_api_status(api_status)
     
-    # Sidebar
+    # Sidebar estilo "atacante"
     with st.sidebar:
-        st.markdown("### Configuración del Análisis")
+        st.markdown("### ⚡ Configuración de Ataque")
         
-        # Estado de Claude
-        st.markdown("#### Estado del Sistema IA")
+        # Estado de Claude - más agresivo
+        st.markdown("#### 🤖 Motor de IA Ofensiva")
         
         if api_status['api_available']:
-            st.success("Sistema IA Activo")
-            st.info(f"Modelo: {api_status.get('model', 'claude-3-haiku')}")
+            st.success("🎯 Sistema IA OPERATIVO")
+            st.info(f"🧠 Modelo: {api_status.get('model', 'claude-3-haiku')}")
+            st.success("✅ Generación de contenido malicioso: ACTIVA")
         else:
-            st.warning("Modo Básico Activo")
+            st.error("❌ Motor IA DESCONECTADO")
+            st.warning("⚠️ Funcionalidad limitada sin IA")
             
-            # Opción para ingresar API key
+            # Opción para ingresar API key - más directo
             manual_key = st.text_input(
-                "Clave API de Anthropic (opcional)", 
+                "🔑 Clave API Anthropic (REQUERIDA)", 
                 type="password",
-                help="Ingresa tu clave API para activar análisis avanzado"
+                help="Sin IA no hay demo real. La generación automática de phishing requiere Claude."
             )
             
-            if manual_key and st.button("Conectar Sistema IA"):
+            if manual_key and st.button("🚀 ACTIVAR MOTOR IA"):
                 if create_claude_agent:
                     st.session_state.claude_agent = create_claude_agent(manual_key)
                     st.rerun()
+                else:
+                    st.error("Error: Componente Claude no disponible")
         
         st.markdown("---")
         
-        # Configuraciones
+        # Configuraciones de ataque
         analysis_depth = st.selectbox(
-            "Profundidad del Análisis",
-            ["Básico", "Estándar", "Avanzado", "Exhaustivo"]
+            "🎯 Nivel de Sofisticación",
+            ["Básico", "Estándar", "Avanzado", "APT (Estado-Nación)"]
         )
         
-        max_targets = st.slider("Máximo de Objetivos", 1, 20, 5)
+        max_targets = st.slider("🎪 Objetivos Simultáneos", 1, 50, 10)
         
-        st.markdown("### Información del Sistema")
-        st.info("""
-        **Capacidades del Sistema:**
+        # Mostrar "capacidades maliciosas"
+        st.markdown("### 💀 Capacidades del Sistema")
+        st.error("""
+        **🎯 Arsenal Disponible:**
         
-        • Análisis de inteligencia de fuentes abiertas
-        • Perfilado psicológico avanzado  
-        • Identificación de vectores de ataque
-        • Generación de estrategias de phishing
+        🕵️ Reconocimiento OSINT automatizado
+        🧠 Perfilado psicológico con IA
+        📧 Generación de phishing híper-realista  
+        📱 Campañas de smishing personalizadas
+        🎭 Suplantación de identidad avanzada
+        """)
+        
+        # Advertencia ética
+        st.markdown("---")
+        st.warning("""
+        ⚖️ **DEMO EDUCATIVA**
+        
+        Este sistema simula herramientas reales de atacantes para concientizar sobre amenazas actuales.
         """)
     
-    # Tabs principales
+    # Tabs principales - estilo "operaciones ofensivas"
     tab1, tab2, tab3, tab4 = st.tabs([
-        "Panel Ejecutivo",
-        "Análisis OSINT", 
-        "Perfilado de Objetivos",
-        "Generación de Estrategias"
+        "🎯 Centro de Comando",
+        "🕵️ Reconocimiento OSINT", 
+        "🧠 Perfilado de Víctimas",
+        "📧 Generador de Phishing"
     ])
     
     with tab1:
@@ -369,52 +383,52 @@ def main():
         create_strategy_generation()
 
 def display_api_status(status):
-    """Mostrar estado de la API en español"""
+    """Mostrar estado de la API estilo 'sistema del atacante'"""
     
     if status['status'] == 'active':
         st.markdown(f"""
         <div class="api-status active">
-            <strong>Estado del Sistema IA: ACTIVO</strong><br>
-            {status['message']}<br>
-            <small>Modelo: {status.get('model', 'N/A')}</small>
+            <strong>🎯 MOTOR IA OFENSIVA: OPERATIVO</strong><br>
+            Sistema de generación de contenido malicioso activo<br>
+            <small>🧠 Modelo: {status.get('model', 'N/A')} | 📧 Phishing automático: HABILITADO</small>
         </div>
         """, unsafe_allow_html=True)
     
     elif status['status'] == 'simulation_mode':
         st.markdown(f"""
         <div class="api-status warning">
-            <strong>Estado del Sistema IA: MODO BÁSICO</strong><br>
-            Sistema funcionando con capacidades limitadas<br>
-            <small>Para funcionalidad completa, configure su clave API</small>
+            <strong>⚠️ MOTOR IA: MODO LIMITADO</strong><br>
+            Generación automática de phishing DESHABILITADA<br>
+            <small>🚨 Para demo completa, active el motor IA</small>
         </div>
         """, unsafe_allow_html=True)
     
     else:
         st.markdown(f"""
         <div class="api-status error">
-            <strong>Estado del Sistema IA: ERROR</strong><br>
+            <strong>❌ MOTOR IA: OFFLINE</strong><br>
             {status['message']}<br>
-            <small>Sistema funcionando en modo básico</small>
+            <small>💀 Sin IA no hay phishing automático - Demo limitada</small>
         </div>
         """, unsafe_allow_html=True)
 
 def create_executive_dashboard():
-    """Dashboard ejecutivo profesional"""
+    """Centro de comando estilo 'atacante'"""
     st.markdown("""
     <div class="section-header">
-        <h3>Panel Ejecutivo - Métricas de Seguridad</h3>
+        <h3>🎯 Centro de Comando - Operaciones Activas</h3>
     </div>
     """, unsafe_allow_html=True)
     
-    # Métricas principales
+    # Métricas estilo "operaciones maliciosas"
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
         st.markdown("""
         <div class="metric-card" style="border-left-color: #dc2626;">
             <h3 style="color: #dc2626;">87</h3>
-            <p>Vulnerabilidades Críticas</p>
-            <div class="metric-label">Identificadas por IA</div>
+            <p>Vulnerabilidades Explotables</p>
+            <div class="metric-label">Detectadas por IA</div>
         </div>
         """, unsafe_allow_html=True)
     
@@ -422,8 +436,8 @@ def create_executive_dashboard():
         st.markdown("""
         <div class="metric-card" style="border-left-color: #f97316;">
             <h3 style="color: #f97316;">234</h3>
-            <p>Objetivos de Alto Riesgo</p>
-            <div class="metric-label">Análisis psicológico</div>
+            <p>Víctimas Potenciales</p>
+            <div class="metric-label">Perfilado psicológico</div>
         </div>
         """, unsafe_allow_html=True)
     
@@ -431,8 +445,8 @@ def create_executive_dashboard():
         st.markdown("""
         <div class="metric-card" style="border-left-color: #059669;">
             <h3 style="color: #059669;">92%</h3>
-            <p>Precisión del Análisis</p>
-            <div class="metric-label">Confianza del sistema</div>
+            <p>Tasa de Éxito Estimada</p>
+            <div class="metric-label">Phishing con IA</div>
         </div>
         """, unsafe_allow_html=True)
     
@@ -440,24 +454,32 @@ def create_executive_dashboard():
         st.markdown("""
         <div class="metric-card">
             <h3>4.2min</h3>
-            <p>Tiempo Promedio</p>
-            <div class="metric-label">Por análisis completo</div>
+            <p>Tiempo de Generación</p>
+            <div class="metric-label">Por email malicioso</div>
         </div>
         """, unsafe_allow_html=True)
     
-    # Mostrar análisis recientes
+    # Mostrar "operaciones recientes"
     if 'recent_analyses' in st.session_state and st.session_state.recent_analyses:
         st.markdown("""
         <div class="section-header">
-            <h3>Análisis Recientes</h3>
+            <h3>📊 Operaciones Recientes</h3>
         </div>
         """, unsafe_allow_html=True)
         
         for analysis in st.session_state.recent_analyses[-3:]:
-            with st.expander(f"Análisis: {analysis.get('type', 'N/A')} - {analysis.get('timestamp', 'N/A')}"):
+            with st.expander(f"🎯 Operación: {analysis.get('type', 'N/A')} - {analysis.get('timestamp', 'N/A')}"):
                 st.json(analysis.get('summary', {}))
     else:
-        st.info("No hay análisis recientes. Ejecute un análisis OSINT o de perfilado para ver resultados aquí.")
+        st.info("🎪 No hay operaciones activas. Inicie reconocimiento OSINT o perfilado de víctimas para comenzar.")
+    
+    # Advertencia de demo
+    st.error("""
+    🎭 **DEMOSTRACIÓN EDUCATIVA EN CURSO**
+    
+    Esta interfaz simula cómo operan realmente los cibercriminales modernos.
+    Los empresarios pueden ver la sofisticación de las amenazas actuales.
+    """)
     
     # Gráficos
     col1, col2 = st.columns(2)
@@ -947,63 +969,381 @@ def display_profile_results():
         st.info("El análisis completo requiere conexión con Sistema IA")
 
 def create_strategy_generation():
-    """Interfaz de generación de estrategias (solo phishing y smishing)"""
+    """Generador de phishing automático - estilo 'atacante'"""
     st.markdown("""
     <div class="section-header">
-        <h3>Generación de Estrategias de Ataque</h3>
+        <h3>📧 Generador Automático de Phishing</h3>
     </div>
     """, unsafe_allow_html=True)
     
-    st.warning("**Uso Profesional**: Este sistema genera estrategias para evaluación de vulnerabilidades y capacitación")
+    # Verificar IA disponible PRIMERO
+    if not st.session_state.claude_agent:
+        st.error("""
+        🚨 **MOTOR IA REQUERIDO PARA DEMO**
+        
+        La generación automática de phishing es el núcleo de esta demostración.
+        Sin IA, no hay contenido realista para mostrar a los empresarios.
+        
+        **Configure la clave API en el sidebar para continuar.**
+        """)
+        
+        st.warning("""
+        💡 **Para el Workshop:**
+        - La IA genera emails 100% realistas
+        - Personalización automática por víctima  
+        - Técnicas de ingeniería social avanzadas
+        - Sin IA = Sin demo impactante
+        """)
+        return
+    
+    st.success("🎯 **Motor IA Operativo** - Generación automática de phishing habilitada")
     
     col1, col2 = st.columns([2, 3])
     
     with col1:
-        st.markdown("#### Configuración de la Estrategia")
+        st.markdown("#### ⚙️ Configuración del Ataque")
         
         # Verificar si hay perfiles previos
         if 'profile_results' in st.session_state:
-            st.success("Usando perfil analizado previamente")
+            st.success("🎯 Víctima perfilada detectada")
             target_name = st.session_state.profile_results.get('employee_data', {}).get('name', 'Objetivo')
-            st.write(f"**Objetivo**: {target_name}")
+            st.write(f"**🎪 Víctima Principal**: {target_name}")
         else:
-            st.info("Ejecute primero un análisis de perfilado para mejores resultados")
+            st.warning("⚠️ Ejecute perfilado de víctima para maximizar efectividad")
         
         attack_type = st.selectbox(
-            "Tipo de Estrategia",
+            "🎭 Vector de Ataque",
             [
-                "Phishing por Correo Electrónico",
-                "Smishing (SMS Phishing)"
+                "📧 Phishing por Email (Híper-realista)",
+                "📱 Smishing (SMS Malicioso)"
             ]
         )
         
         scenario_context = st.text_area(
-            "Contexto del Escenario",
-            "Organización en proceso de auditoría interna\nImplementación de nuevos sistemas de seguridad\nReorganización departamental en curso",
-            height=100
+            "🎬 Contexto de Explotación",
+            "Temporada de auditorías fiscales\nPresión por cierre de trimestre\nCambios en sistemas de seguridad\nReorganización corporativa en curso",
+            height=100,
+            help="Contexto que el atacante usaría para hacer creíble el engaño"
         )
         
         strategy_depth = st.selectbox(
-            "Profundidad del Análisis",
-            ["Básico", "Detallado", "Exhaustivo"]
+            "💀 Nivel de Sofisticación",
+            ["🔰 Básico", "⚡ Avanzado", "💀 APT (Estado-Nación)"]
         )
         
         urgency_level = st.selectbox(
-            "Nivel de Urgencia del Pretexto",
-            ["Baja", "Media", "Alta", "Crítica"]
+            "⏰ Presión Psicológica",
+            ["🟢 Baja", "🟡 Media", "🟠 Alta", "🔴 Crítica"]
         )
         
         social_engineering_focus = st.multiselect(
-            "Técnicas Psicológicas a Emplear",
-            ["Autoridad", "Urgencia", "Reciprocidad", "Escasez", "Validación Social", "Compromiso"],
-            default=["Autoridad", "Urgencia"]
+            "🧠 Arsenal Psicológico",
+            ["👑 Autoridad", "⚡ Urgencia", "🤝 Reciprocidad", "💎 Escasez", "👥 Validación Social", "🎯 Compromiso"],
+            default=["👑 Autoridad", "⚡ Urgencia"],
+            help="Técnicas de manipulación psicológica a combinar"
         )
         
-        if st.button("Generar Estrategia de Ataque", type="primary"):
-            run_strategy_generation(attack_type, scenario_context, strategy_depth, urgency_level, social_engineering_focus)
+        # Botón de generación más dramático
+        if st.button("🚀 GENERAR ATAQUE AUTOMÁTICO", type="primary"):
+            run_strategy_generation_forced_ai(attack_type, scenario_context, strategy_depth, urgency_level, social_engineering_focus)
     
     with col2:
-        display_strategy_results()
+        display_strategy_results_attacker_style()
+
+def run_strategy_generation_forced_ai(attack_type, context, depth, urgency, techniques):
+    """Generar estrategia SIEMPRE con IA - forzado para demo"""
+    
+    # VERIFICACIÓN CRÍTICA: Sin IA no hay demo
+    if not st.session_state.claude_agent:
+        st.error("🚨 MOTOR IA REQUERIDO - Configurar en sidebar")
+        return
+    
+    # Obtener datos del perfil si están disponibles
+    target_profile = st.session_state.get('profile_results', {})
+    company_context = st.session_state.get('osint_results', {}).get('company_data', {})
+    
+    with st.spinner("🎯 Generando ataque automático con IA..."):
+        progress_bar = st.progress(0)
+        
+        steps = [
+            "🕵️ Analizando perfil de la víctima...",
+            "🧠 Identificando debilidades psicológicas...",
+            "🎭 Diseñando estrategia de suplantación...",
+            "🤖 Motor IA generando contenido malicioso...",
+            "📧 Creando email de phishing híper-realista..."
+        ]
+        
+        for i, step in enumerate(steps):
+            time.sleep(0.8)
+            progress_bar.progress((i + 1) / len(steps))
+            st.text(step)
+        
+        try:
+            # SIEMPRE usar Claude - es fundamental para la demo
+            strategy_data = {
+                'attack_type': attack_type,
+                'context': context,
+                'depth': depth,
+                'urgency': urgency,
+                'techniques': techniques,
+                'target_profile': target_profile,
+                'company_context': company_context
+            }
+            
+            # Llamar al agente Claude
+            claude_strategy = st.session_state.claude_agent.generate_attack_simulation(
+                target_profile, company_context, strategy_data
+            )
+            
+            st.session_state.strategy_results = {
+                **claude_strategy,
+                'strategy_data': strategy_data,
+                'ai_analysis': True,
+                'forced_ai': True  # Marca que fue forzado para demo
+            }
+            
+            # Agregar al historial
+            if 'recent_analyses' not in st.session_state:
+                st.session_state.recent_analyses = []
+            
+            st.session_state.recent_analyses.append({
+                'type': '🎯 Generación de Ataque',
+                'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'attack_type': attack_type,
+                'ai_used': True,  # Siempre True para demo
+                'summary': {
+                    'success_probability': st.session_state.strategy_results.get('success_probability', 0.85),
+                    'techniques_used': len(techniques),
+                    'urgency_level': urgency
+                }
+            })
+            
+        except Exception as e:
+            st.error(f"🚨 Error en motor IA: {e}")
+            st.error("Sin IA no hay demo efectiva. Verifique configuración.")
+            return
+        
+        st.success("🎯 Ataque generado exitosamente - Contenido malicioso listo")
+        time.sleep(1)
+        st.rerun()
+
+def display_strategy_results_attacker_style():
+    """Mostrar resultados estilo 'atacante' con énfasis en phishing"""
+    st.markdown("#### 🎯 Ataque Generado")
+    
+    if 'strategy_results' not in st.session_state:
+        st.info("⚡ Configure parámetros y genere ataque para ver resultados")
+        return
+    
+    strategy = st.session_state.strategy_results
+    
+    # Indicador de IA - siempre debería estar activo para demo
+    if strategy.get('ai_analysis'):
+        st.success("🤖 Contenido generado por Motor IA Ofensiva")
+        
+        # Métricas de "efectividad del ataque"
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            success_prob = strategy.get('success_probability', 0.85)
+            prob_color = "💀 Letal" if success_prob >= 0.8 else "🔥 Alta" if success_prob >= 0.6 else "⚡ Media"
+            st.metric("🎯 Probabilidad de Éxito", f"{success_prob:.0%}", f"{prob_color}")
+        
+        with col2:
+            techniques = len(strategy.get('psychological_techniques', []))
+            st.metric("🧠 Técnicas Psicológicas", techniques)
+        
+        with col3:
+            complexity = strategy.get('complexity_level', 'APT')
+            st.metric("💀 Sofisticación", complexity)
+        
+        # LA PARTE MÁS IMPORTANTE: Generación de contenido malicioso
+        st.markdown("---")
+        st.markdown("### 🎭 **CONTENIDO MALICIOSO GENERADO**")
+        st.error("**⚠️ PHISHING AUTOMÁTICO - EXTREMADAMENTE REALISTA**")
+        
+        # SIEMPRE generar contenido con IA
+        generate_attack_content_section_forced(strategy)
+        
+    else:
+        # Esto NO debería pasar en la demo
+        st.error("🚨 ERROR: Motor IA no disponible - Demo comprometida")
+        st.error("Configure clave API para demostración completa")
+
+def generate_attack_content_section_forced(strategy):
+    """Generar contenido SIEMPRE con IA - núcleo de la demo"""
+    
+    # Obtener datos del contexto
+    target_profile = st.session_state.get('profile_results', {})
+    company_context = st.session_state.get('osint_results', {}).get('company_data', {})
+    
+    target_name = target_profile.get('employee_data', {}).get('name', 'Empleado Objetivo')
+    company_name = company_context.get('name', 'Empresa Objetivo')
+    
+    # Determinar tipo de ataque
+    attack_type = strategy.get('strategy_data', {}).get('attack_type', '📧 Phishing por Email (Híper-realista)')
+    
+    if "📧" in attack_type or "Phishing" in attack_type:
+        generate_phishing_email_content_attacker(target_name, company_name, strategy)
+    elif "📱" in attack_type or "Smishing" in attack_type:
+        generate_smishing_content_attacker(target_name, company_name, strategy)
+
+def generate_phishing_email_content_attacker(target_name, company_name, strategy):
+    """Generar email de phishing con IA - estilo 'herramienta de atacante'"""
+    
+    st.markdown("#### 📧 Email Malicioso Generado Automáticamente")
+    
+    # SIEMPRE usar IA - es el núcleo de la demo
+    phishing_content = generate_ai_phishing_email_forced(target_name, company_name, strategy)
+    
+    if not phishing_content:
+        st.error("🚨 Error generando contenido - Motor IA requerido")
+        return
+    
+    # Mostrar el email con estilo más dramático
+    st.markdown(f"""
+    <div class="email-container" style="border: 3px solid #dc2626; background: linear-gradient(135deg, #ffffff, #fef2f2);">
+        <div style="background: #dc2626; color: white; padding: 10px; margin: -2rem -2rem 1rem -2rem; border-radius: 8px 8px 0 0;">
+            <h4 style="margin: 0; text-align: center;">🎯 EMAIL MALICIOSO GENERADO POR IA</h4>
+        </div>
+        
+        <div class="email-header" style="border-bottom: 2px solid #dc2626;">
+            <div style="display: grid; grid-template-columns: 1fr 3fr; gap: 1rem; margin-bottom: 1rem;">
+                <div style="font-weight: 600; color: #374151;">
+                    <div style="margin-bottom: 0.5rem;">📧 De:</div>
+                    <div style="margin-bottom: 0.5rem;">🎯 Para:</div>
+                    <div style="margin-bottom: 0.5rem;">📋 Asunto:</div>
+                    <div style="margin-bottom: 0.5rem;">📅 Fecha:</div>
+                </div>
+                <div style="color: #6b7280;">
+                    <div style="margin-bottom: 0.5rem; color: #dc2626; font-weight: 600;">{phishing_content['from_email']}</div>
+                    <div style="margin-bottom: 0.5rem;">{phishing_content['to_email']}</div>
+                    <div style="margin-bottom: 0.5rem; font-weight: 600; color: #dc2626;">{phishing_content['subject']}</div>
+                    <div style="margin-bottom: 0.5rem;">{datetime.now().strftime('%d %b %Y, %H:%M')}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="email-body">
+            {phishing_content['body']}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Análisis de efectividad para empresarios
+    st.markdown("#### 🔍 Análisis de Efectividad (Para Workshop)")
+    
+    analysis_tabs = st.tabs(["🧠 Técnicas IA Utilizadas", "⚠️ Por Qué Funciona", "🎯 Factores de Éxito"])
+    
+    with analysis_tabs[0]:
+        st.markdown("**🤖 Técnicas de IA Empleadas:**")
+        for technique in phishing_content['techniques_used']:
+            st.markdown(f"• **{technique['name']}**: {technique['description']}")
+    
+    with analysis_tabs[1]:
+        st.markdown("**⚠️ Por Qué Este Email Es Tan Peligroso:**")
+        for red_flag in phishing_content['red_flags']:
+            st.markdown(f"• 🚨 {red_flag}")
+    
+    with analysis_tabs[2]:
+        st.markdown("**🎯 Factores Que Lo Hacen Casi Indetectable:**")
+        for improvement in phishing_content['danger_factors']:
+            st.markdown(f"• 💀 {improvement}")
+
+def generate_ai_phishing_email_forced(target_name, company_name, strategy):
+    """Generar email con IA MEJORADO para demo"""
+    
+    if not st.session_state.claude_agent:
+        st.error("🚨 Motor IA requerido")
+        return None
+    
+    try:
+        # Contexto más específico para la demo
+        target_profile = st.session_state.get('profile_results', {})
+        department = target_profile.get('employee_data', {}).get('department', 'Finanzas')
+        urgency_level = strategy.get('strategy_data', {}).get('urgency', 'Alta')
+        techniques = strategy.get('strategy_data', {}).get('techniques', ['Autoridad', 'Urgencia'])
+        context = strategy.get('strategy_data', {}).get('context', '')
+        
+        # Prompt MEJORADO específicamente para la demo
+        prompt = f"""
+        MISIÓN CRÍTICA: Genera el email de phishing MÁS REALISTA posible para demostrar a empresarios la sofisticación actual de los ataques.
+
+        CONTEXTO DE WORKSHOP:
+        - Audiencia: Empresarios y ejecutivos
+        - Objetivo: Mostrar lo convincentes que son los ataques modernos
+        - Debe ser EXTREMADAMENTE profesional y creíble
+        
+        DATOS DEL OBJETIVO:
+        - Víctima: {target_name}
+        - Empresa: {company_name}
+        - Departamento: {department}
+        - Nivel urgencia: {urgency_level}
+        - Técnicas: {', '.join(techniques)}
+        - Contexto: {context}
+
+        REQUISITOS ESPECÍFICOS:
+        1. SOLO empresas FICTICIAS (sin Deloitte, KPMG, etc.)
+        2. HÍPER-PROFESIONAL: Formato corporativo perfecto
+        3. ESPECÍFICO: Usar detalles del departamento {department}
+        4. PSICOLÓGICAMENTE EFECTIVO: Combinar {', '.join(techniques)}
+        5. ACTUAL: Contexto relevante para 2024/2025
+        6. CONVINCENTE: Que engañe incluso a expertos
+
+        ELEMENTOS CRÍTICOS:
+        - Empresa auditora/consultora FICTICIA pero ultra-creíble
+        - Asunto irresistible relacionado con {department}
+        - Firma completa con logos, datos, disclaimers
+        - Enlaces maliciosos específicos
+        - Presión temporal apropiada para {urgency_level}
+
+        FORMATO JSON OBLIGATORIO:
+        {{
+            "from_email": "email de empresa FICTICIA muy creíble",
+            "to_email": "email construido desde {target_name} y {company_name}",
+            "subject": "asunto IRRESISTIBLE específico para {department}",
+            "body": "HTML corporativo perfecto, logos ficticios, firma detallada",
+            "techniques_used": [
+                {{"name": "técnica", "description": "aplicación específica en el email"}}
+            ],
+            "red_flags": ["señal sutil 1", "señal sutil 2", "señal sutil 3"],
+            "danger_factors": ["factor peligroso 1", "factor 2", "factor 3"]
+        }}
+
+        CRÍTICO: Este email debe convencer incluso a empresarios experimentados. Máximo realismo.
+        """
+        
+        response = st.session_state.claude_agent.client.messages.create(
+            model="claude-3-sonnet-20240229",
+            max_tokens=4000,
+            temperature=0.7,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        
+        content = response.content[0].text
+        
+        # Limpiar JSON
+        if "```json" in content:
+            content = content.split("```json")[1].split("```")[0]
+        elif "```" in content:
+            content = content.split("```")[1].split("```")[0]
+        
+        result = json.loads(content.strip())
+        
+        # Validación final anti-empresas reales
+        forbidden_companies = ['deloitte', 'kpmg', 'pwc', 'ey', 'accenture', 'mckinsey', 'santander', 'bbva', 'telefonica']
+        email_text = result.get('body', '').lower()
+        
+        for company in forbidden_companies:
+            if company in email_text:
+                result['body'] = result['body'].replace(company.capitalize(), f"Consultora{company.capitalize()[:-2]}ex")
+                result['from_email'] = result['from_email'].replace(company, f"{company[:-2]}ex")
+        
+        return result
+        
+    except Exception as e:
+        st.error(f"🚨 Error en motor IA: {e}")
+        return None
 
 def run_strategy_generation(attack_type, context, depth, urgency, techniques):
     """Generar estrategia de ataque"""
@@ -1174,7 +1514,7 @@ def generate_attack_content_section(strategy):
     
     st.markdown("---")
     st.markdown("### 📧 Contenido de Ataque Generado")
-    st.error("**⚠️ CONTENIDO PARA ANÁLISIS  - USO EXCLUSIVO AEGIS**")
+    st.error("**⚠️ CONTENIDO PARA ANÁLISIS EDUCATIVO - USO EXCLUSIVO EN WORKSHOP EMPRESARIAL**")
     
     # Obtener datos del perfil y empresa
     target_profile = st.session_state.get('profile_results', {})
@@ -1655,32 +1995,249 @@ def generate_realistic_smishing_sms_improved(target_name, company_name):
     }
 
 def generate_basic_attack_content():
-    """Generar contenido básico sin IA"""
-    st.markdown("#### 📧 Ejemplo de Contenido para Workshop")
-    st.info("Para ver contenido personalizado completo y análisis detallado, configure la conexión con Sistema IA")
+    """Contenido básico SIN IA - mostrar limitaciones"""
+    st.markdown("#### 🚨 Motor IA DESCONECTADO")
+    st.error("""
+    **💀 SIN IA = SIN DEMO REAL**
     
-    st.markdown("**Ejemplo de Email de Phishing Educativo:**")
+    Los atacantes modernos usan IA para generar contenido híper-realista.
+    Sin el motor IA, esta demo pierde su impacto educativo.
+    """)
+    
+    st.markdown("**📧 Ejemplo Básico (Sin Personalización IA):**")
     st.code("""
-    De: auditoria@consultora-ficticia.com
-    Para: objetivo@empresa-objetivo.com
-    Asunto: URGENTE: Verificación Fiscal Requerida
+    De: auditoria@consultora-generica.com
+    Para: victima@empresa.com
+    Asunto: Verificación Urgente Requerida
     
-    Estimado/a [Nombre],
+    Estimado usuario,
     
-    Requiere validación inmediata documentos fiscales...
-    Para evitar sanciones, acceda a: [enlace-ficticio]
+    Necesita validar documentos inmediatamente...
+    Enlace: [portal-generico]
     
-    Saludos,
-    Consultoría Ficticia S.L.
+    Atentamente,
+    Consultora Genérica
     """, language="text")
     
-    st.markdown("**Técnicas Demostradas en el Workshop:**")
-    st.markdown("• **Autoridad**: Aparenta ser consultoría oficial")
-    st.markdown("• **Urgencia**: Plazos cortos para crear presión")
-    st.markdown("• **Miedo**: Amenaza con sanciones legales")
-    st.markdown("• **Legitimidad**: Formato corporativo profesional")
+    st.warning("""
+    ⚖️ **Diferencia con IA:**
+    
+    🚫 Sin personalización psicológica
+    🚫 Sin detalles específicos del objetivo  
+    🚫 Sin contexto empresarial real
+    🚫 Sin técnicas avanzadas de manipulación
+    
+    ✅ **Con IA:** Emails que engañan incluso a expertos
+    """)
+    
+    st.error("🔧 **Configure clave API para demo completa**")
 
-# Funciones auxiliares
+def create_osint_interface():
+    """Interfaz OSINT estilo 'operaciones de reconocimiento'"""
+    st.markdown("""
+    <div class="section-header">
+        <h3>🕵️ Reconocimiento OSINT - Recopilación de Inteligencia</h3>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.info("🎯 Recopilación automática de información pública para identificar objetivos y vulnerabilidades explotables")
+    
+    col1, col2 = st.columns([2, 3])
+    
+    with col1:
+        st.markdown("#### 🎪 Configuración del Objetivo")
+        
+        with st.form("osint_form"):
+            st.markdown("**🎯 Información de la Víctima Corporativa**")
+            
+            company_name = st.text_input("🏢 Organización Objetivo", "Empresa Objetivo")
+            domain = st.text_input("🌐 Dominio Principal", "empresa-objetivo.com")
+            
+            col_a, col_b = st.columns(2)
+            with col_a:
+                industry = st.selectbox("🏭 Sector", [
+                    "Tecnología", "Finanzas", "Salud", "Educación", 
+                    "Retail", "Manufactura", "Consultoría", "Gobierno"
+                ])
+            with col_b:
+                company_size = st.selectbox("👥 Tamaño", [
+                    "1-50", "51-200", "201-1000", "1000-5000", "5000+"
+                ])
+            
+            location = st.text_input("📍 Ubicación Principal", "Madrid, España")
+            
+            st.markdown("**🕵️ Fuentes de Reconocimiento**")
+            sources = []
+            
+            col_c, col_d = st.columns(2)
+            with col_c:
+                if st.checkbox("👔 LinkedIn", True): sources.append("LinkedIn")
+                if st.checkbox("🌐 Sitio Web Corporativo", True): sources.append("Website")
+                if st.checkbox("🐦 Twitter/X"): sources.append("Twitter")
+                if st.checkbox("📘 Facebook"): sources.append("Facebook")
+            
+            with col_d:
+                if st.checkbox("💻 GitHub"): sources.append("GitHub")
+                if st.checkbox("🔍 Registros DNS"): sources.append("DNS")
+                if st.checkbox("📰 Noticias y Prensa"): sources.append("News")
+                if st.checkbox("💼 Ofertas de Empleo"): sources.append("Jobs")
+            
+            ai_analysis = st.checkbox("🤖 Procesamiento con IA Ofensiva", True)
+            
+            submit_button = st.form_submit_button("🚀 INICIAR RECONOCIMIENTO", type="primary")
+            
+            if submit_button:
+                company_data = {
+                    'name': company_name,
+                    'domain': domain,
+                    'industry': industry,
+                    'size': company_size,
+                    'location': location,
+                    'sources': sources
+                }
+                
+                run_osint_analysis(company_data, ai_analysis)
+    
+    with col2:
+        display_osint_results()
+
+def create_profiling_interface():
+    """Interfaz de perfilado estilo 'análisis de víctimas'"""
+    st.markdown("""
+    <div class="section-header">
+        <h3>🧠 Perfilado Psicológico de Víctimas</h3>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.info("🎯 Análisis psicológico automatizado para identificar debilidades explotables en ingeniería social")
+    
+    col1, col2 = st.columns([2, 3])
+    
+    with col1:
+        st.markdown("#### 🎪 Selección de Víctima")
+        
+        # Lista de empleados objetivo
+        if 'osint_results' in st.session_state:
+            employee_count = st.session_state.osint_results.get('employees_at_risk', 10)
+            employee_options = [f"🎯 Víctima {i+1} - {['CEO', 'CFO', 'CTO', 'Director', 'Gerente', 'Analista'][i%6]}" 
+                             for i in range(min(employee_count, 15))]
+        else:
+            employee_options = [
+                "🎯 María González - CFO",
+                "🎯 Carlos Rodríguez - Director IT", 
+                "🎯 Ana Martínez - Gerente RRHH",
+                "🎯 Luis Hernández - Coordinador Operaciones"
+            ]
+        
+        selected_employee = st.selectbox("👤 Víctima a Perfilar", employee_options)
+        
+        st.markdown("#### 📊 Datos de Vulnerabilidad")
+        
+        with st.form("profile_form"):
+            
+            social_activity = st.slider("📱 Exposición en Redes", 1, 10, 7, 
+                                      help="Nivel de actividad y exposición en redes sociales")
+            info_sharing = st.slider("🗣️ Tendencia a Compartir", 1, 10, 6,
+                                   help="Propensión a compartir información corporativa")
+            security_awareness = st.slider("🛡️ Conciencia de Seguridad", 1, 10, 4,
+                                         help="Nivel de conocimiento en ciberseguridad")
+            
+            department = st.selectbox("🏢 Departamento", 
+                                    ["Finanzas", "Tecnología", "Recursos Humanos", "Ventas", "Marketing", "Operaciones", "Legal"])
+            
+            interests = st.multiselect("🎯 Intereses Identificados",
+                                     ["Tecnología", "Deportes", "Viajes", "Familia", "Finanzas", 
+                                      "Entretenimiento", "Educación", "Arte", "Música"],
+                                     default=["Tecnología", "Viajes"])
+            
+            communication_style = st.selectbox("💬 Estilo de Comunicación",
+                                              ["Formal", "Casual", "Técnico", "Emocional", "Directo"])
+            
+            work_schedule = st.selectbox("⏰ Horario de Trabajo",
+                                       ["Estándar 9-17", "Flexible", "Nocturno", "Fines de Semana", "Disponibilidad 24/7"])
+            
+            risk_factors = st.multiselect("⚠️ Vectores de Explotación",
+                                        ["Oversharing en LinkedIn", "Información personal pública", 
+                                         "Acceso privilegiado", "Contactos externos frecuentes",
+                                         "Patrones predecibles", "Baja verificación de solicitudes"])
+            
+            analyze_button = st.form_submit_button("🧠 ANALIZAR VÍCTIMA", type="primary")
+            
+            if analyze_button:
+                employee_data = {
+                    'name': selected_employee,
+                    'department': department,
+                    'social_activity': social_activity,
+                    'info_sharing': info_sharing,
+                    'security_awareness': security_awareness,
+                    'interests': interests,
+                    'communication': communication_style,
+                    'schedule': work_schedule,
+                    'risk_factors': risk_factors
+                }
+                
+                run_profile_analysis(employee_data)
+    
+    with col2:
+        display_profile_results()
+
+def generate_smishing_content_attacker(target_name, company_name, strategy):
+    """Generar SMS de smishing estilo 'atacante'"""
+    
+    st.markdown("#### 📱 SMS Malicioso Generado")
+    
+    # Usar IA mejorada si está disponible
+    if st.session_state.claude_agent:
+        sms_content = generate_ai_smishing_sms_improved(target_name, company_name, strategy)
+    else:
+        st.error("🚨 Motor IA requerido para smishing personalizado")
+        return
+    
+    # Mostrar el SMS con estilo más dramático
+    st.markdown(f"""
+    <div style="background: linear-gradient(135deg, #dc2626, #991b1b); color: white; padding: 1.2rem; border-radius: 18px; margin: 1rem 0; max-width: 350px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4); border: 2px solid #dc2626;">
+        <div style="font-size: 0.8rem; opacity: 0.9; margin-bottom: 0.5rem; text-align: center;">
+            📱 <strong>SMS MALICIOSO GENERADO</strong>
+        </div>
+        <div style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 0.5rem;">
+            De: {sms_content['from_number']} • {datetime.now().strftime('%H:%M')}
+        </div>
+        <div style="font-size: 1rem; line-height: 1.4; background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 10px;">
+            {sms_content['message']}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Variaciones del ataque
+    st.markdown("#### 🔄 Campañas Automáticas")
+    st.markdown("**🎯 El sistema generaría múltiples variaciones para maximizar efectividad:**")
+    
+    colors = ['#28a745', '#17a2b8', '#ffc107', '#6f42c1']
+    for i, variation in enumerate(sms_content['variations']):
+        color = colors[i % len(colors)]
+        st.markdown(f"""
+        <div style="background: {color}; color: white; padding: 0.8rem; border-radius: 15px; margin: 0.5rem 0; max-width: 340px; font-size: 0.9rem; border: 2px solid {color};">
+            <strong>🎪 Campaña {i+1}:</strong><br>
+            {variation}
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Análisis de efectividad
+    st.markdown("#### 🔍 Análisis de Efectividad")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("**🧠 Técnicas Empleadas:**")
+        for technique in sms_content['techniques_used']:
+            st.markdown(f"• **{technique}**")
+    
+    with col2:
+        st.markdown("**⚠️ Señales de Peligro:**")
+        for red_flag in sms_content['red_flags']:
+            st.markdown(f"• 🚨 {red_flag}")
+
+# Mantener las funciones auxiliares con pequeños ajustes de tono
 def calculate_basic_risk_score(employee_data):
     """Calcular score de riesgo básico"""
     social_risk = employee_data.get('social_activity', 5) / 10
@@ -1695,58 +2252,58 @@ def generate_basic_vulnerabilities(employee_data):
     vulnerabilities = []
     
     if employee_data.get('social_activity', 5) >= 7:
-        vulnerabilities.append("Alta exposición en redes sociales profesionales")
+        vulnerabilities.append("🎯 Alta exposición en redes sociales - Vector de ataque directo")
     
     if employee_data.get('info_sharing', 5) >= 6:
-        vulnerabilities.append("Tendencia a compartir información corporativa")
+        vulnerabilities.append("🗣️ Propensión a compartir información corporativa - Explotable")
     
     if employee_data.get('security_awareness', 5) <= 4:
-        vulnerabilities.append("Baja conciencia sobre técnicas de ingeniería social")
+        vulnerabilities.append("🛡️ Baja conciencia sobre ingeniería social - Víctima ideal")
     
     return vulnerabilities
 
 def generate_basic_vectors(employee_data):
     """Generar vectores básicos"""
-    vectors = ["Phishing dirigido por correo electrónico", "Ingeniería social vía LinkedIn"]
+    vectors = ["📧 Phishing dirigido personalizado", "👔 Ingeniería social vía LinkedIn"]
     
     if 'Familia' in employee_data.get('interests', []):
-        vectors.append("Pretextos relacionados con emergencias familiares")
+        vectors.append("👨‍👩‍👧‍👦 Pretextos familiares - Alta efectividad emocional")
     
     return vectors
 
 def generate_basic_strategy(attack_type, urgency, techniques):
     """Generar estrategia básica"""
     return {
-        "Tipo de Ataque": attack_type,
-        "Nivel de Urgencia": urgency,
-        "Técnicas": ", ".join(techniques),
-        "Enfoque": "Personalizado basado en perfil del objetivo",
-        "Probabilidad Estimada": f"{np.random.uniform(0.6, 0.8):.0%}"
+        "🎭 Vector de Ataque": attack_type,
+        "⏰ Presión Psicológica": urgency,
+        "🧠 Arsenal Empleado": ", ".join(techniques),
+        "🎯 Personalización": "Adaptado al perfil psicológico de la víctima",
+        "📊 Tasa de Éxito Estimada": f"{np.random.uniform(0.65, 0.85):.0%}"
     }
 
 def create_risk_distribution_chart():
-    """Gráfico de distribución de riesgo"""
+    """Gráfico de distribución de riesgo estilo 'atacante'"""
     risk_data = pd.DataFrame({
-        'Nivel': ['Crítico', 'Alto', 'Medio', 'Bajo'],
-        'Cantidad': [87, 234, 456, 123]
+        'Nivel': ['💀 Crítico', '🔥 Alto', '⚡ Medio', '🟢 Bajo'],
+        'Víctimas': [87, 234, 456, 123]
     })
     
     colors = ['#dc2626', '#f97316', '#3b82f6', '#059669']
     
     fig = px.pie(
         risk_data,
-        values='Cantidad',
+        values='Víctimas',
         names='Nivel',
-        title="Distribución de Niveles de Riesgo",
+        title="🎯 Distribución de Víctimas por Nivel de Riesgo",
         color_discrete_sequence=colors
     )
     
     fig.update_traces(textposition='inside', textinfo='percent+label')
-    fig.update_layout(height=400, font_family="Inter")
+    fig.update_layout(height=400, font_family="Inter", title_font_size=16)
     st.plotly_chart(fig, use_container_width=True)
 
 def create_vulnerability_timeline():
-    """Timeline de vulnerabilidades"""
+    """Timeline de vulnerabilidades estilo 'operaciones'"""
     dates = pd.date_range(start='2024-01-01', end='2024-12-31', freq='M')
     vulnerabilities = [45, 52, 48, 61, 58, 67, 74, 69, 73, 81, 87, 92]
     
@@ -1756,17 +2313,18 @@ def create_vulnerability_timeline():
         x=dates,
         y=vulnerabilities,
         mode='lines+markers',
-        name='Vulnerabilidades Detectadas',
+        name='Vulnerabilidades Explotables',
         line=dict(color='#dc2626', width=3),
         marker=dict(size=8, color='#dc2626')
     ))
     
     fig.update_layout(
-        title="Evolución de Vulnerabilidades en el Tiempo",
-        xaxis_title="Período",
-        yaxis_title="Número de Vulnerabilidades",
+        title="📈 Evolución de Vectores de Ataque Identificados",
+        xaxis_title="Período de Reconocimiento",
+        yaxis_title="Vulnerabilidades Detectadas",
         height=400,
-        font_family="Inter"
+        font_family="Inter",
+        title_font_size=16
     )
     
     st.plotly_chart(fig, use_container_width=True)
