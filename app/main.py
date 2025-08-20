@@ -156,11 +156,12 @@ pip install pandas
             "Clave API de Anthropic", 
             type="password",
             placeholder="sk-ant-api-key...",
-            help="Debe empezar con 'sk-ant-'"
+            help="Debe empezar con 'sk-ant-'",
+            key="anthropic_api_key_input"
         )
         
         # Botón para usar datos de ejemplo
-        if st.button("🧪 Usar Datos de Ejemplo (Sin IA)"):
+        if st.button("🧪 Usar Datos de Ejemplo (Sin IA)", key="demo_mode_button"):
             st.session_state.demo_mode = True
             st.success("✅ Modo demo activado - usando datos de ejemplo")
             st.info("📝 Este modo muestra la interfaz con datos predefinidos sin usar IA")
@@ -190,7 +191,7 @@ pip install pandas
                 st.info("**Contexto**: 200k tokens | **Límite**: Según plan")
                 
                 # Botón para probar conexión
-                if st.button("🧪 Probar Conexión"):
+                if st.button("🧪 Probar Conexión", key="test_connection_button"):
                     test_prompt = "Responde solo 'Claude 3.5 Sonnet conectado exitosamente' si puedes ver este mensaje."
                     try:
                         test_resp = client.messages.create(
@@ -308,7 +309,7 @@ pip install pandas
             st.text(f"Modelo: {st.session_state.get('claude_model', 'N/A')}")
             st.text(f"Estado: Conectado")
             
-            if st.button("🧹 Limpiar Caché"):
+            if st.button("🧹 Limpiar Caché", key="clear_cache_button"):
                 for key in ['current_osint', 'current_profile', 'current_content']:
                     if key in st.session_state:
                         del st.session_state[key]
@@ -418,13 +419,150 @@ streamlit run security_platform.py
     
     if st.session_state.get('demo_mode', False):
         st.markdown("### 🎯 Datos de Ejemplo Disponibles")
-        if st.button("📊 Cargar Análisis de Ejemplo"):
+        if st.button("📊 Cargar Análisis de Ejemplo", key="load_demo_data_button"):
             # Cargar datos de ejemplo completos
             load_demo_data()
             st.success("✅ Datos de ejemplo cargados")
-            st.rerun()
+
+def clean_and_parse_json(content):
+    """Función para limpiar y parsear JSON de manera robusta"""
+    try:
+        # Limpiar contenido
+        content = content.strip()
+        
+        # Remover markdown
+        content = content.replace('```json', '').replace('```', '')
+        
+        # Buscar el JSON principal
+        start_idx = content.find('{')
+        end_idx = content.rfind('}')
+        
+        if start_idx == -1 or end_idx == -1 or end_idx <= start_idx:
+            return None
+            
+        json_str = content[start_idx:end_idx+1]
+        
+        # Limpiar caracteres problemáticos
+        json_str = json_str.replace('\n', '\\n').replace('\r', '\\r')
+        
+        # Intentar parsear
+        return json.loads(json_str)
+        
+    except json.JSONDecodeError as e:
+        st.warning(f"Error JSON: {e}")
+        return None
+    except Exception as e:
+        st.warning(f"Error general: {e}")
+        return None
+
+def create_fallback_content(user_name, department, scenario, urgency, company_context):
+    """Crear contenido de fallback cuando falla el parsing"""
+    return {
+        "content": {
+            "subject": f"{urgency.upper()}: {scenario} - Acción Requerida",
+            "sender": f"admin@{company_context.lower().replace(' ', '').replace('.', '')}.com",
+            "body": f"Estimado/a {user_name},\n\nDebe completar {scenario.lower()} de manera {urgency.lower()}.\n\nSu departamento de {department} requiere esta acción.\n\nPor favor, siga las instrucciones proporcionadas.\n\nSaludos,\nEquipo de Administración",
+            "call_to_action": f"Completar {scenario.lower()}"
+        },
+        "personalization_elements": [
+            f"Nombre: {user_name}",
+            f"Departamento: {department}",
+            f"Escenario: {scenario}"
+        ],
+        "psychological_techniques": [
+            {"technique": "Personalización", "application": "Uso del nombre del usuario"},
+            {"technique": "Autoridad", "application": "Remitente administrativo"},
+            {"technique": "Claridad", "application": f"Instrucciones directas para {department}"}
+        ],
+        "effectiveness_prediction": {
+            "score": 0.6,
+            "reasoning": f"Contenido básico personalizado para {user_name} de {department}"
+        }
+    }
 
 def load_demo_data():
+    """Cargar datos de ejemplo completos"""
+    
+    # Análisis OSINT de ejemplo
+    if 'completed_analyses' not in st.session_state:
+        st.session_state.completed_analyses = []
+    
+    demo_osint = {
+        'type': 'Análisis OSINT (DEMO)',
+        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'company': 'TechCorp Demo',
+        'summary': {
+            "risk_score": 0.78,
+            "risk_level": "ALTO",
+            "vulnerabilities": [
+                {
+                    "type": "Exposición de Empleados",
+                    "severity": "ALTA",
+                    "description": "45% del personal técnico comparte información sobre proyectos en LinkedIn"
+                },
+                {
+                    "type": "Subdominios Vulnerables",
+                    "severity": "MEDIA",
+                    "description": "5 subdominios con servicios desactualizados detectados"
+                }
+            ],
+            "attack_vectors": [
+                {
+                    "vector": "Spear Phishing",
+                    "probability": 0.85,
+                    "impact": "Acceso a sistemas críticos mediante ingeniería social dirigida"
+                }
+            ],
+            "recommendations": [
+                {
+                    "priority": "ALTA",
+                    "action": "Implementar política de publicación en redes sociales"
+                }
+            ]
+        }
+    }
+    
+    st.session_state.completed_analyses.append(demo_osint)
+    st.session_state.current_osint = demo_osint['summary']
+    
+    # Perfil de usuario de ejemplo
+    if 'user_profiles' not in st.session_state:
+        st.session_state.user_profiles = []
+    
+    demo_profile = {
+        'user_name': 'Ana García (Demo)',
+        'department': 'Finanzas',
+        'analysis': {
+            "psychological_profile": {
+                "personality_traits": ["Orientada a resultados", "Confiada", "Detallista"],
+                "behavioral_patterns": ["Responde rápido a autoridades", "Sigue procedimientos"],
+                "decision_making_style": "Analítica pero susceptible a presión temporal",
+                "stress_responses": ["Busca aprobación", "Acelera decisiones bajo presión"]
+            },
+            "vulnerability_assessment": {
+                "risk_score": 0.72,
+                "primary_vulnerabilities": [
+                    {
+                        "type": "Autoridad percibida",
+                        "severity": "ALTA",
+                        "description": "Alta susceptibilidad a figuras de autoridad financiera"
+                    }
+                ]
+            },
+            "attack_vectors": [
+                {
+                    "technique": "Phishing de autoridad fiscal",
+                    "effectiveness": 0.82,
+                    "approach": "Emails simulando auditorías urgentes",
+                    "psychological_basis": "Miedo a problemas legales/fiscales"
+                }
+            ]
+        },
+        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    }
+    
+    st.session_state.user_profiles.append(demo_profile)
+    st.session_state.current_profile = demo_profile
     """Cargar datos de ejemplo completos"""
     
     # Análisis OSINT de ejemplo
@@ -1499,125 +1637,52 @@ def generate_adaptive_content(target_profile, content_type, scenario,
         
         # Extraer datos del perfil
         user_data = target_profile
-        analysis = user_data['analysis']
         
-        # Prompt simplificado para obtener JSON más confiable
+        # Prompt ultra-simplificado para asegurar JSON válido
         prompt = f"""
-        Eres un experto en creación de contenido para pruebas de seguridad. Crea un email de phishing educativo personalizado.
+Crea un email de phishing educativo. Responde SOLO con JSON válido:
 
-        USUARIO OBJETIVO:
-        - Nombre: {user_data['user_name']}
-        - Departamento: {user_data['department']}
-        
-        CONFIGURACIÓN:
-        - Tipo: {content_type}
-        - Escenario: {scenario}
-        - Urgencia: {urgency}
-        - Empresa: {company_context}
-        - Contexto: {additional_context}
-
-        Responde EXCLUSIVAMENTE en formato JSON válido:
-
-        {{
-            "content": {{
-                "subject": "URGENTE: Actualización de seguridad requerida - Acción inmediata",
-                "sender": "seguridad@{company_context.lower().replace(' ', '')}.com",
-                "body": "Estimado/a {user_data['user_name']},\\n\\nHemos detectado actividad sospechosa en su cuenta corporativa. Por seguridad, debe actualizar sus credenciales inmediatamente.\\n\\nPor favor, haga clic en el siguiente enlace para verificar su identidad: [LINK]\\n\\nEste proceso debe completarse en las próximas 2 horas para evitar la suspensión de su cuenta.\\n\\nGracias por su cooperación.\\n\\nEquipo de Seguridad IT",
-                "call_to_action": "Hacer clic en enlace de verificación y proporcionar credenciales"
-            }},
-            "personalization_elements": [
-                "Nombre específico del usuario",
-                "Referencia al departamento de {user_data['department']}",
-                "Tono apropiado para el nivel profesional"
-            ],
-            "psychological_techniques": [
-                {{
-                    "technique": "Autoridad",
-                    "application": "Usar remitente que parece oficial del departamento IT"
-                }},
-                {{
-                    "technique": "Urgencia",
-                    "application": "Crear presión temporal con límite de 2 horas"
-                }},
-                {{
-                    "technique": "Miedo",
-                    "application": "Amenaza de suspensión de cuenta"
-                }}
-            ],
-            "effectiveness_prediction": {{
-                "score": 0.75,
-                "reasoning": "Combina autoridad técnica con urgencia, dirigido específicamente a usuario de {user_data['department']}"
-            }}
-        }}
+{{
+    "content": {{
+        "subject": "URGENTE: {scenario} - {user_data['user_name']}",
+        "sender": "admin@{company_context.lower().replace(' ', '').replace('.', '')}.com",
+        "body": "Estimado/a {user_data['user_name']},\\n\\nDebe completar {scenario.lower()} urgentemente.\\n\\nSu departamento de {user_data['department']} requiere esta acción.\\n\\nHaga clic aquí: [ENLACE]\\n\\nGracias,\\nAdministración",
+        "call_to_action": "Hacer clic en enlace y proporcionar información"
+    }},
+    "personalization_elements": ["Nombre: {user_data['user_name']}", "Departamento: {user_data['department']}"],
+    "psychological_techniques": [{{"technique": "Autoridad", "application": "Remitente oficial"}}, {{"technique": "Urgencia", "application": "Presión temporal"}}],
+    "effectiveness_prediction": {{"score": 0.7, "reasoning": "Personalizado para {user_data['department']}"}}
+}}
         """
         
         try:
             response = st.session_state.anthropic_client.messages.create(
                 model=st.session_state.get('claude_model', 'claude-3-5-haiku-20241022'),
-                max_tokens=3000,
-                temperature=0.4,
+                max_tokens=2000,
+                temperature=0.1,  # Muy baja para consistencia
                 messages=[{"role": "user", "content": prompt}]
             )
             
             content = response.content[0].text.strip()
             
             # Debug: mostrar respuesta
-            with st.expander("🔍 Debug: Respuesta de Claude"):
+            with st.expander("🔍 Debug: Respuesta de Claude", expanded=False):
                 st.text(content)
             
-            # Parsing robusto de JSON
-            content_result = None
+            # Usar función de parsing mejorada
+            content_result = clean_and_parse_json(content)
             
-            # Método 1: JSON entre bloques de código
-            if "```json" in content and "```" in content:
-                try:
-                    json_start = content.find("```json") + 7
-                    json_end = content.find("```", json_start)
-                    json_content = content[json_start:json_end].strip()
-                    content_result = json.loads(json_content)
-                except Exception as e:
-                    st.warning(f"Error parsing método 1: {e}")
-            
-            # Método 2: Buscar primer { hasta último }
-            if not content_result and "{" in content and "}" in content:
-                try:
-                    json_start = content.find("{")
-                    json_end = content.rfind("}") + 1
-                    json_content = content[json_start:json_end]
-                    content_result = json.loads(json_content)
-                except Exception as e:
-                    st.warning(f"Error parsing método 2: {e}")
-            
-            # Método 3: Resultado de fallback
-            if not content_result:
-                st.warning("⚠️ No se pudo parsear JSON. Generando contenido básico...")
-                content_result = {
-                    "content": {
-                        "subject": f"{urgency.upper()}: {scenario} - {user_data['user_name']}",
-                        "sender": f"admin@{company_context.lower().replace(' ', '')}.com",
-                        "body": f"Estimado/a {user_data['user_name']},\n\nNecesitamos que complete una {scenario.lower()} de manera {urgency.lower()}.\n\nPor favor, responda a este email con la información solicitada.\n\nGracias,\nEquipo de Administración",
-                        "call_to_action": "Responder con información solicitada"
-                    },
-                    "personalization_elements": [
-                        f"Nombre específico: {user_data['user_name']}",
-                        f"Departamento: {user_data['department']}",
-                        f"Contexto: {scenario}"
-                    ],
-                    "psychological_techniques": [
-                        {
-                            "technique": "Personalización",
-                            "application": "Uso del nombre real del usuario"
-                        },
-                        {
-                            "technique": "Autoridad",
-                            "application": "Remitente que parece oficial"
-                        }
-                    ],
-                    "effectiveness_prediction": {
-                        "score": 0.6,
-                        "reasoning": f"Contenido básico personalizado para {user_data['user_name']} de {user_data['department']}"
-                    }
-                }
+            if content_result:
+                st.success("✅ JSON parseado correctamente")
+            else:
+                st.warning("⚠️ Error en parsing, usando contenido de fallback")
+                content_result = create_fallback_content(
+                    user_data['user_name'], 
+                    user_data['department'], 
+                    scenario, 
+                    urgency, 
+                    company_context
+                )
             
             # Guardar contenido generado
             if 'generated_content' not in st.session_state:
@@ -1640,35 +1705,34 @@ def generate_adaptive_content(target_profile, content_type, scenario,
             display_generated_content(content_data)
             
         except Exception as e:
-            st.error(f"❌ Error generando contenido: {str(e)}")
+            st.error(f"❌ Error conectando con Claude: {str(e)}")
             
-            # Contenido de fallback en caso de error total
-            fallback_content = {
+            # Contenido de emergencia
+            emergency_content = {
                 'target_user': user_data['user_name'],
                 'content_type': content_type,
                 'scenario': scenario,
-                'content': {
-                    "content": {
-                        "subject": f"Error: Generación fallida para {user_data['user_name']}",
-                        "sender": "sistema@empresa.com",
-                        "body": "No se pudo generar contenido automáticamente. Se requiere generación manual.",
-                        "call_to_action": "Contactar administrador"
-                    },
-                    "personalization_elements": ["Error en generación"],
-                    "psychological_techniques": [{"technique": "Error", "application": "No aplicable"}],
-                    "effectiveness_prediction": {"score": 0.0, "reasoning": "Error en generación"}
-                },
+                'content': create_fallback_content(
+                    user_data['user_name'], 
+                    user_data['department'], 
+                    scenario, 
+                    urgency, 
+                    company_context
+                ),
                 'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             
-            st.session_state.current_content = fallback_content
-            display_generated_content(fallback_content)
+            st.session_state.current_content = emergency_content
+            display_generated_content(emergency_content)
 
 def display_generated_content(content_data):
     """Mostrar contenido generado"""
     
     content = content_data['content']['content']
     analysis = content_data['content']
+    
+    # Crear un ID único para este contenido
+    content_id = f"{content_data['target_user']}_{content_data['timestamp'].replace(':', '').replace('-', '').replace(' ', '')}"
     
     st.markdown("### Contenido Generado")
     
@@ -1737,12 +1801,12 @@ def display_generated_content(content_data):
             application = technique.get('application', 'N/A') if isinstance(technique, dict) else 'Aplicación estándar'
             st.markdown(f"• **{technique_name}**: {application}")
     
-    # Botones de acción
+    # Botones de acción con keys únicos
     st.markdown("### Acciones")
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("📋 Copiar Contenido"):
+        if st.button("📋 Copiar Contenido", key=f"copy_{content_id}"):
             # Crear texto para copiar
             copy_text = f"""
 Asunto: {content.get('subject', 'N/A')}
@@ -1756,42 +1820,28 @@ Efectividad Predicha: {score:.0%}
 Generado: {content_data['timestamp']}
             """.strip()
             
-            # En un entorno real, aquí podrías usar pyperclip o similar
-            st.text_area("Contenido para copiar:", copy_text, height=150)
+            # Mostrar en text area para copiar
+            st.text_area("Contenido para copiar:", copy_text, height=150, key=f"textarea_{content_id}")
     
     with col2:
-        if st.button("🔄 Regenerar"):
-            if 'current_profile' in st.session_state and st.session_state.current_profile:
-                # Buscar el perfil original
-                target_profile = None
-                for profile in st.session_state.get('user_profiles', []):
-                    if profile['user_name'] == content_data['target_user']:
-                        target_profile = profile
-                        break
-                
-                if target_profile:
-                    st.info("Regenerando contenido...")
-                    st.rerun()
-                else:
-                    st.error("No se encontró el perfil del usuario original")
-            else:
-                st.error("No hay perfil disponible para regenerar")
+        if st.button("🔄 Regenerar", key=f"regen_{content_id}"):
+            st.info("Para regenerar, use el formulario de generación nuevamente.")
     
     with col3:
-        if st.button("💾 Exportar"):
-            # Crear datos para exportar
-            export_data = {
-                "contenido": content_data,
-                "analisis": analysis,
-                "timestamp": content_data['timestamp']
-            }
-            
-            st.download_button(
-                label="Descargar JSON",
-                data=json.dumps(export_data, indent=2, ensure_ascii=False),
-                file_name=f"contenido_{content_data['target_user']}_{content_data['timestamp'].replace(':', '-')}.json",
-                mime="application/json"
-            )
+        # Crear datos para exportar
+        export_data = {
+            "contenido": content_data,
+            "analisis": analysis,
+            "timestamp": content_data['timestamp']
+        }
+        
+        st.download_button(
+            label="💾 Exportar",
+            data=json.dumps(export_data, indent=2, ensure_ascii=False),
+            file_name=f"contenido_{content_data['target_user']}_{content_data['timestamp'].replace(':', '-').replace(' ', '_')}.json",
+            mime="application/json",
+            key=f"export_{content_id}"
+        )
 
 if __name__ == "__main__":
     main()
