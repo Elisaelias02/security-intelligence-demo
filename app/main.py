@@ -27,7 +27,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# CSS profesional sin emojis
+# CSS profesional
 def load_css():
     st.markdown("""
     <style>
@@ -236,41 +236,25 @@ def load_css():
         box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
     }
     
-    .stSelectbox > div > div {
-        border-radius: 6px;
-    }
-    
-    .stTextInput > div > div {
-        border-radius: 6px;
-    }
-    
-    .stTextArea > div > div {
-        border-radius: 6px;
-    }
-    
-    /* Tabs personalizados */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-        background: var(--light-bg);
-        padding: 0.5rem;
-        border-radius: 8px;
-    }
-    
-    .stTabs [data-baseweb="tab"] {
-        height: 3rem;
-        padding: 0.5rem 1.5rem;
-        border-radius: 6px;
-        font-weight: 500;
-        color: #6b7280;
-        background: transparent;
-        border: 1px solid transparent;
-    }
-    
-    .stTabs [aria-selected="true"] {
+    .email-container {
         background: white;
-        color: var(--primary-color);
-        border-color: var(--border-color);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 2rem;
+        margin: 1.5rem 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .email-header {
+        border-bottom: 2px solid #f3f4f6;
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .email-body {
+        line-height: 1.6;
+        color: #374151;
     }
     
     /* Ocultar elementos de Streamlit */
@@ -364,7 +348,7 @@ def main():
         • Generación de estrategias de phishing
         """)
     
-    # Tabs principales (sin contramedidas y con menos opciones)
+    # Tabs principales
     tab1, tab2, tab3, tab4 = st.tabs([
         "Panel Ejecutivo",
         "Análisis OSINT", 
@@ -502,8 +486,8 @@ def create_osint_interface():
         with st.form("osint_form"):
             st.markdown("**Información Básica del Objetivo**")
             
-            company_name = st.text_input("Nombre de la Organización", "TechCorp Solutions")
-            domain = st.text_input("Dominio Principal", "techcorp.com")
+            company_name = st.text_input("Nombre de la Organización", "Empresa Objetivo")
+            domain = st.text_input("Dominio Principal", "empresa-objetivo.com")
             
             col_a, col_b = st.columns(2)
             with col_a:
@@ -995,7 +979,7 @@ def create_strategy_generation():
         
         scenario_context = st.text_area(
             "Contexto del Escenario",
-            "Organización en proceso de auditoría financiera anual\nPresión por cumplir deadlines de cierre trimestral\nReorganización departamental en curso",
+            "Organización en proceso de auditoría interna\nImplementación de nuevos sistemas de seguridad\nReorganización departamental en curso",
             height=100
         )
         
@@ -1058,7 +1042,7 @@ def run_strategy_generation(attack_type, context, depth, urgency, techniques):
                 }
                 
                 claude_strategy = st.session_state.claude_agent.generate_attack_simulation(
-                    target_profile, company_context
+                    target_profile, company_context, strategy_data
                 )
                 
                 st.session_state.strategy_results = {
@@ -1190,14 +1174,14 @@ def generate_attack_content_section(strategy):
     
     st.markdown("---")
     st.markdown("### 📧 Contenido de Ataque Generado")
-    st.error("**⚠️ CONTENIDO MALICIOSO PARA ANÁLISIS EDUCATIVO - NO USAR EN ATAQUES REALES**")
+    st.error("**⚠️ CONTENIDO PARA ANÁLISIS  - USO EXCLUSIVO AEGIS**")
     
     # Obtener datos del perfil y empresa
     target_profile = st.session_state.get('profile_results', {})
     company_context = st.session_state.get('osint_results', {}).get('company_data', {})
     
-    target_name = target_profile.get('employee_data', {}).get('name', 'María González - CFO')
-    company_name = company_context.get('name', 'TechCorp Solutions')
+    target_name = target_profile.get('employee_data', {}).get('name', 'Empleado Objetivo')
+    company_name = company_context.get('name', 'Empresa Objetivo')
     
     # Determinar tipo de ataque
     attack_type = strategy.get('strategy_data', {}).get('attack_type', 'Phishing por Correo Electrónico')
@@ -1208,47 +1192,46 @@ def generate_attack_content_section(strategy):
         generate_smishing_content(target_name, company_name, strategy)
 
 def generate_phishing_email_content(target_name, company_name, strategy):
-    """Generar contenido realista de email de phishing"""
+    """Generar contenido realista de email de phishing usando IA mejorada"""
     
     st.markdown("#### 📧 Email de Phishing Generado")
     
-    # Usar Claude si está disponible, sino generar contenido realista
+    # Usar Claude con prompts mejorados si está disponible
     if st.session_state.claude_agent:
-        phishing_content = generate_ai_phishing_email(target_name, company_name, strategy)
+        phishing_content = generate_ai_phishing_email_improved(target_name, company_name, strategy)
     else:
-        phishing_content = generate_realistic_phishing_email(target_name, company_name)
+        phishing_content = generate_realistic_phishing_email_improved(target_name, company_name)
     
-    # Mostrar el email en un formato realista
-    st.markdown("""
-    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; margin: 1rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    # Mostrar el email en un formato realista mejorado
+    st.markdown(f"""
+    <div class="email-container">
+        <div class="email-header">
+            <div style="display: grid; grid-template-columns: 1fr 3fr; gap: 1rem; margin-bottom: 1rem;">
+                <div style="font-weight: 600; color: #374151;">
+                    <div style="margin-bottom: 0.5rem;">De:</div>
+                    <div style="margin-bottom: 0.5rem;">Para:</div>
+                    <div style="margin-bottom: 0.5rem;">Asunto:</div>
+                    <div style="margin-bottom: 0.5rem;">Fecha:</div>
+                </div>
+                <div style="color: #6b7280;">
+                    <div style="margin-bottom: 0.5rem;">{phishing_content['from_email']}</div>
+                    <div style="margin-bottom: 0.5rem;">{phishing_content['to_email']}</div>
+                    <div style="margin-bottom: 0.5rem; font-weight: 600; color: #dc2626;">{phishing_content['subject']}</div>
+                    <div style="margin-bottom: 0.5rem;">{datetime.now().strftime('%d %b %Y, %H:%M')}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="email-body">
+            {phishing_content['body']}
+        </div>
+    </div>
     """, unsafe_allow_html=True)
     
-    # Headers del email
-    col1, col2 = st.columns([1, 3])
-    with col1:
-        st.markdown("**De:**")
-        st.markdown("**Para:**")
-        st.markdown("**Asunto:**")
-        st.markdown("**Fecha:**")
-    
-    with col2:
-        st.markdown(f"{phishing_content['from_email']}")
-        st.markdown(f"{target_name.split(' - ')[0].lower().replace(' ', '.')}@{company_name.lower().replace(' ', '')}.com")
-        st.markdown(f"**{phishing_content['subject']}**")
-        st.markdown(f"{datetime.now().strftime('%d %b %Y, %H:%M')}")
-    
-    st.markdown("---")
-    
-    # Contenido del email
-    st.markdown("**Contenido del Email:**")
-    st.markdown(phishing_content['body'], unsafe_allow_html=True)
-    
-    st.markdown("</div>", unsafe_allow_html=True)
-    
     # Análisis del contenido
-    st.markdown("#### 🔍 Análisis del Contenido Malicioso")
+    st.markdown("#### 🔍 Análisis del Contenido para Workshop")
     
-    analysis_tabs = st.tabs(["Técnicas Utilizadas", "Señales de Alerta", "Mejoras Posibles"])
+    analysis_tabs = st.tabs(["Técnicas Utilizadas", "Señales de Alerta", "Puntos de Mejora"])
     
     with analysis_tabs[0]:
         st.markdown("**Técnicas de Ingeniería Social Empleadas:**")
@@ -1256,29 +1239,291 @@ def generate_phishing_email_content(target_name, company_name, strategy):
             st.markdown(f"• **{technique['name']}**: {technique['description']}")
     
     with analysis_tabs[1]:
-        st.markdown("**Señales de Alerta que las Víctimas Deberían Detectar:**")
+        st.markdown("**Señales de Alerta que los Empleados Deben Detectar:**")
         for red_flag in phishing_content['red_flags']:
-            st.markdown(f"• ❌ {red_flag}")
+            st.markdown(f"• ⚠️ {red_flag}")
     
     with analysis_tabs[2]:
-        st.markdown("**Cómo un Atacante Podría Mejorar este Email:**")
-        for improvement in phishing_content['improvements']:
-            st.markdown(f"• ⚠️ {improvement}")
+        st.markdown("**Aspectos que Hacen este Email Particularmente Peligroso:**")
+        for improvement in phishing_content['danger_factors']:
+            st.markdown(f"• 🎯 {improvement}")
+
+def generate_ai_phishing_email_improved(target_name, company_name, strategy):
+    """Generar email de phishing con IA usando prompts mejorados"""
+    
+    try:
+        # Obtener contexto adicional
+        target_profile = st.session_state.get('profile_results', {})
+        department = target_profile.get('employee_data', {}).get('department', 'Finanzas')
+        urgency_level = strategy.get('strategy_data', {}).get('urgency', 'Alta')
+        techniques = strategy.get('strategy_data', {}).get('techniques', ['Autoridad', 'Urgencia'])
+        context = strategy.get('strategy_data', {}).get('context', '')
+        
+        # Prompt mejorado y más específico
+        prompt = f"""
+        CONTEXTO: Eres un experto en ciberseguridad creando contenido EDUCATIVO para un workshop empresarial sobre concientización en seguridad.
+
+        OBJETIVO: Genera un email de phishing REALISTA y PROFESIONAL para demostrar técnicas de ingeniería social a empresarios.
+
+        DATOS DEL ESCENARIO:
+        - Empleado objetivo: {target_name}
+        - Empresa: {company_name}
+        - Departamento: {department}
+        - Nivel de urgencia: {urgency_level}
+        - Técnicas a demostrar: {', '.join(techniques)}
+        - Contexto empresarial: {context}
+
+        REQUISITOS ESPECÍFICOS:
+        1. NO uses nombres de empresas reales (Deloitte, KPMG, etc.)
+        2. Crea nombres de empresas ficticias pero creíbles
+        3. El email debe ser MUY convincente y profesional
+        4. Incluye elementos específicos del departamento ({department})
+        5. Usa un pretexto actual y relevante para 2024
+        6. El tono debe ser corporativo y urgente
+
+        ELEMENTOS A INCLUIR:
+        - Remitente: Empresa auditora ficticia o consultora interna
+        - Asunto: Específico y urgente relacionado con {department}
+        - Cuerpo: Profesional, con logos ficticios, firmas detalladas
+        - Call-to-action: Enlace o solicitud de información
+        - Firma: Completa con datos ficticios pero realistas
+
+        FORMATO DE RESPUESTA JSON:
+        {{
+            "from_email": "email del remitente (empresa ficticia)",
+            "to_email": "email del objetivo basado en {target_name} y {company_name}",
+            "subject": "asunto específico y urgente",
+            "body": "cuerpo completo del email en HTML profesional",
+            "techniques_used": [
+                {{"name": "técnica", "description": "cómo se aplica específicamente"}}
+            ],
+            "red_flags": ["señal de alerta específica 1", "señal 2", "señal 3"],
+            "danger_factors": ["factor peligroso 1", "factor 2", "factor 3"]
+        }}
+
+        IMPORTANTE: 
+        - Solo empresas FICTICIAS
+        - Extremadamente profesional
+        - Para educación en workshop empresarial
+        - Debe parecer 100% legítimo a primera vista
+        """
+        
+        response = st.session_state.claude_agent.client.messages.create(
+            model="claude-3-sonnet-20240229",
+            max_tokens=3000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        
+        content = response.content[0].text
+        
+        # Limpiar JSON
+        if "```json" in content:
+            content = content.split("```json")[1].split("```")[0]
+        elif "```" in content:
+            content = content.split("```")[1].split("```")[0]
+        
+        result = json.loads(content.strip())
+        
+        # Validar que no hay empresas reales
+        forbidden_companies = ['deloitte', 'kpmg', 'pwc', 'ey', 'accenture', 'mckinsey', 'santander', 'bbva']
+        email_text = result.get('body', '').lower()
+        
+        for company in forbidden_companies:
+            if company in email_text:
+                # Reemplazar con versión ficticia
+                result['body'] = result['body'].replace(company.capitalize(), f"Consultoría {company.capitalize()[:-1]}ex")
+        
+        return result
+        
+    except Exception as e:
+        st.error(f"Error generando contenido con IA: {e}")
+        return generate_realistic_phishing_email_improved(target_name, company_name)
+
+def generate_realistic_phishing_email_improved(target_name, company_name):
+    """Generar email de phishing realista mejorado sin IA"""
+    
+    # Obtener datos del perfil si están disponibles
+    target_profile = st.session_state.get('profile_results', {})
+    department = target_profile.get('employee_data', {}).get('department', 'Finanzas')
+    
+    # Generar contenido realista basado en el perfil
+    first_name = target_name.split(' ')[0] if ' ' in target_name else target_name.split(' - ')[0]
+    
+    # Email objetivo
+    target_email = f"{first_name.lower()}.{target_name.split(' ')[1].lower() if ' ' in target_name else 'objetivo'}@{company_name.lower().replace(' ', '-')}.com"
+    
+    # Diferentes escenarios según el departamento (SIN empresas reales)
+    if department == 'Finanzas':
+        scenario = {
+            "from_email": "auditoria@grupoconsultores-madrid.com",
+            "to_email": target_email,
+            "subject": "URGENTE: Validación Fiscal Requerida - Cierre Q4 2024",
+            "body": f"""
+            <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px;">
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjQwIiB2aWV3Qm94PSIwIDAgMTIwIDQwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iNDAiIGZpbGw9IiMxZTQwYWYiLz48dGV4dCB4PSI2MCIgeT0iMjQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIj5BdWRpdG9yQ29ycDwvdGV4dD48L3N2Zz4=" alt="AuditorCorp" style="height: 40px;">
+                    <h2 style="color: #1e40af; margin: 10px 0 5px 0; font-size: 18px;">Grupo Auditores & Consultores Madrid</h2>
+                </div>
+                
+                <p>Estimado/a <strong>{first_name}</strong>,</p>
+                
+                <p>Nos dirigimos a usted en su calidad de responsable financiero de <strong>{company_name}</strong> para informarle sobre la <span style="background-color: #fef3c7; padding: 2px 6px; border-radius: 3px;"><strong>validación fiscal obligatoria Q4 2024</strong></span> que debe completarse antes del <strong style="color: #dc2626;">31 de diciembre</strong>.</p>
+                
+                <div style="background: #fef2f2; border-left: 4px solid #dc2626; padding: 15px; margin: 20px 0; border-radius: 4px;">
+                    <p style="margin: 0; font-weight: 600; color: #dc2626;">⚠️ ACCIÓN CRÍTICA REQUERIDA</p>
+                    <p style="margin: 5px 0 0 0; font-size: 14px;">Su empresa tiene pendiente la validación de documentos fiscales para evitar sanciones del organismo tributario.</p>
+                </div>
+                
+                <p>Hemos identificado discrepancias menores en la documentación fiscal de su organización que requieren validación inmediata. Según las nuevas normativas 2024, es obligatorio completar este proceso para:</p>
+                
+                <ul style="margin: 15px 0; padding-left: 25px;">
+                    <li>Certificar estados financieros del ejercicio actual</li>
+                    <li>Validar transacciones internacionales reportadas</li>
+                    <li>Confirmar cumplimiento normativo fiscal</li>
+                    <li>Evitar penalizaciones por incumplimiento (hasta €50.000)</li>
+                </ul>
+                
+                <p><strong>Para facilitar este proceso urgente</strong>, hemos habilitado un portal seguro donde puede revisar y confirmar la documentación:</p>
+                
+                <div style="text-align: center; margin: 25px 0;">
+                    <a href="https://portal-validacion-fiscal.auditorcorp-madrid.com/secure/validate?empresa={company_name.replace(' ', '')}&responsable={first_name}" 
+                       style="background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block; box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);">
+                       🔐 ACCEDER AL PORTAL SEGURO
+                    </a>
+                </div>
+                
+                <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 12px; border-radius: 6px; margin: 20px 0;">
+                    <p style="margin: 0; font-size: 14px; color: #856404;">
+                        <strong>⏰ Tiempo límite:</strong> Este enlace de validación expira en <strong>6 horas</strong> por motivos de seguridad.
+                    </p>
+                </div>
+                
+                <p>Para completar la validación, necesitará proporcionar:</p>
+                <ul style="font-size: 14px; color: #6b7280;">
+                    <li>Credenciales de acceso al sistema fiscal corporativo</li>
+                    <li>Códigos de verificación bancarios asociados</li>
+                    <li>Confirmación de identidad del responsable financiero</li>
+                </ul>
+                
+                <p>Si tiene alguna consulta sobre este proceso, puede contactarnos directamente respondiendo a este correo o llamando al <strong>+34 91-XXX-XXXX</strong> (horario: 9:00-18:00).</p>
+                
+                <p>Agradecemos su inmediata atención a este requerimiento normativo.</p>
+                
+                <p>Cordialmente,</p>
+                
+                <div style="border-left: 3px solid #1e40af; padding-left: 20px; margin-top: 25px; background: #f8fafc; padding: 15px; border-radius: 6px;">
+                    <strong style="color: #1e40af;">Ana María Rodríguez Fernández</strong><br>
+                    <span style="color: #6b7280;">Directora de Cumplimiento Fiscal</span><br>
+                    <strong>Grupo Auditores & Consultores Madrid</strong><br>
+                    📧 a.rodriguez@grupoconsultores-madrid.com<br>
+                    📞 +34 91-XXX-XXXX ext. 205<br>
+                    🌐 www.grupoconsultores-madrid.com<br>
+                    📍 Calle Serrano 95, 28006 Madrid
+                </div>
+                
+                <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+                <div style="font-size: 11px; color: #9ca3af; line-height: 1.4;">
+                    <p><em>Este correo contiene información confidencial dirigida únicamente al destinatario. Si ha recibido este mensaje por error, 
+                    por favor elimínelo y notifique al remitente. Grupo Auditores & Consultores Madrid es una firma independiente 
+                    especializada en servicios de auditoría y consultoría fiscal para empresas medianas y grandes.</em></p>
+                    
+                    <p><em>Conforme a la LOPD y RGPD, sus datos están protegidos. Para ejercer sus derechos o darse de baja, 
+                    contacte con protecciondatos@grupoconsultores-madrid.com</em></p>
+                </div>
+            </div>
+            """
+        }
+    else:
+        # Escenario para otros departamentos (también sin empresas reales)
+        scenario = {
+            "from_email": f"sistemas.seguridad@{company_name.lower().replace(' ', '-')}.com",
+            "to_email": target_email,
+            "subject": "Actualización Crítica de Seguridad - Validación Requerida",
+            "body": f"""
+            <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333;">
+                <div style="background: #dc2626; color: white; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                    <h2 style="margin: 0; font-size: 18px;">🛡️ ALERTA DE SEGURIDAD - {company_name.upper()}</h2>
+                </div>
+                
+                <p>Estimado/a <strong>{first_name}</strong>,</p>
+                
+                <p>El Departamento de Seguridad Informática ha detectado <strong style="color: #dc2626;">múltiples intentos de acceso no autorizado</strong> dirigidos a cuentas del departamento de {department}.</p>
+                
+                <div style="background: #fef2f2; border: 2px solid #dc2626; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <p style="margin: 0; font-weight: 600; color: #dc2626;">⚠️ ACCIÓN INMEDIATA REQUERIDA</p>
+                    <p style="margin: 8px 0 0 0;">Su cuenta ha sido marcada para verificación de seguridad obligatoria.</p>
+                </div>
+                
+                <p><strong>Actividad sospechosa detectada:</strong></p>
+                <ul>
+                    <li>Intentos de login desde ubicaciones no reconocidas</li>
+                    <li>Patrones de acceso anómalos en horarios nocturnos</li>
+                    <li>Solicitudes de cambio de contraseña no autorizadas</li>
+                </ul>
+                
+                <p>Para mantener la seguridad de nuestros sistemas y proteger la información corporativa, debe <strong>verificar su identidad inmediatamente</strong> a través del portal seguro:</p>
+                
+                <div style="text-align: center; margin: 25px 0;">
+                    <a href="https://portal-seguridad-interna.{company_name.lower().replace(' ', '-')}.com/verificar-identidad?usuario={first_name}" 
+                       style="background: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                       🔐 VERIFICAR CUENTA AHORA
+                    </a>
+                </div>
+                
+                <p><strong style="color: #dc2626;">IMPORTANTE:</strong> Si no completa esta verificación en las próximas <strong>2 horas</strong>, su cuenta será suspendida automáticamente por medidas de seguridad.</p>
+                
+                <p>En caso de dudas, contacte inmediatamente al Helpdesk de Seguridad: <strong>ext. 999</strong></p>
+                
+                <p>Saludos,<br>
+                <strong>Equipo de Ciberseguridad</strong><br>
+                {company_name}</p>
+            </div>
+            """
+        }
+    
+    # Agregar análisis común
+    scenario.update({
+        "techniques_used": [
+            {"name": "Autoridad", "description": "Se presenta como entidad oficial (auditora o IT interno)"},
+            {"name": "Urgencia", "description": "Plazos extremadamente cortos para crear presión"},
+            {"name": "Miedo", "description": "Amenaza con sanciones económicas o suspensión de cuenta"},
+            {"name": "Legitimidad", "description": "Formato profesional con logos, firmas detalladas y datos técnicos"},
+            {"name": "Especificidad", "description": "Menciona detalles específicos del departamento y empresa"}
+        ],
+        "red_flags": [
+            "Dominio de email ligeramente diferente al oficial de la empresa",
+            "Presión temporal extrema (2-6 horas)",
+            "Solicitud de credenciales por correo electrónico",
+            "Enlaces que redirigen a dominios externos",
+            "Amenazas desproporcionadas (sanciones, suspensiones)",
+            "Falta de procesos de verificación alternativos mencionados"
+        ],
+        "danger_factors": [
+            "Apariencia extremadamente profesional que genera confianza inmediata",
+            "Uso de información real de la empresa y empleado objetivo",
+            "Contexto temporal relevante (cierre de año, auditorías)",
+            "Múltiples elementos de presión psicológica combinados",
+            "Solicitud directa de credenciales de acceso críticas",
+            "Imitación convincente de procesos empresariales reales"
+        ]
+    })
+    
+    return scenario
 
 def generate_smishing_content(target_name, company_name, strategy):
     """Generar contenido realista de SMS de smishing"""
     
     st.markdown("#### 📱 Mensaje SMS de Smishing Generado")
     
-    # Usar Claude si está disponible
+    # Usar Claude con prompts mejorados si está disponible
     if st.session_state.claude_agent:
-        sms_content = generate_ai_smishing_sms(target_name, company_name, strategy)
+        sms_content = generate_ai_smishing_sms_improved(target_name, company_name, strategy)
     else:
-        sms_content = generate_realistic_smishing_sms(target_name, company_name)
+        sms_content = generate_realistic_smishing_sms_improved(target_name, company_name)
     
     # Mostrar el SMS en formato móvil
     st.markdown(f"""
-    <div style="background: #007bff; color: white; padding: 1rem; border-radius: 18px; margin: 1rem 0; max-width: 350px; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+    <div style="background: #007bff; color: white; padding: 1rem; border-radius: 18px; margin: 1rem 0; max-width: 350px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);">
         <div style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 0.5rem;">
             Desde: {sms_content['from_number']} • {datetime.now().strftime('%H:%M')}
         </div>
@@ -1289,13 +1534,15 @@ def generate_smishing_content(target_name, company_name, strategy):
     """, unsafe_allow_html=True)
     
     # Variaciones del mensaje
-    st.markdown("#### 📝 Variaciones del Mensaje")
-    st.markdown("**El atacante podría enviar múltiples versiones:**")
+    st.markdown("#### 🔄 Variaciones del Ataque")
+    st.markdown("**El atacante podría enviar múltiples versiones para maximizar efectividad:**")
     
-    for i, variation in enumerate(sms_content['variations'], 1):
+    colors = ['#28a745', '#17a2b8', '#ffc107', '#6f42c1']
+    for i, variation in enumerate(sms_content['variations']):
+        color = colors[i % len(colors)]
         st.markdown(f"""
-        <div style="background: #28a745; color: white; padding: 0.8rem; border-radius: 15px; margin: 0.5rem 0; max-width: 320px; font-size: 0.9rem;">
-            <strong>Variación {i}:</strong><br>
+        <div style="background: {color}; color: white; padding: 0.8rem; border-radius: 15px; margin: 0.5rem 0; max-width: 320px; font-size: 0.9rem;">
+            <strong>Variación {i+1}:</strong><br>
             {variation}
         </div>
         """, unsafe_allow_html=True)
@@ -1308,223 +1555,53 @@ def generate_smishing_content(target_name, company_name, strategy):
     with col1:
         st.markdown("**Técnicas Empleadas:**")
         for technique in sms_content['techniques_used']:
-            st.markdown(f"• {technique}")
+            st.markdown(f"• **{technique}**")
     
     with col2:
         st.markdown("**Señales de Alerta:**")
         for red_flag in sms_content['red_flags']:
-            st.markdown(f"• ❌ {red_flag}")
+            st.markdown(f"• ⚠️ {red_flag}")
 
-def generate_ai_phishing_email(target_name, company_name, strategy):
-    """Generar email de phishing con IA"""
+def generate_ai_smishing_sms_improved(target_name, company_name, strategy):
+    """Generar SMS de smishing con IA mejorada"""
     
     try:
-        # Crear prompt para Claude
+        # Obtener contexto
         target_profile = st.session_state.get('profile_results', {})
+        department = target_profile.get('employee_data', {}).get('department', 'Finanzas')
         urgency_level = strategy.get('strategy_data', {}).get('urgency', 'Alta')
-        techniques = strategy.get('strategy_data', {}).get('techniques', ['Autoridad', 'Urgencia'])
         
         prompt = f"""
-        Genera un email de phishing REALISTA para fines EDUCATIVOS dirigido a:
-        
-        OBJETIVO: {target_name}
-        EMPRESA: {company_name}
-        NIVEL DE URGENCIA: {urgency_level}
-        TÉCNICAS A USAR: {', '.join(techniques)}
-        
-        El email debe incluir:
-        1. Remitente creíble (dirección de email falsa pero realista)
-        2. Asunto convincente y urgente
-        3. Cuerpo del email con técnicas de ingeniería social
-        4. Call-to-action claro (link malicioso, archivo adjunto, etc.)
-        5. Firma profesional falsa
-        
-        FORMATO DE RESPUESTA JSON:
-        {{
-            "from_email": "email del remitente falso",
-            "subject": "asunto del email",
-            "body": "cuerpo completo del email en HTML",
-            "techniques_used": [
-                {{"name": "técnica", "description": "cómo se aplica"}}
-            ],
-            "red_flags": ["señal de alerta 1", "señal 2"],
-            "improvements": ["mejora 1", "mejora 2"]
-        }}
-        
-        IMPORTANTE: Este es para EDUCACIÓN y PREVENCIÓN únicamente.
-        """
-        
-        response = st.session_state.claude_agent.client.messages.create(
-            model="claude-3-haiku-20240307",
-            max_tokens=2000,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        
-        content = response.content[0].text
-        
-        # Limpiar JSON
-        if "```json" in content:
-            content = content.split("```json")[1].split("```")[0]
-        elif "```" in content:
-            content = content.split("```")[1].split("```")[0]
-        
-        return json.loads(content.strip())
-        
-    except Exception as e:
-        st.error(f"Error generando contenido con IA: {e}")
-        return generate_realistic_phishing_email(target_name, company_name)
+        CONTEXTO: Crea contenido SMS de smishing para workshop empresarial de concientización.
 
-def generate_realistic_phishing_email(target_name, company_name):
-    """Generar email de phishing realista sin IA"""
-    
-    # Obtener datos del perfil si están disponibles
-    target_profile = st.session_state.get('profile_results', {})
-    department = target_profile.get('employee_data', {}).get('department', 'Finanzas')
-    
-    # Generar contenido realista basado en el perfil
-    first_name = target_name.split(' ')[0] if ' ' in target_name else target_name.split(' - ')[0]
-    
-    # Diferentes escenarios según el departamento
-    if department == 'Finanzas':
-        scenario = {
-            "from_email": "auditor.externo@deloitte-audit.com",
-            "subject": "URGENTE: Verificación Requerida para Auditoría Anual - Acción Inmediata",
-            "body": f"""
-            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-                <p>Estimado/a {first_name},</p>
-                
-                <p>Espero que este mensaje le encuentre bien. Me dirijo a usted como CFO de {company_name} en relación con la <strong>auditoría anual obligatoria</strong> que debe completarse antes del <span style="color: #d73502; font-weight: bold;">31 de diciembre de 2024</span>.</p>
-                
-                <p><strong style="background-color: #fff3cd; padding: 3px;">⚠️ ACCIÓN REQUERIDA ANTES DE LAS 17:00 HORAS</strong></p>
-                
-                <p>Hemos detectado <u>inconsistencias menores</u> en los registros financieros que requieren su verificación inmediata para evitar retrasos en el proceso de certificación. Según las regulaciones actuales, necesitamos que confirme los siguientes documentos:</p>
-                
-                <ul>
-                    <li>Estados financieros del Q3 2024</li>
-                    <li>Registros de transacciones internacionales</li>
-                    <li>Certificados de cumplimiento fiscal</li>
-                </ul>
-                
-                <p><strong>Para agilizar el proceso y evitar sanciones regulatorias</strong>, hemos preparado un portal seguro donde puede revisar y validar esta información:</p>
-                
-                <div style="text-align: center; margin: 20px 0;">
-                    <a href="https://deloitte-audit-secure.verification-portal.com/validate?token=CFO-{company_name.replace(' ', '')}-2024" 
-                       style="background-color: #0066cc; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
-                       🔒 ACCEDER AL PORTAL SEGURO
-                    </a>
-                </div>
-                
-                <p><em>Este enlace expira en 4 horas por motivos de seguridad.</em></p>
-                
-                <p>También adjunto el formulario de verificación de identidad que debe completar. <strong>Por favor, responda con sus credenciales de acceso</strong> para que podamos proceder con la validación automática.</p>
-                
-                <p>Agradezco su pronta atención a este asunto. Si tiene alguna duda, puede contactarme directamente a este correo o al +34 91-XXX-XXXX.</p>
-                
-                <p>Saludos cordiales,</p>
-                
-                <div style="border-left: 3px solid #0066cc; padding-left: 15px; margin-top: 20px;">
-                    <strong>Roberto Martínez Sánchez</strong><br>
-                    Senior Audit Manager<br>
-                    Deloitte Financial Advisory Services<br>
-                    📧 r.martinez@deloitte.es<br>
-                    📞 +34 91-514-5000<br>
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==" alt="Deloitte Logo" width="120">
-                </div>
-                
-                <hr style="margin-top: 30px; border: none; border-top: 1px solid #ccc;">
-                <p style="font-size: 11px; color: #666;">
-                    <em>Este correo es confidencial y puede contener información privilegiada. Si ha recibido este mensaje por error, 
-                    por favor elimínelo y notifique al remitente. Deloitte se refiere a una o más de las firmas miembro de Deloitte Touche Tohmatsu Limited.</em>
-                </p>
-            </div>
-            """
-        }
-    else:
-        # Escenario genérico para otros departamentos
-        scenario = {
-            "from_email": f"it.seguridad@{company_name.lower().replace(' ', '')}.com",
-            "subject": "Actualización Crítica de Seguridad - Verificación Requerida",
-            "body": f"""
-            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-                <p>Hola {first_name},</p>
-                
-                <p>El departamento de IT ha detectado <strong style="color: #d73502;">actividad sospechosa</strong> en su cuenta corporativa.</p>
-                
-                <p><strong>⚠️ ACCIÓN REQUERIDA: Verificar su cuenta inmediatamente</strong></p>
-                
-                <p>Para mantener la seguridad de nuestros sistemas, necesita verificar su identidad haciendo clic en el siguiente enlace:</p>
-                
-                <div style="text-align: center; margin: 20px 0;">
-                    <a href="https://portal-seguro-{company_name.lower().replace(' ', '')}.com/verify" 
-                       style="background-color: #d73502; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">
-                       VERIFICAR CUENTA AHORA
-                    </a>
-                </div>
-                
-                <p>Si no completa esta verificación en las próximas 2 horas, su cuenta será suspendida automáticamente.</p>
-                
-                <p>Gracias,<br>Equipo de Seguridad IT</p>
-            </div>
-            """
-        }
-    
-    # Agregar análisis
-    scenario.update({
-        "techniques_used": [
-            {"name": "Autoridad", "description": "Se presenta como auditor externo oficial"},
-            {"name": "Urgencia", "description": "Deadline estricto y amenaza de sanciones"},
-            {"name": "Legitimidad", "description": "Usa logos y formato profesional"},
-            {"name": "Miedo", "description": "Amenaza con consecuencias regulatorias"}
-        ],
-        "red_flags": [
-            "Dominio de email ligeramente alterado (deloitte-audit.com vs deloitte.com)",
-            "Solicitud de credenciales por correo electrónico",
-            "Presión temporal extrema (4 horas)",
-            "Enlaces a dominios externos sospechosos",
-            "Gramática y formato no totalmente profesional"
-        ],
-        "improvements": [
-            "Usar dominio exacto de la empresa real (spoofing)",
-            "Incluir información más específica de la empresa",
-            "Referenciar eventos reales recientes de la organización",
-            "Mejorar la calidad visual y tipográfica",
-            "Incluir números de teléfono verificables"
-        ]
-    })
-    
-    return scenario
+        DATOS:
+        - Objetivo: {target_name}
+        - Empresa: {company_name} 
+        - Departamento: {department}
+        - Urgencia: {urgency_level}
 
-def generate_ai_smishing_sms(target_name, company_name, strategy):
-    """Generar SMS de smishing con IA"""
-    
-    try:
-        prompt = f"""
-        Genera mensajes SMS de smishing REALISTAS para fines EDUCATIVOS dirigidos a:
-        
-        OBJETIVO: {target_name}
-        EMPRESA: {company_name}
-        
-        Genera 1 mensaje principal y 3 variaciones. Los SMS deben:
-        1. Ser cortos (máximo 160 caracteres por SMS)
-        2. Crear urgencia
-        3. Incluir enlaces maliciosos convincentes
-        4. Usar técnicas de ingeniería social
-        
+        REQUISITOS:
+        1. NO uses nombres de bancos o empresas REALES
+        2. Crea entidades ficticias pero creíbles
+        3. SMS cortos pero muy convincentes
+        4. Diferentes variaciones del mismo ataque
+        5. Para uso educativo en workshop
+
         FORMATO JSON:
         {{
-            "from_number": "número falso",
-            "message": "mensaje principal",
+            "from_number": "número ficticio de entidad creíble",
+            "message": "mensaje principal (máx 160 caracteres)",
             "variations": ["variación 1", "variación 2", "variación 3"],
-            "techniques_used": ["técnica 1", "técnica 2"],
-            "red_flags": ["señal 1", "señal 2"]
+            "techniques_used": ["técnica 1", "técnica 2", "técnica 3"],
+            "red_flags": ["señal de alerta 1", "señal 2", "señal 3"]
         }}
-        
-        Para EDUCACIÓN únicamente.
+
+        Importante: Solo entidades FICTICIAS, para educación empresarial.
         """
         
         response = st.session_state.claude_agent.client.messages.create(
-            model="claude-3-haiku-20240307",
-            max_tokens=1000,
+            model="claude-3-sonnet-20240229",
+            max_tokens=1500,
             messages=[{"role": "user", "content": prompt}]
         )
         
@@ -1533,63 +1610,75 @@ def generate_ai_smishing_sms(target_name, company_name, strategy):
         if "```json" in content:
             content = content.split("```json")[1].split("```")[0]
         
-        return json.loads(content.strip())
+        result = json.loads(content.strip())
+        
+        # Validar que no hay entidades reales
+        forbidden_entities = ['santander', 'bbva', 'bankia', 'caixabank', 'hacienda', 'aeat']
+        message_text = result.get('message', '').lower()
+        
+        for entity in forbidden_entities:
+            if entity in message_text:
+                result['message'] = result['message'].replace(entity.capitalize(), f"{entity.capitalize()}Ficticio")
+        
+        return result
         
     except Exception as e:
-        return generate_realistic_smishing_sms(target_name, company_name)
+        return generate_realistic_smishing_sms_improved(target_name, company_name)
 
-def generate_realistic_smishing_sms(target_name, company_name):
-    """Generar SMS de smishing realista sin IA"""
+def generate_realistic_smishing_sms_improved(target_name, company_name):
+    """Generar SMS de smishing realista mejorado sin IA"""
     
     first_name = target_name.split(' ')[0] if ' ' in target_name else target_name.split(' - ')[0]
     
     return {
-        "from_number": "+34 600-XXX-XXX (Banco Santander)",
-        "message": f"🏦 ALERTA SEGURIDAD: Detectamos acceso sospechoso a su cuenta empresarial {company_name}. Verificar AHORA: https://santander-verificacion.es/secure?id={first_name.lower()}2024 o será bloqueada en 1h.",
+        "from_number": "+34 900-XXX-XXX (Entidad Financiera)",
+        "message": f"🏦 ALERTA SEGURIDAD: Detectamos acceso sospechoso cuenta empresarial {company_name}. Verificar INMEDIATAMENTE: https://validacion-empresas.entidadfinanciera.es/verify?user={first_name.lower()} Caduca en 1h.",
         "variations": [
-            f"⚠️ {company_name}: Su cuenta será suspendida por actividad inusual. Confirme identidad: https://banco-seguro.com/verify/{first_name} - Urgente",
-            f"BBVA Empresas: Transferencia pendiente €15.340 bloqueada. Autorizar en: https://bbva-empresas.net/auth?user={first_name}&empresa={company_name.replace(' ', '')}",
-            f"Hacienda: Devolución fiscal pendiente para {company_name}. Reclamar en 24h: https://agenciatributaria.gob.es/devolucion?nif={first_name}2024"
+            f"⚠️ {company_name}: Cuenta bloqueada por actividad inusual. Desbloquear ahora: https://empresas-seguras.com/unlock/{first_name} - URGENTE",
+            f"Notificación Fiscal: Devolución pendiente €2.340 para {company_name}. Gestionar en 24h: https://tramites-fiscales.gob.es/devolucion?nif={first_name}2024",
+            f"IT-{company_name}: Actualización seguridad crítica requerida. Instalar certificado: https://actualizaciones-{company_name.lower().replace(' ', '')}.com/cert - Vence hoy"
         ],
         "techniques_used": [
-            "Urgencia extrema (1 hora para actuar)",
-            "Autoridad (bancos y Hacienda)",
-            "Miedo (bloqueo de cuenta)",
-            "Ganancia (devolución fiscal)"
+            "Urgencia extrema (1 hora límite)",
+            "Autoridad (entidades financieras y fiscales)",
+            "Miedo (bloqueo de cuenta empresarial)",
+            "Especificidad (nombres reales de empresa y persona)"
         ],
         "red_flags": [
-            "Número de teléfono no oficial",
-            "URLs con dominios alternativos",
-            "Amenazas de bloqueo inmediato",
-            "Solicitudes de verificación por SMS",
-            "Errores sutiles en nombres de empresas"
+            "Número no oficial de la entidad",
+            "URLs con dominios alternativos o sospechosos",
+            "Plazos de tiempo extremadamente cortos",
+            "Solicitudes de acción inmediata por SMS",
+            "Amenazas desproporcionadas",
+            "Falta de canales de verificación oficiales mencionados"
         ]
     }
 
 def generate_basic_attack_content():
     """Generar contenido básico sin IA"""
-    st.markdown("#### 📧 Ejemplo de Contenido Malicioso")
-    st.info("Para ver contenido personalizado completo, configure la conexión con Sistema IA")
+    st.markdown("#### 📧 Ejemplo de Contenido para Workshop")
+    st.info("Para ver contenido personalizado completo y análisis detallado, configure la conexión con Sistema IA")
     
-    st.markdown("**Ejemplo de Email de Phishing:**")
+    st.markdown("**Ejemplo de Email de Phishing Educativo:**")
     st.code("""
-    De: auditor@empresa-auditoria.com
-    Para: objetivo@empresa.com
-    Asunto: URGENTE: Verificación Requerida - Auditoría Anual
+    De: auditoria@consultora-ficticia.com
+    Para: objetivo@empresa-objetivo.com
+    Asunto: URGENTE: Verificación Fiscal Requerida
     
     Estimado/a [Nombre],
     
-    Necesitamos verificar información financiera urgente...
-    [Enlace malicioso]
+    Requiere validación inmediata documentos fiscales...
+    Para evitar sanciones, acceda a: [enlace-ficticio]
     
     Saludos,
-    Auditor Externo
+    Consultoría Ficticia S.L.
     """, language="text")
     
-    st.markdown("**Técnicas Empleadas:**")
-    st.markdown("• Autoridad (auditor externo)")
-    st.markdown("• Urgencia (verificación inmediata)")
-    st.markdown("• Legitimidad (formato profesional)")
+    st.markdown("**Técnicas Demostradas en el Workshop:**")
+    st.markdown("• **Autoridad**: Aparenta ser consultoría oficial")
+    st.markdown("• **Urgencia**: Plazos cortos para crear presión")
+    st.markdown("• **Miedo**: Amenaza con sanciones legales")
+    st.markdown("• **Legitimidad**: Formato corporativo profesional")
 
 # Funciones auxiliares
 def calculate_basic_risk_score(employee_data):
