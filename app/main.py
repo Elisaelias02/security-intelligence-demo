@@ -1283,8 +1283,17 @@ def generate_guaranteed_phishing_email(target_name, company_name, strategy):
     
     st.markdown("#### EMAIL MALICIOSO GENERADO AUTOMATICAMENTE")
     
-    # Usar SIEMPRE el contenido ultra-realista
-    phishing_content = generate_ultra_realistic_phishing_guaranteed(target_name, company_name, strategy)
+    # Obtener datos básicos
+    target_profile = st.session_state.get('profile_results', {})
+    department = target_profile.get('employee_data', {}).get('department', 'Finanzas')
+    first_name = target_name.split(' ')[0] if ' ' in target_name else target_name.split(' - ')[0]
+    
+    # Email del objetivo
+    company_domain = company_name.lower().replace(' ', '-').replace('empresa-', '') + ".com"
+    target_email = f"{first_name.lower()}.empleado@{company_domain}"
+    
+    # Generar contenido limpio GARANTIZADO
+    phishing_data = generate_clean_phishing_content(target_name, company_name, first_name, target_email, department)
     
     # Mostrar email con diseño profesional
     st.markdown("""
@@ -1307,25 +1316,133 @@ def generate_guaranteed_phishing_email(target_name, company_name, strategy):
         st.markdown("**Fecha:**")
     
     with col2:
-        st.markdown(f"`{phishing_content['from_email']}`")
-        st.markdown(f"`{phishing_content['to_email']}`")
-        st.markdown(f"**{phishing_content['subject']}**")
+        st.markdown(f"`{phishing_data['from_email']}`")
+        st.markdown(f"`{phishing_data['to_email']}`")
+        st.markdown(f"**{phishing_data['subject']}**")
         st.markdown(f"{datetime.now().strftime('%d %b %Y, %H:%M')}")
     
     st.markdown("---")
     
-    # Contenido del email RENDERIZADO CORRECTAMENTE
+    # CONTENIDO DEL EMAIL LIMPIO Y RENDERIZADO
     st.markdown("**CONTENIDO DEL EMAIL:**")
     
-    # Usar un container especial para renderizar el HTML del email
+    # Header del email
     st.markdown("""
-    <div style="border: 2px solid #e5e7eb; border-radius: 8px; margin: 15px 0; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <div style="background: #1e40af; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; margin: 20px 0 0 0;">
+        <h2 style="margin: 0; font-size: 20px;">AUDITORÍA EMPRESARIAL MADRID</h2>
+        <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.9;">Servicios de Cumplimiento Fiscal y Auditoría</p>
+    </div>
     """, unsafe_allow_html=True)
     
-    # Renderizar directamente el HTML del email
-    st.markdown(phishing_content['body_html'], unsafe_allow_html=True)
+    # Alerta urgente
+    st.markdown("""
+    <div style="background: #fff3cd; border: 2px solid #ffc107; padding: 15px; text-align: center; margin: 0;">
+        <strong style="color: #856404; font-size: 16px;">⚠️ REQUERIMIENTO FISCAL URGENTE ⚠️</strong>
+    </div>
+    """, unsafe_allow_html=True)
     
+    # Cuerpo del email usando markdown limpio
+    st.markdown(f"""
+    <div style="padding: 25px; background: white; border: 1px solid #e5e7eb; font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333;">
+    """, unsafe_allow_html=True)
+    
+    # Contenido principal
+    st.markdown(f"Estimado/a **{first_name}**,")
+    
+    st.markdown(f"""
+    En el marco de la **revisión fiscal anual 2024** y las nuevas disposiciones de la AEAT, 
+    hemos identificado discrepancias en la documentación fiscal de **{company_name}** que requieren 
+    validación inmediata.
+    """)
+    
+    # Alerta roja
+    st.markdown("""
+    <div style="background: #fef2f2; border-left: 4px solid #dc2626; padding: 15px; margin: 20px 0;">
+        <h4 style="margin: 0 0 10px 0; color: #dc2626;">Documentos Pendientes de Validación:</h4>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    • Certificado de retenciones IRPF Q4 2024  
+    • Declaración de operaciones con terceros  
+    • Justificantes de deducciones I+D aplicadas  
+    • Validación de beneficios fiscales declarados
+    """)
+    
+    st.markdown(f"""
+    **PLAZO LÍMITE:** La Agencia Tributaria ha establecido un plazo máximo de 
+    **6 HORAS** para completar esta validación. 
+    El incumplimiento puede resultar en sanciones de hasta **€45.000**.
+    """)
+    
+    # Botón de acción
+    st.markdown(f"""
+    <div style="text-align: center; margin: 25px 0;">
+        <a href="https://validacion-fiscal-aeat-empresas.com/acceso?empresa={company_name.replace(' ', '')}&responsable={first_name}" 
+           style="background: linear-gradient(135deg, #dc2626, #991b1b); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);">
+           🔐 ACCEDER AL PORTAL DE VALIDACIÓN FISCAL
+        </a>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("Para consultas urgentes, contacte directamente: **+34 91-789-4567 (24h)**")
+    
+    st.markdown("Agradecemos su inmediata colaboración en este proceso obligatorio.")
+    
+    st.markdown("Atentamente,")
+    
+    # Firma profesional
+    st.markdown("""
+    <div style="border-left: 3px solid #1e40af; padding-left: 15px; margin-top: 30px; background: #f8fafc; padding: 20px; border-radius: 6px;">
+        <strong style="color: #1e40af;">Dra. Carmen Rodríguez Sánchez</strong><br>
+        <span style="color: #6b7280;">Directora de Cumplimiento Fiscal</span><br>
+        <strong>AUDITORÍA EMPRESARIAL MADRID S.L.</strong><br>
+        <span style="font-size: 14px; color: #6b7280;">
+        📧 c.rodriguez@auditoria-empresarial-madrid.com<br>
+        📞 +34 91-789-4567 ext. 205<br>
+        🌐 www.auditoria-empresarial-madrid.com<br>
+        📍 Paseo de la Castellana 95, 28046 Madrid
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Cerrar contenedor
     st.markdown("</div>", unsafe_allow_html=True)
+    
+    # Análisis de efectividad
+    st.markdown("---")
+    st.markdown("#### ANALISIS DE EFECTIVIDAD (PARA WORKSHOP)")
+    
+    # Obtener datos de análisis
+    phishing_data = generate_clean_phishing_content(target_name, company_name, first_name, target_email, department)
+    
+    analysis_tabs = st.tabs(["TÉCNICAS EMPLEADAS", "SEÑALES DE PELIGRO", "FACTORES DE ÉXITO"])
+    
+    with analysis_tabs[0]:
+        st.markdown("**TÉCNICAS DE MANIPULACIÓN UTILIZADAS:**")
+        for i, technique in enumerate(phishing_data['techniques_used'], 1):
+            st.markdown(f"**{i}.** {technique}")
+    
+    with analysis_tabs[1]:
+        st.markdown("**SEÑALES DE ALERTA QUE DEBERÍAN DETECTAR:**")
+        for i, flag in enumerate(phishing_data['red_flags'], 1):
+            st.markdown(f"**{i}.** {flag}")
+    
+    with analysis_tabs[2]:
+        st.markdown("**POR QUÉ ESTE EMAIL ES TAN PELIGROSO:**")
+        for i, factor in enumerate(phishing_data['danger_factors'], 1):
+            st.markdown(f"**{i}.** {factor}")
+    
+    # Estado de generación
+    st.success("GENERADO PROFESIONALMENTE - Contenido híper-realista para demo")
+    
+    # Advertencia final
+    st.error("""
+    **DEMOSTRACIÓN EDUCATIVA**
+    
+    Este contenido fue generado para mostrar a empresarios la sofisticación de los ataques actuales.
+    Los atacantes reales usan técnicas similares para crear emails aún más convincentes.
+    """)
     
     # Análisis de efectividad
     st.markdown("---")
@@ -1359,7 +1476,38 @@ def generate_guaranteed_phishing_email(target_name, company_name, strategy):
     Los atacantes reales usan técnicas similares para crear emails aún más convincentes.
     """)
 
-def generate_ultra_realistic_phishing_guaranteed(target_name, company_name, strategy):
+def generate_clean_phishing_content(target_name, company_name, first_name, target_email, department):
+    """Generar contenido de phishing limpio y garantizado"""
+    
+    return {
+        "from_email": "compliance@auditoria-empresarial-madrid.com",
+        "to_email": target_email,
+        "subject": f"URGENTE: Validación Fiscal Obligatoria - {company_name} - Vence Hoy",
+        "techniques_used": [
+            "Autoridad: Se presenta como firma auditora oficial",
+            "Urgencia extrema: Plazo de 6 horas con amenaza de sanciones",
+            "Legitimidad: Formato corporativo perfecto",
+            "Especificidad: Menciona detalles fiscales técnicos",
+            "Miedo: Amenaza directa con sanciones económicas",
+            "Profesionalismo: Firma completa con datos verificables"
+        ],
+        "red_flags": [
+            "Dominio externo no oficial de la empresa",
+            "Presión temporal extrema para proceso fiscal complejo",
+            "Solicitud de credenciales críticas por email",
+            "Enlaces externos para procesos internos",
+            "Amenazas económicas sin proceso de verificación",
+            "Falta de procedimientos alternativos mencionados"
+        ],
+        "danger_factors": [
+            "Apariencia 100% profesional que engañaría a expertos",
+            "Terminología fiscal técnica específica y actual",
+            "Contexto temporal relevante (final de año fiscal)",
+            "Múltiples elementos de legitimidad aparente",
+            "Solicita acceso directo a sistemas críticos",
+            "Combina múltiples técnicas psicológicas efectivas"
+        ]
+    }
     """Genera contenido phishing ULTRA-REALISTA garantizado"""
     
     # Extraer datos útiles
@@ -1714,6 +1862,39 @@ def generate_guaranteed_sms_content(target_name, company_name, strategy):
     st.markdown(f"**Efectividad:** {sms_content['analysis']}")
     
     st.success("SMS malicioso generado exitosamente")
+
+def generate_clean_phishing_content(target_name, company_name, first_name, target_email, department):
+    """Generar contenido de phishing limpio y garantizado"""
+    
+    return {
+        "from_email": "compliance@auditoria-empresarial-madrid.com",
+        "to_email": target_email,
+        "subject": f"URGENTE: Validación Fiscal Obligatoria - {company_name} - Vence Hoy",
+        "techniques_used": [
+            "Autoridad: Se presenta como firma auditora oficial",
+            "Urgencia extrema: Plazo de 6 horas con amenaza de sanciones",
+            "Legitimidad: Formato corporativo perfecto",
+            "Especificidad: Menciona detalles fiscales técnicos",
+            "Miedo: Amenaza directa con sanciones económicas",
+            "Profesionalismo: Firma completa con datos verificables"
+        ],
+        "red_flags": [
+            "Dominio externo no oficial de la empresa",
+            "Presión temporal extrema para proceso fiscal complejo",
+            "Solicitud de credenciales críticas por email",
+            "Enlaces externos para procesos internos",
+            "Amenazas económicas sin proceso de verificación",
+            "Falta de procedimientos alternativos mencionados"
+        ],
+        "danger_factors": [
+            "Apariencia 100% profesional que engañaría a expertos",
+            "Terminología fiscal técnica específica y actual",
+            "Contexto temporal relevante (final de año fiscal)",
+            "Múltiples elementos de legitimidad aparente",
+            "Solicita acceso directo a sistemas críticos",
+            "Combina múltiples técnicas psicológicas efectivas"
+        ]
+    }
 
 # Funciones auxiliares
 def calculate_basic_risk_score(employee_data):
