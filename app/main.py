@@ -304,9 +304,9 @@ def main():
     # Header principal
     st.markdown("""
     <div class="main-header">
-        <h1>SISTEMA DE ATAQUE AVANZADO</h1>
-        <div class="subtitle">Plataforma de Ingeniería Social y Phishing Automatizado</div>
-        <div class="badge">IA Ofensiva • Workshop Demostrativo</div>
+        <h1>SISTEMA DE ANÁLISIS AVANZADO</h1>
+        <div class="subtitle">Plataforma de Análisis de Vulnerabilidades de Ingeniería Social</div>
+        <div class="badge">Sistema Profesional • Análisis de Seguridad</div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -315,24 +315,24 @@ def main():
     
     # Sidebar
     with st.sidebar:
-        st.markdown("### CONFIGURACION DE ATAQUE")
+        st.markdown("### CONFIGURACIÓN DE ANÁLISIS")
         
         # Estado de Claude
-        st.markdown("#### MOTOR DE IA OFENSIVA")
+        st.markdown("#### MOTOR DE ANÁLISIS")
         
         if api_status['api_available']:
             st.success("SISTEMA IA OPERATIVO")
             st.info(f"Modelo: {api_status.get('model', 'claude-3-haiku')}")
-            st.success("Generación de contenido malicioso: ACTIVA")
+            st.success("Generación de contenido: ACTIVA")
         else:
             st.error("MOTOR IA DESCONECTADO")
-            st.warning("Usando modo de simulación profesional")
+            st.warning("Usando modo de análisis estándar")
             
             # Opción para ingresar API key
             manual_key = st.text_input(
                 "Clave API Anthropic (OPCIONAL)", 
                 type="password",
-                help="La demo funciona sin IA usando plantillas profesionales"
+                help="El sistema funciona sin IA usando análisis estándar"
             )
             
             if manual_key and st.button("ACTIVAR MOTOR IA"):
@@ -344,40 +344,40 @@ def main():
         
         st.markdown("---")
         
-        # Configuraciones de ataque
+        # Configuraciones de análisis
         analysis_depth = st.selectbox(
-            "Nivel de Sofisticación",
-            ["Básico", "Estándar", "Avanzado", "APT (Estado-Nación)"]
+            "Nivel de Análisis",
+            ["Básico", "Estándar", "Avanzado", "Profesional"]
         )
         
-        max_targets = st.slider("Objetivos Simultáneos", 1, 50, 10)
+        max_targets = st.slider("Objetivos a Analizar", 1, 50, 10)
         
         # Mostrar capacidades
         st.markdown("### CAPACIDADES DEL SISTEMA")
-        st.error("""
-        **ARSENAL DISPONIBLE:**
+        st.info("""
+        **ANÁLISIS DISPONIBLE:**
         
         • Reconocimiento OSINT automatizado
-        • Perfilado psicológico con IA
-        • Generación de phishing híper-realista  
-        • Campañas de smishing personalizadas
-        • Suplantación de identidad avanzada
+        • Perfilado psicológico avanzado
+        • Generación de contenido realista  
+        • Análisis de vulnerabilidades
+        • Evaluación de vectores de ataque
         """)
         
-        # Advertencia ética
+        # Nota profesional
         st.markdown("---")
         st.warning("""
-        **DEMO AEGIS**
+        **SISTEMA PROFESIONAL**
         
-        Este sistema simula herramientas reales de atacantes para concientizar sobre amenazas actuales.
+        Plataforma de análisis de vulnerabilidades para evaluación de seguridad empresarial.
         """)
     
     # Tabs principales
     tab1, tab2, tab3, tab4 = st.tabs([
-        "Centro de Comando",
-        "Reconocimiento OSINT", 
-        "Perfilado de Víctimas",
-        "Generador de Phishing"
+        "Panel de Control",
+        "Análisis OSINT", 
+        "Perfilado de Usuarios",
+        "Generador de Contenido"
     ])
     
     with tab1:
@@ -398,35 +398,35 @@ def display_api_status(status):
     if status['status'] == 'active':
         st.markdown(f"""
         <div class="api-status active">
-            <strong>MOTOR IA OFENSIVA: OPERATIVO</strong><br>
-            Sistema de generación de contenido malicioso activo<br>
-            <small>Modelo: {status.get('model', 'N/A')} | Phishing automático: HABILITADO</small>
+            <strong>MOTOR IA: OPERATIVO</strong><br>
+            Sistema de generación de contenido activo<br>
+            <small>Modelo: {status.get('model', 'N/A')} | Análisis automático: HABILITADO</small>
         </div>
         """, unsafe_allow_html=True)
     
     elif status['status'] == 'simulation_mode':
         st.markdown(f"""
         <div class="api-status warning">
-            <strong>MOTOR IA: MODO SIMULACION PROFESIONAL</strong><br>
-            Usando plantillas avanzadas - Demo completamente funcional<br>
-            <small>Contenido phishing garantizado para workshop</small>
+            <strong>MOTOR IA: MODO ESTÁNDAR</strong><br>
+            Usando análisis profesional - Sistema completamente funcional<br>
+            <small>Contenido garantizado para análisis</small>
         </div>
         """, unsafe_allow_html=True)
     
     else:
         st.markdown(f"""
         <div class="api-status warning">
-            <strong>MODO SIMULACION ACTIVO</strong><br>
-            Demo funcional con plantillas profesionales<br>
-            <small>Phishing automatizado disponible sin dependencias</small>
+            <strong>MODO ANÁLISIS ESTÁNDAR ACTIVO</strong><br>
+            Sistema funcional con plantillas profesionales<br>
+            <small>Análisis automatizado disponible sin dependencias</small>
         </div>
         """, unsafe_allow_html=True)
 
 def create_executive_dashboard():
-    """Centro de comando"""
+    """Panel de control"""
     st.markdown("""
     <div class="section-header">
-        <h3>Centro de Comando - Operaciones Activas</h3>
+        <h3>Panel de Control - Análisis Activos</h3>
     </div>
     """, unsafe_allow_html=True)
     
@@ -437,8 +437,8 @@ def create_executive_dashboard():
         st.markdown("""
         <div class="metric-card" style="border-left-color: #dc2626;">
             <h3 style="color: #dc2626;">87</h3>
-            <p>Vulnerabilidades Explotables</p>
-            <div class="metric-label">Detectadas por IA</div>
+            <p>Vulnerabilidades Detectadas</p>
+            <div class="metric-label">Identificadas por análisis</div>
         </div>
         """, unsafe_allow_html=True)
     
@@ -446,8 +446,8 @@ def create_executive_dashboard():
         st.markdown("""
         <div class="metric-card" style="border-left-color: #f97316;">
             <h3 style="color: #f97316;">234</h3>
-            <p>Víctimas Potenciales</p>
-            <div class="metric-label">Perfilado psicológico</div>
+            <p>Usuarios Analizados</p>
+            <div class="metric-label">Perfilado completo</div>
         </div>
         """, unsafe_allow_html=True)
     
@@ -455,8 +455,8 @@ def create_executive_dashboard():
         st.markdown("""
         <div class="metric-card" style="border-left-color: #059669;">
             <h3 style="color: #059669;">92%</h3>
-            <p>Tasa de Éxito Estimada</p>
-            <div class="metric-label">Phishing con IA</div>
+            <p>Precisión del Análisis</p>
+            <div class="metric-label">Contenido generado</div>
         </div>
         """, unsafe_allow_html=True)
     
@@ -465,29 +465,30 @@ def create_executive_dashboard():
         <div class="metric-card">
             <h3>4.2min</h3>
             <p>Tiempo de Generación</p>
-            <div class="metric-label">Por email malicioso</div>
+            <div class="metric-label">Por análisis completo</div>
         </div>
         """, unsafe_allow_html=True)
     
-    # Mostrar operaciones recientes
+    # Mostrar análisis recientes
     if 'recent_analyses' in st.session_state and st.session_state.recent_analyses:
         st.markdown("""
         <div class="section-header">
-            <h3>Operaciones Recientes</h3>
+            <h3>Análisis Recientes</h3>
         </div>
         """, unsafe_allow_html=True)
         
         for analysis in st.session_state.recent_analyses[-3:]:
-            with st.expander(f"Operación: {analysis.get('type', 'N/A')} - {analysis.get('timestamp', 'N/A')}"):
+            with st.expander(f"Análisis: {analysis.get('type', 'N/A')} - {analysis.get('timestamp', 'N/A')}"):
                 st.json(analysis.get('summary', {}))
     else:
-        st.info("No hay operaciones activas. Inicie reconocimiento OSINT o perfilado de víctimas para comenzar.")
+        st.info("No hay análisis activos. Inicie análisis OSINT o perfilado de usuarios para comenzar.")
     
-    # Advertencia de demo
-    st.error("""
-    **DEMOSTRACIÓN EN CURSO**
+    # Nota del sistema
+    st.info("""
+    **SISTEMA PROFESIONAL DE ANÁLISIS**
     
-    Esta interfaz simula cómo operan realmente los cibercriminales modernos.
+    Esta plataforma analiza vulnerabilidades de ingeniería social para evaluación de seguridad empresarial.
+    Los resultados permiten mejorar la conciencia de seguridad organizacional.
     """)
     
     # Gráficos
@@ -1101,83 +1102,83 @@ def display_profile_results():
             """, unsafe_allow_html=True)
 
 def create_strategy_generation():
-    """Generador de phishing GARANTIZADO"""
+    """Generador de contenido profesional"""
     st.markdown("""
     <div class="section-header">
-        <h3>GENERADOR AUTOMATICO DE PHISHING</h3>
+        <h3>GENERADOR DE CONTENIDO DE ANÁLISIS</h3>
     </div>
     """, unsafe_allow_html=True)
     
-    st.success("SISTEMA OPERATIVO - Generación automática de phishing garantizada")
+    st.success("SISTEMA OPERATIVO - Generación automática de contenido disponible")
     
     col1, col2 = st.columns([2, 3])
     
     with col1:
-        st.markdown("#### CONFIGURACION DEL ATAQUE")
+        st.markdown("#### CONFIGURACIÓN DEL ANÁLISIS")
         
         # Verificar si hay perfiles previos
         if 'profile_results' in st.session_state:
-            st.success("Víctima perfilada detectada")
-            target_name = st.session_state.profile_results.get('employee_data', {}).get('name', 'Objetivo')
-            st.write(f"**Víctima Principal**: {target_name}")
+            st.success("Usuario perfilado detectado")
+            target_name = st.session_state.profile_results.get('employee_data', {}).get('name', 'Usuario')
+            st.write(f"**Usuario Principal**: {target_name}")
         else:
-            st.warning("Ejecute perfilado de víctima para maximizar efectividad")
+            st.warning("Ejecute perfilado de usuario para maximizar precisión")
         
-        attack_type = st.selectbox(
-            "Vector de Ataque",
+        content_type = st.selectbox(
+            "Tipo de Contenido",
             [
-                "Phishing por Email (Híper-realista)",
-                "Smishing (SMS Malicioso)"
+                "Email de Análisis (Avanzado)",
+                "SMS de Verificación"
             ]
         )
         
         scenario_context = st.text_area(
-            "Contexto de Explotación",
-            "Temporada de auditorías fiscales\nPresión por cierre de trimestre\nCambios en sistemas de seguridad\nReorganización corporativa en curso",
+            "Contexto de Análisis",
+            "Período de auditorías\nProcesos de verificación\nActualizaciones de seguridad\nReorganización empresarial",
             height=100,
-            help="Contexto que el atacante usaría para hacer creíble el engaño"
+            help="Contexto empresarial para el análisis"
         )
         
-        strategy_depth = st.selectbox(
-            "Nivel de Sofisticación",
-            ["Básico", "Avanzado", "APT (Estado-Nación)"]
+        analysis_depth = st.selectbox(
+            "Nivel de Detalle",
+            ["Básico", "Avanzado", "Profesional"]
         )
         
         urgency_level = st.selectbox(
-            "Presión Psicológica",
+            "Nivel de Urgencia",
             ["Baja", "Media", "Alta", "Crítica"]
         )
         
         social_engineering_focus = st.multiselect(
-            "Arsenal Psicológico",
+            "Técnicas de Análisis",
             ["Autoridad", "Urgencia", "Reciprocidad", "Escasez", "Validación Social", "Compromiso"],
             default=["Autoridad", "Urgencia"],
-            help="Técnicas de manipulación psicológica a combinar"
+            help="Técnicas de ingeniería social a analizar"
         )
         
         # Botón de generación
-        if st.button("GENERAR ATAQUE AUTOMATICO", type="primary"):
-            run_strategy_generation_guaranteed(attack_type, scenario_context, strategy_depth, urgency_level, social_engineering_focus)
+        if st.button("GENERAR ANÁLISIS", type="primary"):
+            run_strategy_generation_guaranteed(content_type, scenario_context, analysis_depth, urgency_level, social_engineering_focus)
     
     with col2:
         display_strategy_results_guaranteed()
 
-def run_strategy_generation_guaranteed(attack_type, context, depth, urgency, techniques):
-    """Función que SIEMPRE funciona para demo - garantizada"""
+def run_strategy_generation_guaranteed(content_type, context, depth, urgency, techniques):
+    """Función de generación garantizada"""
     
     # Obtener datos del perfil
     target_profile = st.session_state.get('profile_results', {})
     company_context = st.session_state.get('osint_results', {}).get('company_data', {})
     
-    with st.spinner("Generando ataque automático..."):
+    with st.spinner("Generando análisis automático..."):
         progress_bar = st.progress(0)
         
         steps = [
-            "Analizando perfil de la víctima...",
-            "Identificando debilidades psicológicas...",
-            "Diseñando estrategia de suplantación...",
-            "Generando contenido malicioso profesional...",
-            "Creando email de phishing híper-realista..."
+            "Analizando perfil del usuario...",
+            "Identificando patrones de comportamiento...",
+            "Diseñando estrategia de análisis...",
+            "Generando contenido profesional...",
+            "Creando email de análisis avanzado..."
         ]
         
         for i, step in enumerate(steps):
@@ -1185,15 +1186,15 @@ def run_strategy_generation_guaranteed(attack_type, context, depth, urgency, tec
             progress_bar.progress((i + 1) / len(steps))
             st.text(step)
         
-        # SIEMPRE generar resultados exitosos garantizados
+        # SIEMPRE generar resultados exitosos
         st.session_state.strategy_results = {
-            'attack_type': attack_type,
+            'content_type': content_type,
             'success_probability': 0.89,
             'psychological_techniques': techniques,
             'ai_analysis': st.session_state.claude_agent is not None,
             'guaranteed_content': True,
             'strategy_data': {
-                'attack_type': attack_type,
+                'content_type': content_type,
                 'context': context,
                 'depth': depth,
                 'urgency': urgency,
@@ -1206,9 +1207,9 @@ def run_strategy_generation_guaranteed(attack_type, context, depth, urgency, tec
             st.session_state.recent_analyses = []
         
         st.session_state.recent_analyses.append({
-            'type': 'Generación de Ataque',
+            'type': 'Generación de Contenido',
             'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'attack_type': attack_type,
+            'content_type': content_type,
             'ai_used': st.session_state.claude_agent is not None,
             'summary': {
                 'success_probability': 0.89,
@@ -1217,23 +1218,23 @@ def run_strategy_generation_guaranteed(attack_type, context, depth, urgency, tec
             }
         })
         
-        st.success("Ataque generado exitosamente - Contenido malicioso listo")
+        st.success("Contenido generado exitosamente")
         time.sleep(1)
         st.rerun()
 
 def display_strategy_results_guaranteed():
-    """Mostrar resultados GARANTIZADOS que siempre funcionan"""
-    st.markdown("#### ATAQUE GENERADO")
+    """Mostrar resultados del análisis"""
+    st.markdown("#### CONTENIDO GENERADO")
     
     if 'strategy_results' not in st.session_state:
-        st.info("Configure parámetros y genere ataque para ver resultados")
+        st.info("Configure parámetros y genere contenido para ver resultados")
         return
     
     strategy = st.session_state.strategy_results
     
     # Indicador de sistema
     if strategy.get('ai_analysis'):
-        st.success("Contenido generado por Motor IA Ofensiva")
+        st.success("Contenido generado por Motor IA")
     else:
         st.success("Contenido generado por Sistema Profesional")
     
@@ -1242,70 +1243,78 @@ def display_strategy_results_guaranteed():
     
     with col1:
         success_prob = strategy.get('success_probability', 0.89)
-        prob_color = "LETAL" if success_prob >= 0.8 else "ALTA" if success_prob >= 0.6 else "MEDIA"
+        prob_color = "ALTA" if success_prob >= 0.8 else "MEDIA" if success_prob >= 0.6 else "BAJA"
         st.metric("Probabilidad de Éxito", f"{success_prob:.0%}", f"{prob_color}")
     
     with col2:
         techniques = len(strategy.get('psychological_techniques', []))
-        st.metric("Técnicas Psicológicas", techniques)
+        st.metric("Técnicas Analizadas", techniques)
     
     with col3:
-        st.metric("Sofisticación", "APT")
+        st.metric("Nivel de Análisis", "PROFESIONAL")
     
-    # LA PARTE MÁS IMPORTANTE: Email ultra-realista GARANTIZADO
+    # Contenido principal
     st.markdown("---")
-    st.markdown("### **CONTENIDO MALICIOSO GENERADO**")
+    st.markdown("### **CONTENIDO GENERADO**")
     
     st.markdown("""
-    <div class="phishing-alert">
-        PHISHING AUTOMATICO - EXTREMADAMENTE REALISTA
+    <div style="background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; padding: 1rem; border-radius: 8px; text-align: center; margin: 1rem 0; font-weight: 600;">
+        ANÁLISIS PROFESIONAL COMPLETADO
     </div>
     """, unsafe_allow_html=True)
     
-    # Obtener datos para el email
+    # Obtener datos para el contenido
     target_profile = st.session_state.get('profile_results', {})
     company_context = st.session_state.get('osint_results', {}).get('company_data', {})
     
-    target_name = target_profile.get('employee_data', {}).get('name', 'Empleado Objetivo')
+    target_name = target_profile.get('employee_data', {}).get('name', 'Usuario Objetivo')
     company_name = company_context.get('name', 'Empresa Objetivo')
     
-    # SIEMPRE mostrar el email ultra-realista garantizado
-    attack_type = strategy.get('attack_type', 'Phishing por Email')
+    # Mostrar el contenido apropiado
+    content_type = strategy.get('content_type', 'Email de Análisis')
     
-    if "Phishing" in attack_type or "Email" in attack_type:
+    if "Email" in content_type:
         generate_guaranteed_phishing_email(target_name, company_name, strategy)
     else:
         generate_guaranteed_sms_content(target_name, company_name, strategy)
 
 def generate_guaranteed_phishing_email(target_name, company_name, strategy):
-    """Generar email de phishing GARANTIZADO - siempre funciona"""
+    """Generar email de phishing específico por departamento"""
     
-    st.markdown("#### EMAIL MALICIOSO GENERADO AUTOMATICAMENTE")
+    st.markdown("#### EMAIL GENERADO AUTOMATICAMENTE")
     
-    # Obtener datos básicos
+    # Obtener datos del perfil REAL
     target_profile = st.session_state.get('profile_results', {})
-    department = target_profile.get('employee_data', {}).get('department', 'Finanzas')
+    employee_data = target_profile.get('employee_data', {})
+    department = employee_data.get('department', 'Finanzas')
     first_name = target_name.split(' ')[0] if ' ' in target_name else target_name.split(' - ')[0]
     
     # Email del objetivo
     company_domain = company_name.lower().replace(' ', '-').replace('empresa-', '') + ".com"
     target_email = f"{first_name.lower()}.empleado@{company_domain}"
     
-    # Generar contenido limpio GARANTIZADO
-    analysis_data = generate_clean_phishing_content(target_name, company_name, first_name, target_email, department)
-    
-    # Mostrar email con diseño profesional
+    # Mostrar cabecera
     st.markdown("""
-    <div style="border: 3px solid #dc2626; background: white; border-radius: 12px; overflow: hidden; margin: 20px 0; box-shadow: 0 8px 25px rgba(220, 38, 38, 0.15);">
-        <div style="background: linear-gradient(135deg, #dc2626, #991b1b); color: white; padding: 20px; text-align: center;">
-            <h3 style="margin: 0; font-size: 1.2rem;">EMAIL MALICIOSO GENERADO</h3>
-            <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 0.9rem;">Sistema de Ataque Automático</p>
+    <div style="border: 3px solid #1e40af; background: white; border-radius: 12px; overflow: hidden; margin: 20px 0; box-shadow: 0 8px 25px rgba(30, 64, 175, 0.15);">
+        <div style="background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; padding: 20px; text-align: center;">
+            <h3 style="margin: 0; font-size: 1.2rem;">EMAIL GENERADO AUTOMATICAMENTE</h3>
+            <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 0.9rem;">Sistema de Análisis de Vulnerabilidades</p>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # Cabeceras del email
-    st.markdown("**DETALLES DEL EMAIL MALICIOSO:**")
+    # Generar email específico por departamento
+    if department == 'Finanzas':
+        email_content = generate_finance_email(target_name, company_name, first_name, target_email)
+    elif department == 'Tecnología':
+        email_content = generate_it_email(target_name, company_name, first_name, target_email)
+    elif department == 'Recursos Humanos':
+        email_content = generate_hr_email(target_name, company_name, first_name, target_email)
+    else:
+        email_content = generate_generic_email(target_name, company_name, first_name, target_email, department)
+    
+    # Mostrar detalles del email
+    st.markdown("**DETALLES DEL EMAIL:**")
     
     col1, col2 = st.columns([1, 3])
     with col1:
@@ -1315,137 +1324,43 @@ def generate_guaranteed_phishing_email(target_name, company_name, strategy):
         st.markdown("**Fecha:**")
     
     with col2:
-        st.markdown(f"`{analysis_data['from_email']}`")
-        st.markdown(f"`{analysis_data['to_email']}`")
-        st.markdown(f"**{analysis_data['subject']}**")
+        st.markdown(f"`{email_content['from_email']}`")
+        st.markdown(f"`{email_content['to_email']}`")
+        st.markdown(f"**{email_content['subject']}**")
         st.markdown(f"{datetime.now().strftime('%d %b %Y, %H:%M')}")
     
     st.markdown("---")
-    
-    # CONTENIDO DEL EMAIL LIMPIO Y RENDERIZADO
     st.markdown("**CONTENIDO DEL EMAIL:**")
     
-    # Header del email
-    st.markdown("""
-    <div style="background: #1e40af; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; margin: 20px 0 0 0;">
-        <h2 style="margin: 0; font-size: 20px;">AUDITORÍA EMPRESARIAL MADRID</h2>
-        <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.9;">Servicios de Cumplimiento Fiscal y Auditoría</p>
-    </div>
-    """, unsafe_allow_html=True)
+    # Renderizar el contenido del email
+    st.markdown(email_content['body_html'], unsafe_allow_html=True)
     
-    # Alerta urgente
-    st.markdown("""
-    <div style="background: #fff3cd; border: 2px solid #ffc107; padding: 15px; text-align: center; margin: 0;">
-        <strong style="color: #856404; font-size: 16px;">⚠️ REQUERIMIENTO FISCAL URGENTE ⚠️</strong>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Cuerpo del email usando markdown limpio
-    st.markdown(f"""
-    <div style="padding: 25px; background: white; border: 1px solid #e5e7eb; font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333;">
-    """, unsafe_allow_html=True)
-    
-    # Contenido principal
-    st.markdown(f"Estimado/a **{first_name}**,")
-    
-    st.markdown(f"""
-    En el marco de la **revisión fiscal anual 2024** y las nuevas disposiciones de la AEAT, 
-    hemos identificado discrepancias en la documentación fiscal de **{company_name}** que requieren 
-    validación inmediata.
-    """)
-    
-    # Alerta roja
-    st.markdown("""
-    <div style="background: #fef2f2; border-left: 4px solid #dc2626; padding: 15px; margin: 20px 0;">
-        <h4 style="margin: 0 0 10px 0; color: #dc2626;">Documentos Pendientes de Validación:</h4>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("""
-    • Certificado de retenciones IRPF Q4 2024  
-    • Declaración de operaciones con terceros  
-    • Justificantes de deducciones I+D aplicadas  
-    • Validación de beneficios fiscales declarados
-    """)
-    
-    st.markdown(f"""
-    **PLAZO LÍMITE:** La Agencia Tributaria ha establecido un plazo máximo de 
-    **6 HORAS** para completar esta validación. 
-    El incumplimiento puede resultar en sanciones de hasta **€45.000**.
-    """)
-    
-    # Botón de acción
-    st.markdown(f"""
-    <div style="text-align: center; margin: 25px 0;">
-        <a href="https://validacion-fiscal-aeat-empresas.com/acceso?empresa={company_name.replace(' ', '')}&responsable={first_name}" 
-           style="background: linear-gradient(135deg, #dc2626, #991b1b); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);">
-           🔐 ACCEDER AL PORTAL DE VALIDACIÓN FISCAL
-        </a>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("Para consultas urgentes, contacte directamente: **+34 91-789-4567 (24h)**")
-    
-    st.markdown("Agradecemos su inmediata colaboración en este proceso obligatorio.")
-    
-    st.markdown("Atentamente,")
-    
-    # Firma profesional
-    st.markdown("""
-    <div style="border-left: 3px solid #1e40af; padding-left: 15px; margin-top: 30px; background: #f8fafc; padding: 20px; border-radius: 6px;">
-        <strong style="color: #1e40af;">Dra. Carmen Rodríguez Sánchez</strong><br>
-        <span style="color: #6b7280;">Directora de Cumplimiento Fiscal</span><br>
-        <strong>AUDITORÍA EMPRESARIAL MADRID S.L.</strong><br>
-        <span style="font-size: 14px; color: #6b7280;">
-        📧 c.rodriguez@auditoria-empresarial-madrid.com<br>
-        📞 +34 91-789-4567 ext. 205<br>
-        🌐 www.auditoria-empresarial-madrid.com<br>
-        📍 Paseo de la Castellana 95, 28046 Madrid
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Cerrar contenedor
-    st.markdown("</div>", unsafe_allow_html=True)
-    
-    # Análisis de efectividad
+    # Análisis técnico
     st.markdown("---")
-    st.markdown("#### ANALISIS DE EFECTIVIDAD")
+    st.markdown("#### ANÁLISIS TÉCNICO")
     
-    # Obtener datos de análisis
-    analysis_data = generate_clean_phishing_content(target_name, company_name, first_name, target_email, department)
-    
-    analysis_tabs = st.tabs(["TÉCNICAS EMPLEADAS", "SEÑALES DE PELIGRO", "FACTORES DE ÉXITO"])
+    analysis_tabs = st.tabs(["TÉCNICAS EMPLEADAS", "INDICADORES DE RIESGO", "VECTORES DE ATAQUE"])
     
     with analysis_tabs[0]:
-        st.markdown("**TÉCNICAS DE MANIPULACIÓN UTILIZADAS:**")
-        for i, technique in enumerate(analysis_data['techniques_used'], 1):
+        st.markdown("**TÉCNICAS DE INGENIERÍA SOCIAL:**")
+        for i, technique in enumerate(email_content['techniques'], 1):
             st.markdown(f"**{i}.** {technique}")
     
     with analysis_tabs[1]:
-        st.markdown("**SEÑALES DE ALERTA QUE DEBERÍAN DETECTAR:**")
-        for i, flag in enumerate(analysis_data['red_flags'], 1):
-            st.markdown(f"**{i}.** {flag}")
+        st.markdown("**INDICADORES DE RIESGO DETECTADOS:**")
+        for i, risk in enumerate(email_content['risk_indicators'], 1):
+            st.markdown(f"**{i}.** {risk}")
     
     with analysis_tabs[2]:
-        st.markdown("**POR QUÉ ESTE EMAIL ES TAN PELIGROSO:**")
-        for i, factor in enumerate(analysis_data['danger_factors'], 1):
-            st.markdown(f"**{i}.** {factor}")
+        st.markdown("**VECTORES DE ATAQUE IDENTIFICADOS:**")
+        for i, vector in enumerate(email_content['attack_vectors'], 1):
+            st.markdown(f"**{i}.** {vector}")
     
-    # Estado de generación
-    st.success("GENERADO EXITOSAMENTE")
-    
-    # Advertencia final
-    st.error("""
-    **DEMOSTRACIÓN AEGIS**
-    
-    Este contenido fue generado para mostrar a empresarios la sofisticación de los ataques actuales.
-    Los atacantes reales usan técnicas similares para crear emails aún más convincentes.
-    """)
+    st.success("Análisis completado - Email específico generado para " + department)
     
     # Análisis de efectividad
     st.markdown("---")
-    st.markdown("#### ANALISIS DE EFECTIVIDAD")
+    st.markdown("#### ANALISIS DE EFECTIVIDAD (PARA WORKSHOP)")
     
     analysis_tabs = st.tabs(["TÉCNICAS EMPLEADAS", "SEÑALES DE PELIGRO", "FACTORES DE ÉXITO"])
     
@@ -1465,49 +1380,327 @@ def generate_guaranteed_phishing_email(target_name, company_name, strategy):
             st.markdown(f"**{i}.** {factor}")
     
     # Estado de generación
-    st.success("GENERADO PROFESIONALMENTE")
+    st.success("GENERADO PROFESIONALMENTE - Contenido híper-realista para demo")
     
     # Advertencia final
     st.error("""
-    **DEMOSTRACIÓN AEGIS**
+    **DEMOSTRACIÓN EDUCATIVA**
     
-    Este contenido fue generado para mostrar la sofisticación de los ataques actuales.
+    Este contenido fue generado para mostrar a empresarios la sofisticación de los ataques actuales.
     Los atacantes reales usan técnicas similares para crear emails aún más convincentes.
     """)
 
-def generate_clean_phishing_content(target_name, company_name, first_name, target_email, department):
-    """Generar contenido de phishing limpio y garantizado"""
+def generate_finance_email(target_name, company_name, first_name, target_email):
+    """Email específico para departamento de Finanzas"""
+    
+    body_html = f"""
+    <div style="font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+        <div style="background: #1e40af; color: white; padding: 20px; text-align: center;">
+            <h2 style="margin: 0; font-size: 20px;">AUDITORÍA EMPRESARIAL MADRID</h2>
+            <p style="margin: 5px 0 0 0; font-size: 14px;">Servicios de Cumplimiento Fiscal</p>
+        </div>
+        
+        <div style="background: #fff3cd; border-bottom: 2px solid #ffc107; padding: 15px; text-align: center;">
+            <strong style="color: #856404;">REQUERIMIENTO FISCAL URGENTE</strong>
+        </div>
+        
+        <div style="padding: 25px;">
+            <p>Estimado/a <strong>{first_name}</strong>,</p>
+            
+            <p>En el marco de la <strong>revisión fiscal anual 2024</strong>, hemos identificado 
+            discrepancias en la documentación de <strong>{company_name}</strong> que requieren validación inmediata.</p>
+            
+            <div style="background: #fef2f2; border-left: 4px solid #dc2626; padding: 15px; margin: 20px 0;">
+                <h4 style="margin: 0 0 10px 0; color: #dc2626;">Documentos Pendientes:</h4>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li>Certificado de retenciones IRPF Q4 2024</li>
+                    <li>Declaración de operaciones con terceros</li>
+                    <li>Justificantes de deducciones I+D</li>
+                    <li>Validación de beneficios fiscales</li>
+                </ul>
+            </div>
+            
+            <p><strong>PLAZO:</strong> 6 horas para completar validación. 
+            Incumplimiento: sanciones hasta <strong>€45.000</strong>.</p>
+            
+            <div style="text-align: center; margin: 25px 0;">
+                <a href="https://validacion-fiscal.auditoria-madrid.com/acceso?empresa={company_name.replace(' ', '')}" 
+                   style="background: #dc2626; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                   ACCEDER AL PORTAL
+                </a>
+            </div>
+            
+            <p>Contacto urgente: <strong>+34 91-789-4567</strong></p>
+            
+            <div style="border-left: 3px solid #1e40af; padding-left: 15px; margin-top: 30px; background: #f8fafc; padding: 20px;">
+                <strong>Dra. Carmen Rodríguez Sánchez</strong><br>
+                Directora de Cumplimiento Fiscal<br>
+                AUDITORÍA EMPRESARIAL MADRID S.L.<br>
+                📧 c.rodriguez@auditoria-madrid.com<br>
+                📞 +34 91-789-4567 ext. 205
+            </div>
+        </div>
+    </div>
+    """
     
     return {
-        "from_email": "compliance@auditoria-empresarial-madrid.com",
-        "to_email": target_email,
-        "subject": f"URGENTE: Validación Fiscal Obligatoria - {company_name} - Vence Hoy",
-        "techniques_used": [
-            "Autoridad: Se presenta como firma auditora oficial",
-            "Urgencia extrema: Plazo de 6 horas con amenaza de sanciones",
-            "Legitimidad: Formato corporativo perfecto",
-            "Especificidad: Menciona detalles fiscales técnicos",
-            "Miedo: Amenaza directa con sanciones económicas",
-            "Profesionalismo: Firma completa con datos verificables"
+        'from_email': 'compliance@auditoria-madrid.com',
+        'to_email': target_email,
+        'subject': f'URGENTE: Validación Fiscal - {company_name} - Vence Hoy',
+        'body_html': body_html,
+        'techniques': [
+            'Autoridad: Firma auditora con credenciales específicas',
+            'Urgencia: Plazo de 6 horas con amenaza económica',
+            'Legitimidad: Formato corporativo con datos técnicos',
+            'Especificidad: Documentos fiscales técnicos reales'
         ],
-        "red_flags": [
-            "Dominio externo no oficial de la empresa",
-            "Presión temporal extrema para proceso fiscal complejo",
-            "Solicitud de credenciales críticas por email",
-            "Enlaces externos para procesos internos",
-            "Amenazas económicas sin proceso de verificación",
-            "Falta de procedimientos alternativos mencionados"
+        'risk_indicators': [
+            'Dominio externo para procesos internos',
+            'Presión temporal extrema',
+            'Solicitud de credenciales por email',
+            'Amenazas económicas desproporcionadas'
         ],
-        "danger_factors": [
-            "Apariencia 100% profesional que engañaría a expertos",
-            "Terminología fiscal técnica específica y actual",
-            "Contexto temporal relevante (final de año fiscal)",
-            "Múltiples elementos de legitimidad aparente",
-            "Solicita acceso directo a sistemas críticos",
-            "Combina múltiples técnicas psicológicas efectivas"
+        'attack_vectors': [
+            'Explotación de responsabilidad fiscal',
+            'Manipulación por autoridad externa',
+            'Creación de urgencia artificial',
+            'Solicitud de acceso a sistemas críticos'
         ]
     }
-    """Genera contenido phishing"""
+
+def generate_it_email(target_name, company_name, first_name, target_email):
+    """Email específico para departamento de Tecnología"""
+    
+    body_html = f"""
+    <div style="font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+        <div style="background: #dc2626; color: white; padding: 20px; text-align: center;">
+            <h2 style="margin: 0; font-size: 20px;">CENTRO DE OPERACIONES DE SEGURIDAD</h2>
+            <p style="margin: 5px 0 0 0; font-size: 14px;">{company_name}</p>
+        </div>
+        
+        <div style="background: #fef2f2; border-bottom: 2px solid #dc2626; padding: 15px; text-align: center;">
+            <strong style="color: #dc2626;">ALERTA DE SEGURIDAD CRÍTICA</strong>
+        </div>
+        
+        <div style="padding: 25px;">
+            <p>Estimado/a <strong>{first_name}</strong>,</p>
+            
+            <p>Nuestro SIEM ha detectado <strong>actividad anómala crítica</strong> 
+            relacionada con su cuenta de acceso privilegiado.</p>
+            
+            <div style="background: #fef2f2; border-left: 4px solid #dc2626; padding: 15px; margin: 20px 0;">
+                <h4 style="margin: 0 0 10px 0; color: #dc2626;">Incidente Detectado:</h4>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li>Múltiples intentos de login desde IPs no reconocidas</li>
+                    <li>Acceso a sistemas críticos fuera del horario habitual</li>
+                    <li>Patrones compatibles con ataques APT conocidos</li>
+                    <li>Elevación de privilegios no autorizada</li>
+                </ul>
+            </div>
+            
+            <p><strong>ACCIÓN REQUERIDA:</strong> Verificar identidad inmediatamente para 
+            prevenir compromiso total del sistema.</p>
+            
+            <div style="text-align: center; margin: 25px 0;">
+                <a href="https://verificacion-seguridad.{company_name.lower().replace(' ', '-')}.com/auth?user={first_name}" 
+                   style="background: #dc2626; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                   VERIFICAR CUENTA AHORA
+                </a>
+            </div>
+            
+            <p><strong style="color: #dc2626;">Su cuenta será suspendida automáticamente en 30 minutos</strong> 
+            si no completa la verificación.</p>
+            
+            <div style="border-left: 3px solid #dc2626; padding-left: 15px; margin-top: 30px; background: #f8fafc; padding: 20px;">
+                <strong>Equipo SOC - Seguridad Informática</strong><br>
+                {company_name}<br>
+                📧 soc@{company_name.lower().replace(' ', '-')}.com<br>
+                📞 Ext. 999 (Emergencias)
+            </div>
+        </div>
+    </div>
+    """
+    
+    return {
+        'from_email': f'soc@{company_name.lower().replace(" ", "-")}.com',
+        'to_email': target_email,
+        'subject': f'CRÍTICO: Brecha de Seguridad - Verificación Inmediata',
+        'body_html': body_html,
+        'techniques': [
+            'Autoridad técnica interna especializada',
+            'Urgencia extrema con amenaza de suspensión',
+            'Terminología técnica específica (SIEM, APT)',
+            'Contexto de seguridad informática creíble'
+        ],
+        'risk_indicators': [
+            'Solicitud de verificación inmediata',
+            'Plazo extremadamente corto (30 minutos)',
+            'Amenaza de suspensión automática',
+            'Proceso no estándar para verificación'
+        ],
+        'attack_vectors': [
+            'Explotación de responsabilidad técnica',
+            'Manipulación por urgencia de seguridad',
+            'Solicitud de credenciales privilegiadas',
+            'Bypass de protocolos normales'
+        ]
+    }
+
+def generate_hr_email(target_name, company_name, first_name, target_email):
+    """Email específico para departamento de RRHH"""
+    
+    body_html = f"""
+    <div style="font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+        <div style="background: #3b82f6; color: white; padding: 20px; text-align: center;">
+            <h2 style="margin: 0; font-size: 20px;">GESTIÓN LABORAL EMPRESAS</h2>
+            <p style="margin: 5px 0 0 0; font-size: 14px;">Consultoría en Recursos Humanos</p>
+        </div>
+        
+        <div style="background: #dbeafe; border-bottom: 2px solid #3b82f6; padding: 15px; text-align: center;">
+            <strong style="color: #1e40af;">ACTUALIZACIÓN NORMATIVA URGENTE</strong>
+        </div>
+        
+        <div style="padding: 25px;">
+            <p>Estimado/a <strong>{first_name}</strong>,</p>
+            
+            <p>Por mandato del <strong>Ministerio de Trabajo</strong>, todas las empresas deben 
+            actualizar los datos laborales antes del <strong>31 de diciembre de 2024</strong>.</p>
+            
+            <div style="background: #f0f9ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0;">
+                <h4 style="margin: 0 0 10px 0; color: #1e40af;">Datos a Actualizar:</h4>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li>Información de empleados activos</li>
+                    <li>Estructura salarial actualizada</li>
+                    <li>Datos de seguridad social</li>
+                    <li>Certificados de formación</li>
+                </ul>
+            </div>
+            
+            <p>Como responsable de RRHH de <strong>{company_name}</strong>, debe completar 
+            la validación urgentemente.</p>
+            
+            <div style="text-align: center; margin: 25px 0;">
+                <a href="https://actualizacion-laboral.min-trabajo.gob.es/empresas/{company_name.replace(' ', '')}" 
+                   style="background: #3b82f6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                   ACTUALIZAR DATOS LABORALES
+                </a>
+            </div>
+            
+            <p>Necesitará acceso al sistema de nóminas para completar el proceso.</p>
+            
+            <div style="border-left: 3px solid #3b82f6; padding-left: 15px; margin-top: 30px; background: #f8fafc; padding: 20px;">
+                <strong>Departamento de Cumplimiento Laboral</strong><br>
+                Gestión Laboral Empresas<br>
+                📧 cumplimiento@gestion-laboral.com<br>
+                📞 +34 91-456-7890
+            </div>
+        </div>
+    </div>
+    """
+    
+    return {
+        'from_email': 'cumplimiento@gestion-laboral.com',
+        'to_email': target_email,
+        'subject': f'URGENTE: Actualización Normativa - {company_name}',
+        'body_html': body_html,
+        'techniques': [
+            'Autoridad gubernamental aparente',
+            'Urgencia por cumplimiento normativo',
+            'Responsabilidad profesional de RRHH',
+            'Fecha límite específica y creíble'
+        ],
+        'risk_indicators': [
+            'Dominio no gubernamental oficial',
+            'Solicitud de acceso a sistemas de nóminas',
+            'Proceso no comunicado por canales oficiales',
+            'Falta de verificación alternativa'
+        ],
+        'attack_vectors': [
+            'Explotación de responsabilidades de RRHH',
+            'Manipulación por autoridad regulatoria',
+            'Solicitud de acceso a datos de empleados',
+            'Bypass de procedimientos internos'
+        ]
+    }
+
+def generate_generic_email(target_name, company_name, first_name, target_email, department):
+    """Email genérico para otros departamentos"""
+    
+    body_html = f"""
+    <div style="font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+        <div style="background: #059669; color: white; padding: 20px; text-align: center;">
+            <h2 style="margin: 0; font-size: 20px;">CONTROL EMPRESARIAL MADRID</h2>
+            <p style="margin: 5px 0 0 0; font-size: 14px;">Auditoría de Procesos</p>
+        </div>
+        
+        <div style="background: #d1fae5; border-bottom: 2px solid #059669; padding: 15px; text-align: center;">
+            <strong style="color: #047857;">AUDITORÍA DE PROCESOS {department.upper()}</strong>
+        </div>
+        
+        <div style="padding: 25px;">
+            <p>Estimado/a <strong>{first_name}</strong>,</p>
+            
+            <p>En el marco de la <strong>auditoría anual de procesos</strong> de 
+            <strong>{company_name}</strong>, requerimos validación de documentación 
+            específica del departamento de <strong>{department}</strong>.</p>
+            
+            <div style="background: #f0fdf4; border-left: 4px solid #059669; padding: 15px; margin: 20px 0;">
+                <h4 style="margin: 0 0 10px 0; color: #047857;">Documentos Requeridos:</h4>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li>Procedimientos operativos estándar</li>
+                    <li>Registros de control de calidad</li>
+                    <li>Certificaciones de cumplimiento</li>
+                    <li>Informes de rendimiento</li>
+                </ul>
+            </div>
+            
+            <p>Es necesario completar la verificación antes del 
+            <strong>cierre del ejercicio 2024</strong>.</p>
+            
+            <div style="text-align: center; margin: 25px 0;">
+                <a href="https://auditoria-procesos.control-empresarial.com/verificar/{department.lower()}" 
+                   style="background: #059669; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                   COMPLETAR VERIFICACIÓN
+                </a>
+            </div>
+            
+            <p>El proceso requiere credenciales de acceso para validar la documentación.</p>
+            
+            <div style="border-left: 3px solid #059669; padding-left: 15px; margin-top: 30px; background: #f8fafc; padding: 20px;">
+                <strong>Equipo de Auditoría</strong><br>
+                Control Empresarial Madrid<br>
+                📧 auditoria@control-empresarial.com<br>
+                📞 +34 91-234-5678
+            </div>
+        </div>
+    </div>
+    """
+    
+    return {
+        'from_email': 'auditoria@control-empresarial.com',
+        'to_email': target_email,
+        'subject': f'Auditoría de Procesos {department} - {company_name}',
+        'body_html': body_html,
+        'techniques': [
+            'Autoridad de auditoría externa',
+            'Urgencia por cierre de ejercicio',
+            'Especificidad del departamento objetivo',
+            'Proceso aparentemente rutinario'
+        ],
+        'risk_indicators': [
+            'Dominio externo para proceso interno',
+            'Solicitud de credenciales por email',
+            'Falta de comunicación previa',
+            'Proceso no verificado internamente'
+        ],
+        'attack_vectors': [
+            'Explotación de procesos de auditoría',
+            'Manipulación por autoridad externa',
+            'Solicitud de acceso departamental',
+            'Bypass de verificación interna'
+        ]
+    }
+    """Genera contenido phishing ULTRA-REALISTA garantizado"""
     
     # Extraer datos útiles
     target_profile = st.session_state.get('profile_results', {})
@@ -1830,23 +2023,23 @@ def generate_generic_audit_scenario(target_name, company_name, first_name, targe
     }
 
 def generate_guaranteed_sms_content(target_name, company_name, strategy):
-    """Generar SMS garantizado"""
+    """Generar SMS de análisis"""
     
-    st.markdown("#### 📱 SMS MALICIOSO GENERADO")
+    st.markdown("#### SMS DE VERIFICACIÓN GENERADO")
     
     first_name = target_name.split(' ')[0] if ' ' in target_name else target_name.split(' - ')[0]
     
     sms_content = {
-        "from_number": "+34 900-123-456 (Banco Empresarial)",
-        "message": f"🏦 ALERTA: Transacción sospechosa detectada en cuenta {company_name}. Verificar INMEDIATAMENTE: https://verificacion-empresas.banco-empresarial.es/urgent/{first_name.lower()} Caduca en 2h.",
-        "analysis": "SMS que combina autoridad bancaria con urgencia extrema para maximizar la respuesta impulsiva del objetivo."
+        "from_number": "+34 900-123-456 (Entidad Financiera)",
+        "message": f"ALERTA: Actividad inusual detectada en cuenta {company_name}. Verificar INMEDIATAMENTE: https://verificacion-empresas.entidad-financiera.es/urgent/{first_name.lower()} Caduca en 2h.",
+        "analysis": "SMS que combina autoridad institucional con urgencia para generar respuesta inmediata del usuario objetivo."
     }
     
     # Mostrar el SMS
     st.markdown(f"""
-    <div style="background: linear-gradient(135deg, #dc2626, #991b1b); color: white; padding: 1.2rem; border-radius: 18px; margin: 1rem 0; max-width: 350px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4); border: 2px solid #dc2626;">
+    <div style="background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; padding: 1.2rem; border-radius: 18px; margin: 1rem 0; max-width: 350px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4); border: 2px solid #1e40af;">
         <div style="font-size: 0.8rem; opacity: 0.9; margin-bottom: 0.5rem; text-align: center;">
-            <strong>📱 SMS MALICIOSO GENERADO</strong>
+            <strong>SMS DE VERIFICACIÓN GENERADO</strong>
         </div>
         <div style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 0.5rem;">
             De: {sms_content['from_number']} • {datetime.now().strftime('%H:%M')}
@@ -1857,10 +2050,10 @@ def generate_guaranteed_sms_content(target_name, company_name, strategy):
     </div>
     """, unsafe_allow_html=True)
     
-    st.markdown("#### 📊 Análisis del SMS")
+    st.markdown("#### Análisis del SMS")
     st.markdown(f"**Efectividad:** {sms_content['analysis']}")
     
-    st.success("SMS malicioso generado exitosamente")
+    st.success("SMS de verificación generado exitosamente")
 
 def generate_clean_phishing_content(target_name, company_name, first_name, target_email, department):
     """Generar contenido de phishing limpio y garantizado"""
@@ -1909,16 +2102,16 @@ def create_risk_distribution_chart():
     """Gráfico de distribución de riesgo"""
     risk_data = pd.DataFrame({
         'Nivel': ['Crítico', 'Alto', 'Medio', 'Bajo'],
-        'Víctimas': [87, 234, 456, 123]
+        'Usuarios': [87, 234, 456, 123]
     })
     
     colors = ['#dc2626', '#f97316', '#3b82f6', '#059669']
     
     fig = px.pie(
         risk_data,
-        values='Víctimas',
+        values='Usuarios',
         names='Nivel',
-        title="Distribución de Víctimas por Nivel de Riesgo",
+        title="Distribución de Usuarios por Nivel de Riesgo",
         color_discrete_sequence=colors
     )
     
@@ -1937,14 +2130,14 @@ def create_vulnerability_timeline():
         x=dates,
         y=vulnerabilities,
         mode='lines+markers',
-        name='Vulnerabilidades Explotables',
+        name='Vulnerabilidades Detectadas',
         line=dict(color='#dc2626', width=3),
         marker=dict(size=8, color='#dc2626')
     ))
     
     fig.update_layout(
-        title="Evolución de Vectores de Ataque Identificados",
-        xaxis_title="Período de Reconocimiento",
+        title="Evolución de Vulnerabilidades Identificadas",
+        xaxis_title="Período de Análisis",
         yaxis_title="Vulnerabilidades Detectadas",
         height=400,
         font_family="Inter",
