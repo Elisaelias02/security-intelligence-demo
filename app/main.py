@@ -1090,9 +1090,9 @@ def run_strategy_generation_forced_ai(attack_type, context, depth, urgency, tech
                 'company_context': company_context
             }
             
-            # Llamar al agente Claude
+            # Llamar al agente Claude con los argumentos correctos
             claude_strategy = st.session_state.claude_agent.generate_attack_simulation(
-                target_profile, company_context, strategy_data
+                target_profile, company_context
             )
             
             st.session_state.strategy_results = {
@@ -1381,8 +1381,9 @@ def run_strategy_generation(attack_type, context, depth, urgency, techniques):
                     'company_context': company_context
                 }
                 
+                # Corregir llamada al método Claude
                 claude_strategy = st.session_state.claude_agent.generate_attack_simulation(
-                    target_profile, company_context, strategy_data
+                    target_profile, company_context
                 )
                 
                 st.session_state.strategy_results = {
