@@ -1314,14 +1314,18 @@ def generate_guaranteed_phishing_email(target_name, company_name, strategy):
     
     st.markdown("---")
     
-    # Contenido del email
+    # Contenido del email RENDERIZADO CORRECTAMENTE
     st.markdown("**CONTENIDO DEL EMAIL:**")
     
-    st.markdown(f"""
-    <div style="background: #f8fafc; border: 2px solid #e5e7eb; border-radius: 8px; padding: 25px; margin: 15px 0; font-family: 'Segoe UI', sans-serif; line-height: 1.6;">
-        {phishing_content['body_html']}
-    </div>
+    # Usar un container especial para renderizar el HTML del email
+    st.markdown("""
+    <div style="border: 2px solid #e5e7eb; border-radius: 8px; margin: 15px 0; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
     """, unsafe_allow_html=True)
+    
+    # Renderizar directamente el HTML del email
+    st.markdown(phishing_content['body_html'], unsafe_allow_html=True)
+    
+    st.markdown("</div>", unsafe_allow_html=True)
     
     # Análisis de efectividad
     st.markdown("---")
