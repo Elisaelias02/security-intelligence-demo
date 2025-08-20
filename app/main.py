@@ -367,7 +367,7 @@ def main():
         # Advertencia ética
         st.markdown("---")
         st.warning("""
-        **DEMO EDUCATIVA**
+        **DEMO AEGIS**
         
         Este sistema simula herramientas reales de atacantes para concientizar sobre amenazas actuales.
         """)
@@ -485,10 +485,9 @@ def create_executive_dashboard():
     
     # Advertencia de demo
     st.error("""
-    **DEMOSTRACIÓN EDUCATIVA EN CURSO**
+    **DEMOSTRACIÓN EN CURSO**
     
     Esta interfaz simula cómo operan realmente los cibercriminales modernos.
-    Los empresarios pueden ver la sofisticación de las amenazas actuales.
     """)
     
     # Gráficos
@@ -1470,9 +1469,9 @@ def generate_guaranteed_phishing_email(target_name, company_name, strategy):
     
     # Advertencia final
     st.error("""
-    **DEMOSTRACIÓN EDUCATIVA**
+    **DEMOSTRACIÓN AEGIS**
     
-    Este contenido fue generado para mostrar a empresarios la sofisticación de los ataques actuales.
+    Este contenido fue generado para mostrar la sofisticación de los ataques actuales.
     Los atacantes reales usan técnicas similares para crear emails aún más convincentes.
     """)
 
