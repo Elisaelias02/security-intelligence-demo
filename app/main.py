@@ -2066,13 +2066,13 @@ def generate_basic_attack_content():
     """Contenido básico SIN IA - mostrar limitaciones"""
     st.markdown("#### 🚨 Motor IA DESCONECTADO")
     st.error("""
-    **💀 SIN IA = SIN DEMO REAL**
+    ** SIN IA = SIN DEMO REAL**
     
     Los atacantes modernos usan IA para generar contenido híper-realista.
     Sin el motor IA, esta demo pierde su impacto educativo.
     """)
     
-    st.markdown("**📧 Ejemplo Básico (Sin Personalización IA):**")
+    st.markdown("** Ejemplo Básico (Sin Personalización IA):**")
     st.code("""
     De: auditoria@consultora-generica.com
     Para: victima@empresa.com
@@ -2088,7 +2088,7 @@ def generate_basic_attack_content():
     """, language="text")
     
     st.warning("""
-    ⚖️ **Diferencia con IA:**
+     **Diferencia con IA:**
     
     🚫 Sin personalización psicológica
     🚫 Sin detalles específicos del objetivo  
