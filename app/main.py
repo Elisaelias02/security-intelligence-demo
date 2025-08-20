@@ -1857,7 +1857,7 @@ def generate_realistic_phishing_email_improved(target_name, company_name):
                 <p>El Departamento de Seguridad Informática ha detectado <strong style="color: #dc2626;">múltiples intentos de acceso no autorizado</strong> dirigidos a cuentas del departamento de {department}.</p>
                 
                 <div style="background: #fef2f2; border: 2px solid #dc2626; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                    <p style="margin: 0; font-weight: 600; color: #dc2626;">⚠ ACCIÓN INMEDIATA REQUERIDA</p>
+                    <p style="margin: 0; font-weight: 600; color: #dc2626;"> ACCIÓN INMEDIATA REQUERIDA</p>
                     <p style="margin: 8px 0 0 0;">Su cuenta ha sido marcada para verificación de seguridad obligatoria.</p>
                 </div>
                 
