@@ -1781,7 +1781,7 @@ def generate_realistic_phishing_email_improved(target_name, company_name):
     # Obtener departamento básico
     target_profile = st.session_state.get('profile_results', {})
     department = target_profile.get('employee_data', {}).get('department', 'Finanzas')
-    return generate_simple_fallback_content(target_name, company_name, department)ado discrepancias menores en la documentación fiscal de su organización que requieren validación inmediata. Según las nuevas normativas 2024, es obligatorio completar este proceso para:</p>
+    return generate_simple_fallback_content(target_name, company_name, departmentado discrepancias menores en la documentación fiscal de su organización que requieren validación inmediata. Según las nuevas normativas 2024, es obligatorio completar este proceso para:</p>
                 
                 <ul style="margin: 15px 0; padding-left: 25px;">
                     <li>Certificar estados financieros del ejercicio actual</li>
