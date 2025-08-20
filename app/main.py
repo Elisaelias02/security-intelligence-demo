@@ -1932,7 +1932,7 @@ def generate_smishing_content(target_name, company_name, strategy):
     st.markdown(f"""
     <div style="background: #007bff; color: white; padding: 1rem; border-radius: 18px; margin: 1rem 0; max-width: 350px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);">
         <div style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 0.5rem;">
-            Desde: {sms_content['from_number']} • {datetime.now().strftime('%H:%M')}
+            Desde: {sms_content['from_number']}  {datetime.now().strftime('%H:%M')}
         </div>
         <div style="font-size: 1rem; line-height: 1.4;">
             {sms_content['message']}
