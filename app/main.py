@@ -12,7 +12,7 @@ import os
 # Configuración de la página
 st.set_page_config(
     page_title="Plataforma de Análisis de Seguridad",
-    page_icon="🛡",
+    page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -122,22 +122,41 @@ def setup_ai_agent():
         
         if not ANTHROPIC_AVAILABLE:
             st.error("**Anthropic SDK no instalado**")
-            st.code("pip install anthropic")
+            st.code("pip install anthropic", language="bash")
+            st.markdown("**Instalación completa:**")
+            st.code("""
+pip install anthropic
+pip install streamlit
+pip install plotly
+pip install pandas
+            """, language="bash")
             return
         
         # Input para API key
+        st.markdown("**Obtener API Key:**")
+        st.markdown("1. Ir a [console.anthropic.com](https://console.anthropic.com)")
+        st.markdown("2. Crear cuenta / Iniciar sesión")
+        st.markdown("3. Ir a 'API Keys' y crear nueva clave")
+        st.markdown("4. Copiar la clave (empieza con 'sk-ant-')")
+        
         api_key = st.text_input(
             "Clave API de Anthropic", 
             type="password",
-            help="Obtenla en https://console.anthropic.com"
+            placeholder="sk-ant-api-key...",
+            help="Debe empezar con 'sk-ant-'"
         )
         
         if api_key:
+            # Validación básica de formato
+            if not api_key.startswith('sk-ant-'):
+                st.error("❌ Formato de API key incorrecto. Debe empezar con 'sk-ant-'")
+                return
+                
             try:
                 # Inicializar cliente Anthropic REAL
                 client = anthropic.Anthropic(api_key=api_key)
                 
-                # Probar conexión
+                # Probar conexión con Claude 3.5 Sonnet (modelo más avanzado disponible)
                 test_response = client.messages.create(
                     model="claude-3-5-sonnet-20241022",
                     max_tokens=10,
@@ -145,18 +164,93 @@ def setup_ai_agent():
                 )
                 
                 st.session_state.anthropic_client = client
+                st.session_state.claude_model = "claude-3-5-sonnet-20241022"
                 st.success("✅ Anthropic Claude 3.5 Sonnet conectado")
-                st.info("**Modelo**: claude-3-5-sonnet-20241022")
+                st.info("**Modelo**: Claude 3.5 Sonnet (más avanzado)")
+                st.info("**Contexto**: 200k tokens | **Límite**: Según plan")
+                
+                # Botón para probar conexión
+                if st.button("🧪 Probar Conexión"):
+                    test_prompt = "Responde solo 'Claude 3.5 Sonnet conectado exitosamente' si puedes ver este mensaje."
+                    try:
+                        test_resp = client.messages.create(
+                            model="claude-3-5-sonnet-20241022",
+                            max_tokens=30,
+                            messages=[{"role": "user", "content": test_prompt}]
+                        )
+                        st.success(f"✅ {test_resp.content[0].text}")
+                    except Exception as test_error:
+                        st.error(f"❌ Error en prueba: {test_error}")
                 
             except Exception as e:
-                st.error(f"❌ Error de conexión: {str(e)}")
-                return
+                error_msg = str(e)
+                if "404" in error_msg or "not_found" in error_msg:
+                    # Intentar con Claude 3.5 Haiku como respaldo
+                    try:
+                        client = anthropic.Anthropic(api_key=api_key)
+                        test_response = client.messages.create(
+                            model="claude-3-5-haiku-20241022",
+                            max_tokens=10,
+                            messages=[{"role": "user", "content": "test"}]
+                        )
+                        st.session_state.anthropic_client = client
+                        st.session_state.claude_model = "claude-3-5-haiku-20241022"
+                        st.success("✅ Anthropic Claude 3.5 Haiku conectado")
+                        st.info("**Modelo**: claude-3-5-haiku-20241022 (respaldo)")
+                        st.warning("Nota: Usando Claude 3.5 Haiku (modelo económico)")
+                        
+                    except Exception as e2:
+                        # Último recurso: Claude 3 Opus
+                        try:
+                            test_response = client.messages.create(
+                                model="claude-3-opus-20240229",
+                                max_tokens=10,
+                                messages=[{"role": "user", "content": "test"}]
+                            )
+                            st.session_state.anthropic_client = client
+                            st.session_state.claude_model = "claude-3-opus-20240229"
+                            st.success("✅ Anthropic Claude 3 Opus conectado")
+                            st.info("**Modelo**: claude-3-opus-20240229")
+                            st.warning("Nota: Usando Claude 3 Opus (modelo premium)")
+                            
+                        except Exception as e3:
+                            st.error(f"❌ Error de conexión con todos los modelos")
+                            st.error(f"**Error técnico:** {str(e3)}")
+                            st.markdown("""
+                            **Posibles soluciones:**
+                            1. Verificar que la API key sea correcta
+                            2. Verificar que tenga créditos disponibles en su cuenta
+                            3. Verificar que la API key tenga permisos
+                            4. Intentar en unos minutos (puede ser problema temporal)
+                            """)
+                            return
+                else:
+                    st.error(f"❌ Error de conexión: {error_msg}")
+                    st.markdown("""
+                    **Posibles soluciones:**
+                    1. Verificar que la API key sea correcta (debe empezar con 'sk-ant-')
+                    2. Verificar que tenga créditos disponibles
+                    3. Verificar conexión a internet
+                    """)
+                    return
         else:
             st.warning("⚠️ API key requerida para funcionalidad completa")
+            st.info("El sistema intentará usar **Claude 3.5 Sonnet** primero, luego **Claude 3.5 Haiku**, y **Claude 3 Opus** como último recurso")
             if 'anthropic_client' in st.session_state:
                 del st.session_state.anthropic_client
         
         st.markdown("---")
+        st.markdown("### Información de Costos")
+        st.markdown("""
+        **Claude 3.5 Sonnet**: ~$3 por millón de tokens (MÁS AVANZADO)  
+        **Claude 3.5 Haiku**: ~$1 por millón de tokens  
+        **Claude 3 Opus**: ~$15 por millón de tokens  
+        
+        **Estimado por análisis**: $0.01 - $0.15  
+        **Créditos gratuitos**: $5 para nuevas cuentas  
+        **Límite por minuto**: Según plan de usuario
+        """)
+        
         st.markdown("### Capacidades")
         
         if 'anthropic_client' in st.session_state:
@@ -184,16 +278,42 @@ def show_dashboard():
         st.markdown("""
         **Para usar este sistema necesitas:**
         
-        1. **Cuenta en Anthropic**: https://console.anthropic.com
-        2. **API Key**: Generar en la consola de Anthropic  
-        3. **Modelo recomendado**: Claude 3.5 Sonnet (más avanzado para análisis de seguridad)
+        1. **Cuenta en Anthropic Console**: [console.anthropic.com](https://console.anthropic.com)
+        2. **API Key de Anthropic**: Genera una clave en la consola  
+        3. **Créditos disponibles**: $5 gratis para cuentas nuevas
+        
+        **Modelos soportados (por prioridad):**
+        - **Claude 3.5 Sonnet** (MÁS AVANZADO): Análisis ultra-sofisticado, 200k contexto
+        - **Claude 3.5 Haiku** (económico): Análisis eficiente y rápido
+        - **Claude 3 Opus** (premium): Análisis más complejo y detallado
         
         **¿Por qué Claude 3.5 Sonnet?**
-        - Razonamiento avanzado para análisis de vulnerabilidades
-        - Comprensión contextual profunda
-        - Generación de contenido altamente personalizado
-        - Análisis psicológico sofisticado
+        - **Razonamiento más avanzado** para análisis complejos de vulnerabilidades
+        - **Mayor contexto** (200k tokens) para análisis profundos
+        - **Mejor comprensión psicológica** para perfilado de usuarios
+        - **Generación más sofisticada** de contenido personalizado
+        
+        **Casos de uso:**
+        - Evaluación avanzada de vulnerabilidades de seguridad
+        - Análisis psicológico profundo de susceptibilidad 
+        - Generación de contenido híper-personalizado para tests
+        - Capacitación avanzada en concientización de seguridad
+        
+        **Importante**: Este sistema está optimizado para Claude 3.5 Sonnet.
+        Con modelos menores, la calidad del análisis será menor.
         """)
+        
+        st.markdown("### Instalación Rápida")
+        st.code("""
+# 1. Instalar dependencias
+pip install anthropic streamlit plotly pandas
+
+# 2. Ejecutar el sistema  
+streamlit run security_platform.py
+
+# 3. Configurar API key en el sidebar
+# 4. El sistema usará automáticamente Claude 3.5 Sonnet
+        """, language="bash")
         return
     
     st.markdown("### Análisis Activos")
@@ -306,7 +426,7 @@ def run_real_osint_analysis(company_name, domain, industry, additional_info):
         
         try:
             response = st.session_state.anthropic_client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model=st.session_state.get('claude_model', 'claude-3-5-haiku-20241022'),
                 max_tokens=3000,
                 temperature=0.3,
                 messages=[{"role": "user", "content": prompt}]
@@ -534,7 +654,7 @@ def generate_psychological_profile(user_name, department, seniority, company_siz
         
         try:
             response = st.session_state.anthropic_client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model=st.session_state.get('claude_model', 'claude-3-5-haiku-20241022'),
                 max_tokens=3000,
                 temperature=0.3,
                 messages=[{"role": "user", "content": prompt}]
@@ -757,7 +877,7 @@ def generate_adaptive_content(target_profile, content_type, scenario,
         
         try:
             response = st.session_state.anthropic_client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model=st.session_state.get('claude_model', 'claude-3-5-haiku-20241022'),
                 max_tokens=3000,
                 temperature=0.4,
                 messages=[{"role": "user", "content": prompt}]
