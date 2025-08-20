@@ -987,6 +987,18 @@ def create_strategy_generation():
         **Configure la clave API en el sidebar para continuar.**
         """)
         
+        with st.expander("🔧 ¿Cómo configurar la API?"):
+            st.markdown("""
+            **Pasos para activar el motor IA:**
+            
+            1. 🔑 **Obtener clave API**: Regístrese en https://console.anthropic.com
+            2. 📝 **Copiar clave**: En el dashboard, vaya a "API Keys"
+            3. 🔧 **Configurar**: Pegue la clave en el sidebar izquierdo
+            4. 🚀 **Activar**: Haga clic en "ACTIVAR MOTOR IA"
+            
+            **⚠️ Sin API, la demo pierde todo su impacto educativo.**
+            """)
+        
         st.warning("""
         💡 **Para el Workshop:**
         - La IA genera emails 100% realistas
@@ -1193,11 +1205,19 @@ def generate_phishing_email_content_attacker(target_name, company_name, strategy
     
     st.markdown("#### 📧 Email Malicioso Generado Automáticamente")
     
-    # SIEMPRE usar IA - es el núcleo de la demo
+    # Intentar generar con IA, con fallback si falla
     phishing_content = generate_ai_phishing_email_forced(target_name, company_name, strategy)
     
     if not phishing_content:
-        st.error("🚨 Error generando contenido - Motor IA requerido")
+        st.error("🚨 Error en motor IA - Usando contenido de emergencia")
+        # Obtener datos básicos para fallback
+        target_profile = st.session_state.get('profile_results', {})
+        department = target_profile.get('employee_data', {}).get('department', 'Finanzas')
+        phishing_content = generate_fallback_phishing_content(target_name, company_name, department)
+    
+    # Verificar que tenemos contenido válido
+    if not phishing_content:
+        st.error("🚨 No se pudo generar contenido - Verifique configuración")
         return
     
     # Mostrar el email con estilo más dramático
@@ -1216,16 +1236,16 @@ def generate_phishing_email_content_attacker(target_name, company_name, strategy
                     <div style="margin-bottom: 0.5rem;">📅 Fecha:</div>
                 </div>
                 <div style="color: #6b7280;">
-                    <div style="margin-bottom: 0.5rem; color: #dc2626; font-weight: 600;">{phishing_content['from_email']}</div>
-                    <div style="margin-bottom: 0.5rem;">{phishing_content['to_email']}</div>
-                    <div style="margin-bottom: 0.5rem; font-weight: 600; color: #dc2626;">{phishing_content['subject']}</div>
+                    <div style="margin-bottom: 0.5rem; color: #dc2626; font-weight: 600;">{phishing_content.get('from_email', 'N/A')}</div>
+                    <div style="margin-bottom: 0.5rem;">{phishing_content.get('to_email', 'N/A')}</div>
+                    <div style="margin-bottom: 0.5rem; font-weight: 600; color: #dc2626;">{phishing_content.get('subject', 'N/A')}</div>
                     <div style="margin-bottom: 0.5rem;">{datetime.now().strftime('%d %b %Y, %H:%M')}</div>
                 </div>
             </div>
         </div>
         
         <div class="email-body">
-            {phishing_content['body']}
+            {phishing_content.get('body', 'Contenido no disponible')}
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -1237,17 +1257,20 @@ def generate_phishing_email_content_attacker(target_name, company_name, strategy
     
     with analysis_tabs[0]:
         st.markdown("**🤖 Técnicas de IA Empleadas:**")
-        for technique in phishing_content['techniques_used']:
-            st.markdown(f"• **{technique['name']}**: {technique['description']}")
+        for technique in phishing_content.get('techniques_used', []):
+            if isinstance(technique, dict):
+                st.markdown(f"• **{technique.get('name', 'N/A')}**: {technique.get('description', 'N/A')}")
+            else:
+                st.markdown(f"• **{technique}**")
     
     with analysis_tabs[1]:
         st.markdown("**⚠️ Por Qué Este Email Es Tan Peligroso:**")
-        for red_flag in phishing_content['red_flags']:
+        for red_flag in phishing_content.get('red_flags', []):
             st.markdown(f"• 🚨 {red_flag}")
     
     with analysis_tabs[2]:
         st.markdown("**🎯 Factores Que Lo Hacen Casi Indetectable:**")
-        for improvement in phishing_content['danger_factors']:
+        for improvement in phishing_content.get('danger_factors', []):
             st.markdown(f"• 💀 {improvement}")
 
 def generate_ai_phishing_email_forced(target_name, company_name, strategy):
@@ -1313,9 +1336,10 @@ def generate_ai_phishing_email_forced(target_name, company_name, strategy):
         CRÍTICO: Este email debe convencer incluso a empresarios experimentados. Máximo realismo.
         """
         
+        # Usar modelo disponible y con parámetros más conservadores
         response = st.session_state.claude_agent.client.messages.create(
-            model="claude-3-sonnet-20240229",
-            max_tokens=4000,
+            model="claude-3-haiku-20240307",  # Cambiar a modelo disponible
+            max_tokens=3000,
             temperature=0.7,
             messages=[{"role": "user", "content": prompt}]
         )
@@ -1343,7 +1367,75 @@ def generate_ai_phishing_email_forced(target_name, company_name, strategy):
         
     except Exception as e:
         st.error(f"🚨 Error en motor IA: {e}")
-        return None
+        # Devolver contenido de fallback para que la demo continúe
+        return generate_fallback_phishing_content(target_name, company_name, department)
+
+def generate_fallback_phishing_content(target_name, company_name, department):
+    """Contenido de fallback si la IA falla - para que la demo continúe"""
+    
+    first_name = target_name.split(' ')[0] if ' ' in target_name else target_name.split(' - ')[0]
+    target_email = f"{first_name.lower()}.objetivo@{company_name.lower().replace(' ', '-')}.com"
+    
+    return {
+        "from_email": "auditoria@grupo-consultores-madrid.com",
+        "to_email": target_email,
+        "subject": f"URGENTE: Validación {department} - Acción Requerida Hoy",
+        "body": f"""
+        <div style="font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333;">
+            <div style="background: #1e40af; color: white; padding: 15px; margin-bottom: 20px;">
+                <h2 style="margin: 0;">Grupo Consultores Madrid</h2>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">Auditoría y Compliance Empresarial</p>
+            </div>
+            
+            <p>Estimado/a <strong>{first_name}</strong>,</p>
+            
+            <p>Como responsable del área de <strong>{department}</strong> en {company_name}, debe completar urgentemente la validación de documentos corporativos requerida por las nuevas normativas 2025.</p>
+            
+            <div style="background: #fef2f2; border: 2px solid #dc2626; padding: 15px; margin: 20px 0; border-radius: 6px;">
+                <p style="margin: 0; font-weight: 600; color: #dc2626;">⚠️ ACCIÓN CRÍTICA REQUERIDA</p>
+                <p style="margin: 8px 0 0 0;">Plazo límite: <strong>HOY antes de las 18:00</strong></p>
+            </div>
+            
+            <p>Para evitar sanciones regulatorias, acceda al portal seguro de validación:</p>
+            
+            <div style="text-align: center; margin: 25px 0;">
+                <a href="https://validacion-empresarial.grupo-consultores.com/secure/{first_name.lower()}" 
+                   style="background: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                   🔐 VALIDAR DOCUMENTOS AHORA
+                </a>
+            </div>
+            
+            <p>Saludos cordiales,</p>
+            <div style="margin-top: 20px; padding: 15px; border-left: 3px solid #1e40af; background: #f8fafc;">
+                <strong>Ana María Rodríguez</strong><br>
+                Directora de Compliance<br>
+                Grupo Consultores Madrid<br>
+                📧 a.rodriguez@grupo-consultores-madrid.com<br>
+                📞 +34 91-XXX-XXXX
+            </div>
+        </div>
+        """,
+        "techniques_used": [
+            {"name": "Autoridad", "description": "Se presenta como consultora oficial de compliance"},
+            {"name": "Urgencia", "description": "Plazo extremo (mismo día) para crear presión"},
+            {"name": "Miedo", "description": "Amenaza con sanciones regulatorias"},
+            {"name": "Legitimidad", "description": "Formato corporativo profesional con firma detallada"}
+        ],
+        "red_flags": [
+            "Presión temporal extrema (mismo día)",
+            "Dominio de email no verificable oficialmente",
+            "Solicitud de acceso a portal externo",
+            "Amenazas desproporcionadas por email",
+            "Falta de canales de verificación alternativos"
+        ],
+        "danger_factors": [
+            "Apariencia extremadamente profesional",
+            "Uso de información específica del departamento",
+            "Contexto temporal creíble (nuevas normativas 2025)",
+            "Combinación efectiva de múltiples técnicas psicológicas",
+            "Portal falso con URL convincente"
+        ]
+    }
 
 def run_strategy_generation(attack_type, context, depth, urgency, techniques):
     """Generar estrategia de ataque"""
@@ -1650,7 +1742,7 @@ def generate_ai_phishing_email_improved(target_name, company_name, strategy):
         """
         
         response = st.session_state.claude_agent.client.messages.create(
-            model="claude-3-sonnet-20240229",
+            model="claude-3-haiku-20240307",  # Cambiar a modelo disponible
             max_tokens=3000,
             messages=[{"role": "user", "content": prompt}]
         )
@@ -1941,7 +2033,7 @@ def generate_ai_smishing_sms_improved(target_name, company_name, strategy):
         """
         
         response = st.session_state.claude_agent.client.messages.create(
-            model="claude-3-sonnet-20240229",
+            model="claude-3-haiku-20240307",  # Usar modelo disponible
             max_tokens=1500,
             messages=[{"role": "user", "content": prompt}]
         )
@@ -1964,6 +2056,7 @@ def generate_ai_smishing_sms_improved(target_name, company_name, strategy):
         return result
         
     except Exception as e:
+        st.error(f"Error generando SMS con IA: {e}")
         return generate_realistic_smishing_sms_improved(target_name, company_name)
 
 def generate_realistic_smishing_sms_improved(target_name, company_name):
