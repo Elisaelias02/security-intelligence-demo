@@ -1411,7 +1411,7 @@ def generate_guaranteed_phishing_email(target_name, company_name, strategy):
     
     # Análisis de efectividad
     st.markdown("---")
-    st.markdown("#### ANALISIS DE EFECTIVIDAD (PARA WORKSHOP)")
+    st.markdown("#### ANALISIS DE EFECTIVIDAD")
     
     # Obtener datos de análisis
     phishing_data = generate_clean_phishing_content(target_name, company_name, first_name, target_email, department)
@@ -1438,7 +1438,7 @@ def generate_guaranteed_phishing_email(target_name, company_name, strategy):
     
     # Advertencia final
     st.error("""
-    **DEMOSTRACIÓN EDUCATIVA**
+    **DEMOSTRACIÓN AEGIS**
     
     Este contenido fue generado para mostrar a empresarios la sofisticación de los ataques actuales.
     Los atacantes reales usan técnicas similares para crear emails aún más convincentes.
