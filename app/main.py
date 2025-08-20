@@ -1795,7 +1795,7 @@ def generate_realistic_phishing_email_improved(target_name, company_name):
                 <div style="text-align: center; margin: 25px 0;">
                     <a href="https://portal-validacion-fiscal.auditorcorp-madrid.com/secure/validate?empresa={company_name.replace(' ', '')}&responsable={first_name}" 
                        style="background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block; box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);">
-                       🔐 ACCEDER AL PORTAL SEGURO
+                        ACCEDER AL PORTAL SEGURO
                     </a>
                 </div>
                 
