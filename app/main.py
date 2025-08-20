@@ -1292,7 +1292,7 @@ def generate_guaranteed_phishing_email(target_name, company_name, strategy):
     target_email = f"{first_name.lower()}.empleado@{company_domain}"
     
     # Generar contenido limpio GARANTIZADO
-    phishing_data = generate_clean_phishing_content(target_name, company_name, first_name, target_email, department)
+    analysis_data = generate_clean_phishing_content(target_name, company_name, first_name, target_email, department)
     
     # Mostrar email con diseño profesional
     st.markdown("""
@@ -1315,9 +1315,9 @@ def generate_guaranteed_phishing_email(target_name, company_name, strategy):
         st.markdown("**Fecha:**")
     
     with col2:
-        st.markdown(f"`{phishing_data['from_email']}`")
-        st.markdown(f"`{phishing_data['to_email']}`")
-        st.markdown(f"**{phishing_data['subject']}**")
+        st.markdown(f"`{analysis_data['from_email']}`")
+        st.markdown(f"`{analysis_data['to_email']}`")
+        st.markdown(f"**{analysis_data['subject']}**")
         st.markdown(f"{datetime.now().strftime('%d %b %Y, %H:%M')}")
     
     st.markdown("---")
@@ -1413,27 +1413,27 @@ def generate_guaranteed_phishing_email(target_name, company_name, strategy):
     st.markdown("#### ANALISIS DE EFECTIVIDAD")
     
     # Obtener datos de análisis
-    phishing_data = generate_clean_phishing_content(target_name, company_name, first_name, target_email, department)
+    analysis_data = generate_clean_phishing_content(target_name, company_name, first_name, target_email, department)
     
     analysis_tabs = st.tabs(["TÉCNICAS EMPLEADAS", "SEÑALES DE PELIGRO", "FACTORES DE ÉXITO"])
     
     with analysis_tabs[0]:
         st.markdown("**TÉCNICAS DE MANIPULACIÓN UTILIZADAS:**")
-        for i, technique in enumerate(phishing_data['techniques_used'], 1):
+        for i, technique in enumerate(analysis_data['techniques_used'], 1):
             st.markdown(f"**{i}.** {technique}")
     
     with analysis_tabs[1]:
         st.markdown("**SEÑALES DE ALERTA QUE DEBERÍAN DETECTAR:**")
-        for i, flag in enumerate(phishing_data['red_flags'], 1):
+        for i, flag in enumerate(analysis_data['red_flags'], 1):
             st.markdown(f"**{i}.** {flag}")
     
     with analysis_tabs[2]:
         st.markdown("**POR QUÉ ESTE EMAIL ES TAN PELIGROSO:**")
-        for i, factor in enumerate(phishing_data['danger_factors'], 1):
+        for i, factor in enumerate(analysis_data['danger_factors'], 1):
             st.markdown(f"**{i}.** {factor}")
     
     # Estado de generación
-    st.success("GENERADO PROFESIONALMENTE - Contenido híper-realista para demo")
+    st.success("GENERADO EXITOSAMENTE")
     
     # Advertencia final
     st.error("""
@@ -1445,7 +1445,7 @@ def generate_guaranteed_phishing_email(target_name, company_name, strategy):
     
     # Análisis de efectividad
     st.markdown("---")
-    st.markdown("#### ANALISIS DE EFECTIVIDAD (PARA WORKSHOP)")
+    st.markdown("#### ANALISIS DE EFECTIVIDAD")
     
     analysis_tabs = st.tabs(["TÉCNICAS EMPLEADAS", "SEÑALES DE PELIGRO", "FACTORES DE ÉXITO"])
     
@@ -1465,7 +1465,7 @@ def generate_guaranteed_phishing_email(target_name, company_name, strategy):
             st.markdown(f"**{i}.** {factor}")
     
     # Estado de generación
-    st.success("GENERADO PROFESIONALMENTE - Contenido híper-realista para demo")
+    st.success("GENERADO PROFESIONALMENTE")
     
     # Advertencia final
     st.error("""
@@ -1507,7 +1507,7 @@ def generate_clean_phishing_content(target_name, company_name, first_name, targe
             "Combina múltiples técnicas psicológicas efectivas"
         ]
     }
-    """Genera contenido phishing ULTRA-REALISTA garantizado"""
+    """Genera contenido phishing"""
     
     # Extraer datos útiles
     target_profile = st.session_state.get('profile_results', {})
