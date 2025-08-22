@@ -87,7 +87,14 @@ def main():
         load_css()
         
         # Inicializar estado de la sesión
-        initialize_session_state()
+        if 'demo_mode' not in st.session_state:
+            st.session_state.demo_mode = False
+        if 'completed_analyses' not in st.session_state:
+            st.session_state.completed_analyses = []
+        if 'user_profiles' not in st.session_state:
+            st.session_state.user_profiles = []
+        if 'generated_content' not in st.session_state:
+            st.session_state.generated_content = []
         
         # Header principal
         st.markdown("""
@@ -121,56 +128,30 @@ def main():
             content_generation()
         
         # Footer con información adicional
-        show_footer()
+        st.markdown("---")
+        st.markdown("""
+        <div style="text-align: center; color: #6b7280; font-size: 0.9rem; padding: 1rem;">
+            <p><strong>Sistema de Análisis de Vulnerabilidades</strong> - Plataforma educativa para evaluación de seguridad</p>
+            <p>⚠️ <strong>Uso Ético:</strong> Esta herramienta debe usarse únicamente para fines educativos y de concientización sobre seguridad.</p>
+        </div>
+        """, unsafe_allow_html=True)
         
     except Exception as e:
         st.error(f"❌ Error en la aplicación: {str(e)}")
-        show_error_recovery()
-
-def initialize_session_state():
-    """Inicializar todas las variables de sesión"""
-    default_values = {
-        'demo_mode': False,
-        'completed_analyses': [],
-        'user_profiles': [],
-        'generated_content': [],
-        'current_osint': None,
-        'current_profile': None,
-        'current_content': None,
-        'anthropic_client': None,
-        'claude_model': None
-    }
-    
-    for key, default_value in default_values.items():
-        if key not in st.session_state:
-            st.session_state[key] = default_value
-
-def show_footer():
-    """Mostrar footer con información"""
-    st.markdown("---")
-    st.markdown("""
-    <div style="text-align: center; color: #6b7280; font-size: 0.9rem; padding: 1rem;">
-        <p><strong>Sistema de Análisis de Vulnerabilidades</strong> - Plataforma educativa para evaluación de seguridad</p>
-        <p>⚠️ <strong>Uso Ético:</strong> Esta herramienta debe usarse únicamente para fines educativos y de concientización sobre seguridad.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-def show_error_recovery():
-    """Mostrar opciones de recuperación de errores"""
-    st.info("💡 **Soluciones sugeridas:**")
-    st.markdown("""
-    1. **Recargar la página** (F5 o Ctrl+R)
-    2. **Usar el Modo Demo** en el sidebar
-    3. **Verificar la API key** si está usando Claude
-    4. **Limpiar caché** del navegador
-    """)
-    
-    # Botón de emergencia para reiniciar
-    if st.button("🔄 Reiniciar Aplicación", key="emergency_restart"):
-        # Limpiar todo el estado
-        for key in list(st.session_state.keys()):
-            del st.session_state[key]
-        st.rerun()
+        st.info("💡 **Soluciones sugeridas:**")
+        st.markdown("""
+        1. **Recargar la página** (F5 o Ctrl+R)
+        2. **Usar el Modo Demo** en el sidebar
+        3. **Verificar la API key** si está usando Claude
+        4. **Limpiar caché** del navegador
+        """)
+        
+        # Botón de emergencia para reiniciar
+        if st.button("🔄 Reiniciar Aplicación", key="emergency_restart"):
+            # Limpiar todo el estado
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
+            st.rerun()
 
 def setup_ai_agent():
     """Configurar agente de IA REAL"""
@@ -218,28 +199,24 @@ def setup_ai_agent():
         elif api_key:
             setup_anthropic_client(api_key)
         
-        show_system_status()
-
-def show_system_status():
-    """Mostrar estado del sistema"""
-    st.markdown("### 🎯 Sistema Ultra-Realista")
-    if 'anthropic_client' in st.session_state or st.session_state.get('demo_mode', False):
-        mode_text = "(DEMO)" if st.session_state.get('demo_mode', False) else ""
-        st.markdown(f"""
-        ✅ **Análisis OSINT ultra-detallado** {mode_text}  
-        ✅ **Perfilado psicológico avanzado** {mode_text}  
-        ✅ **Emails de phishing ULTRA-REALISTAS** {mode_text}  
-        ✅ **Evaluación de vectores de ataque** {mode_text}  
-        ✅ **Contenido indistinguible de emails reales** {mode_text}
-        """)
-    else:
-        st.markdown("""
-        ❌ Análisis OSINT automatizado  
-        ❌ Perfilado psicológico avanzado  
-        ❌ Generación de contenido adaptativo  
-        ❌ Evaluación de vectores de ataque  
-        ❌ Análisis contextual profundo
-        """)
+        st.markdown("### 🎯 Sistema Ultra-Realista")
+        if 'anthropic_client' in st.session_state or st.session_state.get('demo_mode', False):
+            mode_text = "(DEMO)" if st.session_state.get('demo_mode', False) else ""
+            st.markdown(f"""
+            ✅ **Análisis OSINT ultra-detallado** {mode_text}  
+            ✅ **Perfilado psicológico avanzado** {mode_text}  
+            ✅ **Emails de phishing ULTRA-REALISTAS** {mode_text}  
+            ✅ **Evaluación de vectores de ataque** {mode_text}  
+            ✅ **Contenido indistinguible de emails reales** {mode_text}
+            """)
+        else:
+            st.markdown("""
+            ❌ Análisis OSINT automatizado  
+            ❌ Perfilado psicológico avanzado  
+            ❌ Generación de contenido adaptativo  
+            ❌ Evaluación de vectores de ataque  
+            ❌ Análisis contextual profundo
+            """)
 
 def test_anthropic_connection(api_key):
     """Probar conexión con Anthropic usando modelo que funciona"""
@@ -275,6 +252,25 @@ def setup_anthropic_client(api_key):
             st.info("🔑 API Key configurada. Use 'Probar API' para verificar.")
         except Exception as e:
             st.error(f"❌ Error configurando cliente: {str(e)}")
+
+def display_system_info():
+    """Mostrar información del sistema"""
+    st.markdown("---")
+    
+    if st.session_state.get('demo_mode'):
+        st.markdown("### 🧪 Modo Demo Activo")
+        st.info("Usando datos de ejemplo predefinidos")
+    elif 'anthropic_client' in st.session_state:
+        st.markdown("### ✅ Sistema Conectado")
+        st.info(f"Modelo: {st.session_state.get('claude_model', 'N/A')}")
+    else:
+        st.markdown("### ⚠️ Sistema No Configurado")
+        st.warning("Configure API key o use modo demo")
+    
+    # Botón para limpiar caché fuera del form
+    if st.button("🧹 Limpiar Caché", key="clear_cache_main"):
+        clear_session_cache()
+        st.success("✅ Caché limpiado")
 
 def clear_session_cache():
     """Limpiar caché de sesión"""
@@ -317,19 +313,12 @@ def show_dashboard():
     # Historial de análisis
     display_recent_analyses()
     
-    # Mostrar sección demo si está en modo demo
-    if st.session_state.get('demo_mode'):
-        show_demo_section()
-
-# Botón para cargar datos demo FUERA del dashboard principal
-def show_demo_section():
-    """Sección separada para cargar datos demo"""
+    # Botón para cargar datos demo fuera de cualquier form
     if st.session_state.get('demo_mode'):
         st.markdown("### 🎯 Datos de Ejemplo")
-        if st.button("📊 Cargar Análisis de Ejemplo", key="load_demo_dashboard_separate"):
+        if st.button("📊 Cargar Análisis de Ejemplo", key="load_demo_dashboard"):
             load_demo_data()
             st.success("✅ Datos de ejemplo cargados")
-            time.sleep(1)  # Pequeña pausa antes de rerun
             st.rerun()
 
 def show_setup_instructions():
@@ -366,45 +355,34 @@ def safe_json_parse(content):
         # Limpiar contenido
         content = content.strip()
         
-        # Si está vacío, retornar None inmediatamente
-        if not content:
-            return None
-        
         # Remover markdown
         content = re.sub(r'```json\s*', '', content)
         content = re.sub(r'```\s*$', '', content)
-        content = content.strip()
         
-        # Si sigue vacío después de limpiar, retornar None
-        if not content:
-            return None
-        
-        # Buscar JSON entre llaves - mejorado
-        json_match = re.search(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}', content, re.DOTALL)
+        # Buscar primer bloque JSON entre llaves
+        json_match = re.search(r'\{.*?\}', content, re.DOTALL)
         if json_match:
             json_str = json_match.group(0)
-        else:
-            # Si no encuentra llaves anidadas, buscar el patrón más simple
-            json_match = re.search(r'\{.*\}', content, re.DOTALL)
-            if json_match:
-                json_str = json_match.group(0)
-            else:
-                json_str = content
+            
+            # Limpiar caracteres problemáticos
+            json_str = json_str.replace('\n', ' ').replace('\r', ' ')
+            json_str = re.sub(r'\s+', ' ', json_str).strip()
+            
+            # Intentar parsear
+            return json.loads(json_str)
         
-        # Limpiar caracteres problemáticos pero mantener estructura
-        json_str = re.sub(r'[\x00-\x1f\x7f-\x9f]', '', json_str)  # Remover caracteres de control
-        json_str = re.sub(r'\\(?!["\\/bfnrt])', '\\\\', json_str)  # Escapar backslashes incorrectos
-        
-        # Intentar parsear
-        parsed = json.loads(json_str)
-        return parsed
+        # Si no hay llaves, intentar parsear directamente
+        return json.loads(content)
         
     except json.JSONDecodeError as e:
-        print(f"JSON Error: {e}")  # Log para debug, no mostrar al usuario
+        st.warning(f"Error JSON: {e}")
+        st.text(f"Contenido que falló: {content}")
         return None
     except Exception as e:
-        print(f"Parse Error: {e}")  # Log para debug, no mostrar al usuario
+        st.warning(f"Error parsing: {e}")
+        st.text(f"Contenido que falló: {content}")
         return None
+
 
 def osint_analysis():
     """Análisis OSINT real mejorado"""
@@ -452,17 +430,16 @@ def osint_analysis():
         )
         
         submitted = st.form_submit_button("🔍 Iniciar Análisis OSINT", use_container_width=True)
-    
-    # Procesar fuera del formulario
-    if submitted:
-        if company_name and domain:
-            run_osint_analysis(company_name, domain, industry, company_size, 
-                             employee_info, tech_stack, additional_info)
-        else:
-            st.error("Complete los campos obligatorios (*)")
+        
+        if submitted:
+            if company_name and domain:
+                run_osint_analysis(company_name, domain, industry, company_size, 
+                                 employee_info, tech_stack, additional_info)
+            else:
+                st.error("Complete los campos obligatorios (*)")
     
     # Mostrar resultados existentes
-    if st.session_state.get('current_osint'):
+    if 'current_osint' in st.session_state:
         st.markdown("---")
         st.markdown("### 📊 Último Análisis Completado")
         display_osint_results(st.session_state.current_osint)
@@ -483,9 +460,7 @@ def run_osint_analysis(company_name, domain, industry, company_size,
         
         # Prompt mejorado para análisis más específico
         prompt = f"""
-Eres un experto analista de ciberseguridad especializado en OSINT. 
-
-IMPORTANTE: Responde ÚNICAMENTE con un objeto JSON válido, sin texto adicional, explicaciones o markdown.
+Eres un experto analista de ciberseguridad especializado en OSINT. Analiza la siguiente empresa y proporciona un análisis detallado.
 
 EMPRESA A ANALIZAR:
 - Nombre: {company_name}
@@ -496,7 +471,7 @@ EMPRESA A ANALIZAR:
 - Stack tecnológico: {tech_stack}
 - Información adicional: {additional_info}
 
-Responde con este JSON exacto (sin ```json ni otras etiquetas):
+Proporciona un análisis JSON detallado con la siguiente estructura EXACTA:
 
 {{
     "risk_score": 0.75,
@@ -546,14 +521,13 @@ Responde con este JSON exacto (sin ```json ni otras etiquetas):
         }}
     ]
 }}
+
+Basa tu análisis en la información específica proporcionada. Si no hay información suficiente para un campo, usa "Análisis manual requerido".
 """
         
         try:
-            if 'anthropic_client' not in st.session_state:
-                raise Exception("Cliente Anthropic no configurado")
-                
             response = st.session_state.anthropic_client.messages.create(
-                model=st.session_state.get('claude_model', 'claude-3-5-haiku-20241022'),
+                model="claude-3-5-haiku-20241022",  # Usar modelo que funciona
                 max_tokens=4000,
                 temperature=0.3,
                 messages=[{"role": "user", "content": prompt}]
@@ -569,7 +543,6 @@ Responde con este JSON exacto (sin ```json ni otras etiquetas):
             
             if not analysis_result:
                 st.warning("⚠️ Error en parsing JSON. Generando análisis básico...")
-                st.info("💡 Esto puede ocurrir si la respuesta de Claude no es JSON válido. Usando datos de respaldo.")
                 analysis_result = generate_fallback_osint(company_name, industry, employee_info)
             
             save_osint_result(analysis_result, company_name)
@@ -634,7 +607,7 @@ def generate_demo_osint(company_name, domain, industry, employee_info):
         "recommendations": [
             {
                 "priority": "ALTA",
-                "category": "Concientización",
+                "category": "Concienciación",
                 "action": "Programa de entrenamiento en ingeniería social",
                 "timeline": "30 días"
             }
@@ -678,9 +651,6 @@ def generate_fallback_osint(company_name, industry, employee_info):
 
 def save_osint_result(result, company_name):
     """Guardar resultado del análisis OSINT"""
-    if 'completed_analyses' not in st.session_state:
-        st.session_state.completed_analyses = []
-        
     st.session_state.completed_analyses.append({
         'type': 'Análisis OSINT',
         'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
@@ -691,10 +661,6 @@ def save_osint_result(result, company_name):
 
 def display_osint_results(results):
     """Mostrar resultados del análisis OSINT mejorado"""
-    
-    if not results or not isinstance(results, dict):
-        st.error("Error: Resultados de análisis inválidos")
-        return
     
     st.markdown("### Resultados del Análisis")
     
@@ -746,9 +712,6 @@ def display_osint_results(results):
 
 def display_vulnerability_card(vuln):
     """Mostrar tarjeta de vulnerabilidad"""
-    if not isinstance(vuln, dict):
-        return
-        
     severity_color = {
         'CRÍTICA': '#dc2626', 'ALTA': '#f97316', 
         'MEDIA': '#d97706', 'BAJA': '#059669'
@@ -765,9 +728,6 @@ def display_vulnerability_card(vuln):
 
 def display_employee_exposure(emp):
     """Mostrar exposición de empleado"""
-    if not isinstance(emp, dict):
-        return
-        
     risk_color = {'ALTO': '#dc2626', 'MEDIO': '#f97316', 'BAJO': '#059669'}.get(emp.get('risk_level', 'MEDIO'), '#6b7280')
     
     st.markdown(f"""
@@ -780,9 +740,6 @@ def display_employee_exposure(emp):
 
 def display_attack_vector(vector):
     """Mostrar vector de ataque"""
-    if not isinstance(vector, dict):
-        return
-        
     probability = vector.get('probability', 0)
     color = '#dc2626' if probability > 0.7 else '#f97316' if probability > 0.4 else '#059669'
     
@@ -796,9 +753,6 @@ def display_attack_vector(vector):
 
 def display_technical_finding(finding):
     """Mostrar hallazgo técnico"""
-    if not isinstance(finding, dict):
-        return
-        
     st.markdown(f"""
     <div style="border-left: 4px solid #3b82f6; padding: 1rem; margin: 0.5rem 0; background: #eff6ff; border-radius: 6px;">
         <h4 style="margin: 0 0 0.5rem 0;">{finding.get('finding', 'Hallazgo')}</h4>
@@ -809,9 +763,6 @@ def display_technical_finding(finding):
 
 def display_recommendation(rec):
     """Mostrar recomendación"""
-    if not isinstance(rec, dict):
-        return
-        
     priority_color = {
         'ALTA': '#dc2626', 'MEDIA': '#f97316', 'BAJA': '#059669'
     }.get(rec.get('priority', 'MEDIA'), '#6b7280')
@@ -893,24 +844,23 @@ def user_profiling():
         )
         
         submitted = st.form_submit_button("🧠 Generar Perfil Psicológico", use_container_width=True)
-    
-    # Procesar fuera del formulario
-    if submitted:
-        if user_name and department:
-            generate_psychological_profile(
-                user_name, department, seniority, company_size, industry, age_range,
-                social_activity, security_awareness, info_sharing, tech_comfort,
-                authority_response, stress_reaction, work_patterns, personality_traits,
-                additional_context
-            )
-        else:
-            st.error("Complete los campos obligatorios (*)")
+        
+        if submitted:
+            if user_name and department:
+                generate_psychological_profile(
+                    user_name, department, seniority, company_size, industry, age_range,
+                    social_activity, security_awareness, info_sharing, tech_comfort,
+                    authority_response, stress_reaction, work_patterns, personality_traits,
+                    additional_context
+                )
+            else:
+                st.error("Complete los campos obligatorios (*)")
     
     # Mostrar perfiles existentes
     display_existing_profiles()
     
     # Mostrar último perfil si existe
-    if st.session_state.get('current_profile'):
+    if 'current_profile' in st.session_state and st.session_state.current_profile:
         st.markdown("---")
         st.markdown("### 🧠 Último Perfil Generado")
         display_profile_results(st.session_state.current_profile)
@@ -933,9 +883,7 @@ def generate_psychological_profile(user_name, department, seniority, company_siz
     with st.spinner("Generando perfil psicológico avanzado..."):
         
         prompt = f"""
-Eres un experto en psicología organizacional y ciberseguridad.
-
-IMPORTANTE: Responde ÚNICAMENTE con un objeto JSON válido, sin texto adicional, explicaciones o markdown.
+Eres un experto en psicología organizacional y ciberseguridad. Analiza el siguiente perfil y proporciona un análisis detallado.
 
 PERFIL A ANALIZAR:
 - Nombre: {user_name}
@@ -953,7 +901,7 @@ PERFIL A ANALIZAR:
 - Rasgos de personalidad: {', '.join(personality_traits)}
 - Contexto adicional: {additional_context}
 
-Responde con este JSON exacto (sin ```json ni otras etiquetas):
+Proporciona un análisis JSON con esta estructura EXACTA:
 
 {{
     "psychological_profile": {{
@@ -1022,14 +970,13 @@ Responde con este JSON exacto (sin ```json ni otras etiquetas):
         ]
     }}
 }}
+
+Basa todo el análisis en las métricas específicas proporcionadas.
 """
         
         try:
-            if 'anthropic_client' not in st.session_state:
-                raise Exception("Cliente Anthropic no configurado")
-                
             response = st.session_state.anthropic_client.messages.create(
-                model=st.session_state.get('claude_model', 'claude-3-5-haiku-20241022'),
+                model="claude-3-5-haiku-20241022",  # Usar modelo que funciona
                 max_tokens=4000,
                 temperature=0.3,
                 messages=[{"role": "user", "content": prompt}]
@@ -1044,7 +991,6 @@ Responde con este JSON exacto (sin ```json ni otras etiquetas):
             
             if not profile_result:
                 st.warning("⚠️ Error en parsing JSON. Generando perfil básico...")
-                st.info("💡 Esto puede ocurrir si la respuesta de Claude no es JSON válido. Usando datos de respaldo.")
                 profile_result = generate_fallback_profile(user_name, department, seniority)
             
             save_profile_result(profile_result, user_name, department)
@@ -1196,13 +1142,13 @@ def display_existing_profiles():
         st.markdown("---")
         st.markdown("### 👥 Perfiles Existentes")
         
-        for profile in st.session_state.user_profiles[-3:]:
+        for i, profile in enumerate(st.session_state.user_profiles[-3:]):
             with st.expander(f"👤 {profile['user_name']} ({profile['department']}) - {profile['timestamp']}", expanded=False):
                 display_profile_summary(profile)
 
 def display_profile_summary(profile):
     """Mostrar resumen del perfil"""
-    analysis = profile.get('analysis', {})
+    analysis = profile['analysis']
     
     if 'vulnerability_assessment' in analysis:
         risk_score = analysis['vulnerability_assessment'].get('overall_risk_score', 0)
@@ -1248,26 +1194,20 @@ def display_profile_results(profile_data):
         vuln_count = len(analysis.get('vulnerability_assessment', {}).get('psychological_vulnerabilities', []))
         st.metric("Vulnerabilidades", vuln_count)
     
-    # Secciones detalladas
-    display_detailed_profile_sections(analysis)
-
-def display_detailed_profile_sections(analysis):
-    """Mostrar secciones detalladas del perfil"""
-    
     # Perfil psicológico
-    if analysis.get('psychological_profile'):
+    if 'psychological_profile' in analysis:
         display_psychological_profile(analysis['psychological_profile'])
     
     # Evaluación de vulnerabilidades
-    if analysis.get('vulnerability_assessment'):
+    if 'vulnerability_assessment' in analysis:
         display_vulnerability_assessment(analysis['vulnerability_assessment'])
     
     # Simulación de ataques
-    if analysis.get('attack_simulation'):
+    if 'attack_simulation' in analysis:
         display_attack_simulation(analysis['attack_simulation'])
     
     # Entrenamiento personalizado
-    if analysis.get('personalized_training'):
+    if 'personalized_training' in analysis:
         display_personalized_training(analysis['personalized_training'])
 
 def display_psychological_profile(profile):
@@ -1324,13 +1264,11 @@ def display_vulnerability_assessment(assessment):
                 'MEDIA': '#d97706', 'BAJA': '#059669'
             }.get(vuln.get('severity', 'MEDIA'), '#6b7280')
             
-            triggers_text = ', '.join(vuln.get('triggers', []))
-            
             st.markdown(f"""
             <div style="border-left: 4px solid {severity_color}; padding: 1rem; margin: 0.5rem 0; background: #fef2f2; border-radius: 6px;">
                 <h4 style="margin: 0 0 0.5rem 0; color: {severity_color};">{vuln.get('type', 'Vulnerabilidad')} - {vuln.get('severity', 'MEDIA')}</h4>
                 <p><strong>Descripción:</strong> {vuln.get('description', 'No disponible')}</p>
-                <p><strong>Desencadenantes:</strong> {triggers_text}</p>
+                <p><strong>Desencadenantes:</strong> {', '.join(vuln.get('triggers', []))}</p>
                 <p><strong>Método de explotación:</strong> {vuln.get('exploitation_method', 'No especificado')}</p>
             </div>
             """, unsafe_allow_html=True)
@@ -1447,18 +1385,17 @@ def content_generation():
                                          key="content_context")
         
         submitted = st.form_submit_button("🎯 Generar Contenido Personalizado", use_container_width=True)
-    
-    # Procesar fuera del formulario
-    if submitted:
-        generate_adaptive_content(target_profile, content_type, scenario, 
-                                urgency, sender_type, company_context, 
-                                personalization_level, additional_context)
+        
+        if submitted:
+            generate_adaptive_content(target_profile, content_type, scenario, 
+                                    urgency, sender_type, company_context, 
+                                    personalization_level, additional_context)
     
     # Mostrar contenido existente
     display_existing_content()
     
     # Mostrar último contenido si existe
-    if st.session_state.get('current_content'):
+    if 'current_content' in st.session_state and st.session_state.current_content:
         st.markdown("---")
         st.markdown("### 🎯 Último Contenido Generado")
         display_generated_content(st.session_state.current_content)
@@ -1486,9 +1423,7 @@ def generate_adaptive_content(target_profile, content_type, scenario,
         
         # Construir prompt ultra-detallado
         prompt = f"""
-Eres un experto en ingeniería social y generación de contenido persuasivo.
-
-IMPORTANTE: Responde ÚNICAMENTE con un objeto JSON válido, sin texto adicional, explicaciones o markdown.
+Eres un experto en ingeniería social y generación de contenido persuasivo. Crea contenido altamente personalizado.
 
 PERFIL DEL USUARIO:
 - Nombre: {user_data['user_name']}
@@ -1504,7 +1439,7 @@ CONFIGURACIÓN DEL CONTENIDO:
 - Nivel personalización: {personalization_level}/10
 - Contexto adicional: {additional_context}
 
-Responde con este JSON exacto (sin ```json ni otras etiquetas):
+Genera contenido JSON con esta estructura EXACTA:
 
 {{
     "content": {{
@@ -1554,14 +1489,13 @@ Responde con este JSON exacto (sin ```json ni otras etiquetas):
         }}
     ]
 }}
+
+Usa TODA la información del perfil psicológico para crear contenido extremadamente personalizado y efectivo.
 """
         
         try:
-            if 'anthropic_client' not in st.session_state:
-                raise Exception("Cliente Anthropic no configurado")
-                
             response = st.session_state.anthropic_client.messages.create(
-                model=st.session_state.get('claude_model', 'claude-3-5-haiku-20241022'),
+                model=st.session_state.get('claude_model', 'claude-3-5-sonnet-20241022'),
                 max_tokens=4000,
                 temperature=0.4,
                 messages=[{"role": "user", "content": prompt}]
@@ -1576,7 +1510,6 @@ Responde con este JSON exacto (sin ```json ni otras etiquetas):
             
             if not content_result:
                 st.warning("⚠️ Error en parsing JSON. Generando contenido básico...")
-                st.info("💡 Esto puede ocurrir si la respuesta de Claude no es JSON válido. Usando datos de respaldo.")
                 content_result = generate_fallback_content(user_data, content_type, scenario, urgency)
             
             save_content_result(content_result, user_data, content_type, scenario)
@@ -1585,6 +1518,25 @@ Responde con este JSON exacto (sin ```json ni otras etiquetas):
             
         except Exception as e:
             st.error(f"❌ Error generando contenido: {str(e)}")
+            # Intentar con modelo de respaldo
+            if "not_found" in str(e).lower() or "404" in str(e):
+                st.info("🔄 Intentando con modelo de respaldo...")
+                try:
+                    response = st.session_state.anthropic_client.messages.create(
+                        model="claude-3-5-haiku-20241022",
+                        max_tokens=4000,
+                        temperature=0.4,
+                        messages=[{"role": "user", "content": prompt}]
+                    )
+                    content = response.content[0].text.strip()
+                    content_result = safe_json_parse(content) or generate_fallback_content(user_data, content_type, scenario, urgency)
+                    save_content_result(content_result, user_data, content_type, scenario)
+                    st.success("✅ Contenido generado (modelo de respaldo)")
+                    display_generated_content(st.session_state.current_content)
+                    return
+                except Exception:
+                    pass
+            
             # Usar fallback final
             fallback_result = generate_fallback_content(user_data, content_type, scenario, urgency)
             save_content_result(fallback_result, user_data, content_type, scenario)
@@ -1623,7 +1575,7 @@ def generate_demo_content(target_profile, content_type, scenario, urgency,
     # Crear contenido ultra-personalizado
     personalized_body = f"""Estimado/a {user_name},
 
-Como profesional de {department} en {company_context}, necesitamos su atención inmediata para {scenario.lower()}.
+Como {user_data.get('seniority', 'profesional')} de {department} en {company_context}, necesitamos su atención inmediata para {scenario.lower()}.
 
 Hemos identificado una situación que requiere su intervención específica debido a su rol en {department}."""
     
@@ -1664,6 +1616,7 @@ Saludos urgentes,
             "personalization_hooks": [
                 f"Nombre específico: {user_name}",
                 f"Departamento específico: {department}",
+                f"Rol específico: {user_data.get('seniority', 'profesional')}",
                 f"Empresa específica: {company_context}"
             ]
         },
@@ -1679,6 +1632,11 @@ Saludos urgentes,
                     "technique": "Urgencia",
                     "application": f"Crear presión temporal {urgency.lower()}",
                     "effectiveness_reason": f"Nivel {urgency} reduce tiempo de análisis crítico"
+                },
+                {
+                    "technique": "Personalización específica",
+                    "application": f"Dirigido específicamente a {user_name} de {department}",
+                    "effectiveness_reason": "Aumenta percepción de legitimidad"
                 }
             ],
             "emotional_triggers": [
@@ -1688,11 +1646,13 @@ Saludos urgentes,
             ],
             "authority_elements": [
                 f"Remitente {sender_type}",
-                f"Proceso oficial de {scenario}"
+                f"Proceso oficial de {scenario}",
+                f"Referencia a dirección de {company_context}"
             ],
             "social_proof_elements": [
                 f"Proceso estándar en {department}",
-                f"Política de {company_context}"
+                f"Política de {company_context}",
+                "Cumplimiento regulatorio"
             ]
         },
         "effectiveness_prediction": {
@@ -1722,6 +1682,210 @@ Saludos urgentes,
                 "subject": f"Protocolo {scenario} - Validación {department}",
                 "key_differences": "Lenguaje más técnico, referencias a procedimientos específicos"
             }
+        ]
+    }
+
+def create_account_verification_email(user_name, department, company_context, urgency):
+    """Crear email de verificación de cuenta ultra-realista"""
+    return {
+        "subject": f"Verificación de cuenta requerida - {user_name} ({department})",
+        "sender": f"noreply@{company_context.lower().replace(' ', '')}.com",
+        "sender_name": "Sistema de Seguridad Corporativa",
+        "body": f"""Estimado/a {user_name},
+
+Por políticas de seguridad actualizadas de {company_context}, es necesario verificar periódicamente las cuentas corporativas.
+
+Su cuenta corporativa requiere re-verificación debido a:
+• Implementación de nuevas políticas de acceso
+• Migración al nuevo sistema de autenticación
+• Cumplimiento con certificación ISO 27001
+
+DATOS DE LA CUENTA:
+• Usuario: {user_name.lower().replace(' ', '.')}@{company_context.lower().replace(' ', '')}.com
+• Departamento: {department}
+• Último acceso: {datetime.now().strftime('%d/%m/%Y %H:%M')}
+• Nivel de acceso: Usuario departamental
+
+Para mantener el acceso a sus sistemas, complete la verificación en:
+[ENLACE DE VERIFICACIÓN]
+
+El proceso toma aproximadamente 3 minutos e incluye:
+1. Confirmación de datos personales
+2. Actualización de información de contacto
+3. Verificación de accesos departamentales
+4. Confirmación de políticas de seguridad
+
+IMPORTANTE: Las cuentas no verificadas serán deshabilitadas automáticamente el {(datetime.now() + timedelta(days=3)).strftime('%d/%m/%Y')}.
+
+Este es un mensaje automático del Sistema de Gestión de Identidades.
+No responda a este correo.
+
+Soporte Técnico: soporte@{company_context.lower().replace(' ', '')}.com
+Mesa de ayuda: ext. 4357""",
+        "call_to_action": "Verificar cuenta en el enlace proporcionado",
+        "urgency_indicators": [
+            "Deshabilitación automática en 3 días",
+            "Último acceso mostrado",
+            "Proceso de migración de sistema"
+        ],
+        "personalization_hooks": [
+            f"Email corporativo: {user_name.lower().replace(' ', '.')}@{company_context.lower().replace(' ', '')}.com",
+            f"Nivel de acceso específico",
+            f"Departamento mencionado: {department}"
+        ],
+        "realistic_details": [
+            "Sistema de gestión de identidades",
+            "Certificación ISO mencionada",
+            "Mesa de ayuda con extensión",
+            "Políticas de seguridad corporativa"
+        ]
+    }
+
+def create_tech_emergency_email(user_name, department, company_context, urgency):
+    """Crear email de emergencia técnica ultra-realista"""
+    return {
+        "subject": f"EMERGENCIA: Falla crítica en sistemas de {department} - Acción inmediata",
+        "sender": f"ops@{company_context.lower().replace(' ', '')}.com",
+        "sender_name": "Centro de Operaciones NOC",
+        "body": f"""ALERTA CRÍTICA - {user_name}
+
+El Centro de Operaciones de Red ha detectado una falla crítica que afecta directamente al departamento de {department}.
+
+DETALLES DEL INCIDENTE:
+• Ticket: INC-2025-{department[:3].upper()}-{datetime.now().strftime('%m%d')}-001
+• Severidad: CRÍTICA (P1)
+• Inicio: {datetime.now().strftime('%d/%m/%Y %H:%M')}
+• Sistemas afectados: Servidores de aplicaciones {department}
+• Impacto: Pérdida total de conectividad para {department}
+
+SÍNTOMAS REPORTADOS:
+✗ Base de datos de {department} inaccesible
+✗ Aplicaciones críticas fuera de línea
+✗ Pérdida de sincronización de archivos compartidos
+✗ Error en respaldo automático nocturno
+
+ROOT CAUSE ANALYSIS:
+Falla en controlador de dominio DCPROD-{department[:3].upper()}-02
+El servicio de autenticación está presentando errores intermitentes.
+
+ACCIÓN INMEDIATA REQUERIDA:
+Para acelerar la resolución y evitar pérdida de datos, necesitamos que verifique inmediatamente:
+
+1. Su acceso actual a sistemas críticos
+2. Estado de documentos importantes en curso
+3. Integridad de archivos locales vs servidor
+
+PROCESO DE RECUPERACIÓN:
+Acceda al portal de emergencia NOC: [ENLACE MALICIOSO]
+Use sus credenciales corporativas para:
+• Reportar estado de sus datos locales
+• Confirmar integridad de archivos críticos
+• Autorizar procedimiento de recuperación
+
+TIEMPO ESTIMADO DE RESOLUCIÓN:
+Sin su colaboración: 8-12 horas
+Con verificación inmediata: 2-3 horas
+
+El tiempo es CRÍTICO. Cada minuto de retraso extiende la ventana de recuperación.
+
+Centro de Operaciones NOC
+{company_context}
+Escalación 24/7: ext. 911
+noc.emergency@{company_context.lower().replace(' ', '')}.com""",
+        "call_to_action": "Verificar estado de datos en portal NOC inmediatamente",
+        "urgency_indicators": [
+            "Falla crítica P1",
+            "Pérdida total de conectividad",
+            "Tiempo crítico para recuperación",
+            "Escalación 24/7 mencionada"
+        ],
+        "personalization_hooks": [
+            f"Sistemas específicos de {department}",
+            f"Base de datos de {department}",
+            f"Controlador DCPROD-{department[:3].upper()}-02",
+            "Ticket con código departamental"
+        ],
+        "realistic_details": [
+            "Terminología NOC real",
+            "Ticket con formato corporativo",
+            "Severidad P1 (crítica)",
+            "Root cause analysis técnico",
+            "Centro de operaciones 24/7"
+        ]
+    }
+
+def create_executive_request_email(user_name, department, company_context, urgency):
+    """Crear email de solicitud ejecutiva ultra-realista"""
+    return {
+        "subject": f"Solicitud urgente de información - {department}",
+        "sender": f"direccion@{company_context.lower().replace(' ', '')}.com",
+        "sender_name": "Lic. Roberto Hernández - Director General",
+        "body": f"""Estimado/a {user_name},
+
+Espero te encuentres bien. Te contacto directamente debido a una situación que requiere atención inmediata.
+
+Hemos recibido una solicitud formal de información por parte de la Comisión Nacional Bancaria y de Valores (CNBV) relacionada con las operaciones del departamento de {department}.
+
+ANTECEDENTES:
+El día de ayer recibimos el oficio CNBV-2025-{department[:3].upper()}-847 solicitando información específica sobre:
+• Procedimientos operativos del área de {department}
+• Controles internos implementados
+• Documentación de procesos críticos
+• Registro de transacciones del último trimestre
+
+URGENCIA:
+Tenemos únicamente 48 horas para entregar la información completa. El incumplimiento podría resultar en:
+• Multa de hasta $50,000,000 pesos
+• Suspensión temporal de operaciones
+• Afectación a nuestra calificación regulatoria
+
+INFORMACIÓN REQUERIDA DE {department.upper()}:
+Necesito que prepares inmediatamente:
+1. Manual de procedimientos actualizado
+2. Matriz de autorización de {department}
+3. Reportes de actividad del Q4 2024
+4. Documentación de controles internos
+
+PROCESO:
+Para agilizar la entrega, he habilitado un portal seguro donde puedes cargar la documentación:
+[ENLACE EJECUTIVO]
+
+Por favor confirma recepción de este mensaje y proporciona un tiempo estimado para tener lista la información.
+
+Comprendo la urgencia que esto representa, pero es fundamental para mantener nuestro estatus regulatorio.
+
+Quedo atento a tu pronta respuesta.
+
+Saludos cordiales,
+
+Lic. Roberto Hernández Maldonado
+Director General
+{company_context}
+Teléfono directo: 55-1234-5678
+rhernandez@{company_context.lower().replace(' ', '')}.com
+
+"Construyendo el futuro juntos"
+
+CONFIDENCIAL: Este mensaje contiene información privilegiada y confidencial.""",
+        "call_to_action": "Preparar documentación del departamento y subirla al portal en 48 horas",
+        "urgency_indicators": [
+            "Solicitud formal CNBV",
+            "48 horas para entregar",
+            "Multa de $50,000,000 pesos",
+            "Suspensión de operaciones"
+        ],
+        "personalization_hooks": [
+            f"Solicitud específica sobre {department}",
+            f"Procedimientos operativos de {department}",
+            f"Matriz de autorización de {department}",
+            f"Oficio CNBV-2025-{department[:3].upper()}-847"
+        ],
+        "realistic_details": [
+            "Oficio con numeración oficial",
+            "Multa específica y realista",
+            "Terminología regulatoria correcta",
+            "Teléfono directo ejecutivo",
+            "Marca de confidencialidad"
         ]
     }
 
@@ -1781,13 +1945,218 @@ NOTA: Este es un proceso automatizado del sistema.""",
             "success_probability": 0.55,
             "reasoning": f"Contenido mejorado para {user_name} de {department} con autoridad corporativa",
             "potential_red_flags": ["Proceso automatizado mencionado", "Falta de detalles específicos"]
-        },
-        "variations": [
-            {
-                "variation_type": "Menos urgente",
-                "subject": f"Recordatorio: {scenario} - {department}",
-                "key_differences": "Tono menos urgente, más informativo"
-            }
+        }
+    }
+
+def create_tax_audit_email(user_name, department, company_context, urgency):
+    """Crear email de auditoría fiscal ultra-realista"""
+    return {
+        "subject": f"URGENTE: Requerimiento Fiscal - {company_context} - {user_name}",
+        "sender": "notificaciones@sat.gob.mx",
+        "sender_name": "Lic. María Elena Rodríguez - SAT",
+        "body": f"""Estimado/a {user_name},
+
+Por medio del presente, el Servicio de Administración Tributaria le notifica que se ha iniciado un procedimiento de revisión fiscal para {company_context}, identificada con RFC [RFC-EMPRESA].
+
+Como responsable del área de {department}, usted ha sido designado como el contacto principal para este proceso.
+
+INFORMACIÓN DEL PROCEDIMIENTO:
+• Número de expediente: SAT-2025-{company_context[:4].upper()}-847293
+• Tipo de revisión: Revisión de gabinete
+• Período a revisar: Ejercicio fiscal 2024
+• Fecha de inicio: {datetime.now().strftime('%d de %B de %Y')}
+• Responsable: {user_name} - {department}
+
+DOCUMENTACIÓN REQUERIDA (ENTREGA INMEDIATA):
+1. Estados financieros dictaminados 2024
+2. Declaraciones anuales y mensuales 2024
+3. Comprobantes fiscales de gastos mayores a $50,000
+4. Conciliación entre contabilidad y declaraciones
+5. Balanza de comprobación al 31/12/2024
+
+IMPORTANTE: El incumplimiento en la entrega de documentación dentro de las siguientes 24 HORAS resultará en:
+❌ Multa de $186,000 a $371,000 pesos
+❌ Clausura temporal de las instalaciones
+❌ Embargo precautorio de cuentas bancarias
+
+Para evitar estas sanciones, debe:
+1. Acceder al portal SAT empresarial: [ENLACE FALSO]
+2. Cargar la documentación en formato PDF
+3. Confirmar recepción respondiendo este correo
+
+Este procedimiento es de carácter OBLIGATORIO conforme al Artículo 42 del Código Fiscal de la Federación.
+
+DATOS DE CONTACTO:
+Lic. María Elena Rodríguez Sánchez
+Administración Local de Auditoría Fiscal
+Tel: 55-4738-2100 ext. 2847
+Email: mrodriguez.alf@sat.gob.mx
+
+Quedamos en espera de su pronta respuesta.
+
+Atentamente,
+SERVICIO DE ADMINISTRACIÓN TRIBUTARIA
+Administración Local de Auditoría Fiscal""",
+        "call_to_action": "Acceder al portal SAT y subir documentación en las próximas 24 horas",
+        "urgency_indicators": [
+            "Plazo de 24 horas",
+            "Multas específicas mencionadas",
+            "Número de expediente oficial",
+            "Clausura temporal amenazada"
+        ],
+        "personalization_hooks": [
+            f"Nombre específico: {user_name}",
+            f"Área de responsabilidad: {department}",
+            f"Empresa específica: {company_context}",
+            "Montos de multa específicos",
+            "RFC de empresa mencionado"
+        ],
+        "realistic_details": [
+            "Número de expediente convincente",
+            "Artículo legal específico",
+            "Nombre y cargo del funcionario",
+            "Teléfono oficial del SAT",
+            "Proceso fiscalmente correcto"
+        ]
+    }
+
+def create_security_update_email(user_name, department, company_context, urgency):
+    """Crear email de actualización de seguridad ultra-realista"""
+    return {
+        "subject": f"CRÍTICO: Brecha de seguridad detectada - Acción inmediata requerida",
+        "sender": f"seguridad@{company_context.lower().replace(' ', '')}.com",
+        "sender_name": "Ing. Carlos Mendoza - CISO",
+        "body": f"""Estimado/a {user_name},
+
+El equipo de Ciberseguridad ha detectado actividad sospechosa relacionada con credenciales del departamento de {department}.
+
+DETALLES DEL INCIDENTE:
+• ID del incidente: SEC-2025-{department[:3].upper()}-4729
+• Hora de detección: {datetime.now().strftime('%d/%m/%Y %H:%M')}
+• Tipo de amenaza: Acceso no autorizado potencial
+• Sistemas afectados: Servidores de {department}
+• Nivel de riesgo: CRÍTICO
+
+INDICADORES DE COMPROMISO:
+• Múltiples intentos de acceso desde IP: 185.243.115.47 (Rusia)
+• Intento de acceso a archivos confidenciales de {department}
+• Uso de credenciales que coinciden con el patrón: {user_name[:2]}***
+
+ACCIÓN INMEDIATA REQUERIDA:
+Por políticas de seguridad corporativa, debe verificar inmediatamente la integridad de su cuenta.
+
+PASOS A SEGUIR (URGENTE):
+1. Acceder al portal de verificación: [ENLACE MALICIOSO]
+2. Confirmar su identidad con credenciales actuales
+3. Actualizar contraseña siguiendo políticas corporativas
+4. Responder confirmando que completó el proceso
+
+ADVERTENCIA: Si no completa la verificación en las próximas 2 HORAS:
+• Su cuenta será suspendida automáticamente
+• Se bloqueará el acceso a sistemas de {department}
+• Se escalará el incidente a Dirección General
+
+Este es un protocolo de seguridad automatizado activado por nuestro SOC (Security Operations Center).
+
+Para consultas urgentes:
+Ing. Carlos Mendoza - CISO
+Tel: ext. 1337
+Email: cmendoza.ciso@{company_context.lower().replace(' ', '')}.com
+
+Equipo de Ciberseguridad
+{company_context}""",
+        "call_to_action": "Verificar cuenta en portal de seguridad en las próximas 2 horas",
+        "urgency_indicators": [
+            "Incidente de seguridad activo",
+            "IP de atacante específica",
+            "Deadline de 2 horas",
+            "Suspensión automática amenazada"
+        ],
+        "personalization_hooks": [
+            f"Credenciales parciales: {user_name[:2]}***",
+            f"Sistemas específicos de {department}",
+            f"Archivos de {department} mencionados",
+            "ID de incidente personalizado"
+        ],
+        "realistic_details": [
+            "ID de incidente técnico convincente",
+            "IP de atacante real",
+            "Terminología de ciberseguridad correcta",
+            "Escalación a dirección mencionada",
+            "SOC y procesos reales"
+        ]
+    }
+
+def create_compliance_email(user_name, department, company_context, urgency):
+    """Crear email de compliance ultra-realista"""
+    return {
+        "subject": f"Acción requerida: Actualización de compliance {department} - {company_context}",
+        "sender": f"compliance@{company_context.lower().replace(' ', '')}.com",
+        "sender_name": "Lic. Ana Patricia Vásquez - Chief Compliance Officer",
+        "body": f"""Estimado/a {user_name},
+
+En seguimiento a la auditoría externa de KPMG y como parte del proceso de certificación ISO 27001, requerimos su colaboración inmediata.
+
+MARCO REGULATORIO:
+• Ley General de Protección de Datos Personales (LGPDP)
+• NOM-151-SCFI-2016 (Esquemas de ciberseguridad)
+• SOX Section 404 (para reportes financieros)
+• Lineamientos CNBV (sector financiero)
+
+ACCIONES REQUERIDAS PARA {department.upper()}:
+1. Actualización de matriz de riesgos departamental
+2. Certificación de controles de acceso
+3. Validación de procedimientos de {department}
+4. Confirmación de capacitación en protección de datos
+
+INFORMACIÓN ESPECÍFICA SOLICITADA:
+• Lista actualizada de usuarios con acceso a sistemas críticos
+• Inventario de datos personales bajo custodia de {department}
+• Bitácora de accesos del último trimestre
+• Certificación de destrucción segura de documentos
+
+TIMELINE CRÍTICO:
+La auditoría externa revisará específicamente el área de {department} el próximo VIERNES.
+
+El incumplimiento puede resultar en:
+• Observaciones en el dictamen de auditoría
+• Multas INAI hasta por $327,000,000 pesos
+• Pérdida de certificaciones ISO
+• Impacto en calificación crediticia corporativa
+
+PROCESO DE CUMPLIMIENTO:
+1. Acceder al portal de compliance: [ENLACE MALICIOSO]
+2. Completar cuestionario específico de {department}
+3. Cargar evidencias documentales
+4. Obtener certificado digital de cumplimiento
+
+Su colaboración es FUNDAMENTAL para mantener nuestras certificaciones.
+
+Cualquier duda, favor de contactarme directamente.
+
+Lic. Ana Patricia Vásquez Morales
+Chief Compliance Officer
+{company_context}
+Tel: ext. 1100 | avazquez.cco@{company_context.lower().replace(' ', '')}.com""",
+        "call_to_action": "Completar portal de compliance antes del viernes",
+        "urgency_indicators": [
+            "Auditoría externa el viernes",
+            "Multas INAI específicas",
+            "Certificaciones en riesgo",
+            "Impacto crediticio mencionado"
+        ],
+        "personalization_hooks": [
+            f"Revisión específica de {department}",
+            f"Procedimientos de {department}",
+            f"Datos bajo custodia de {department}",
+            "Usuario con acceso a sistemas críticos"
+        ],
+        "realistic_details": [
+            "Leyes y normas específicas reales",
+            "Montos de multa INAI reales",
+            "Proceso de auditoría convincente",
+            "Certificaciones mencionadas",
+            "Terminología legal correcta"
         ]
     }
 
@@ -1818,13 +2187,13 @@ def display_existing_content():
         st.markdown("---")
         st.markdown("### 📧 Contenido Generado Anteriormente")
         
-        for content in st.session_state.generated_content[-3:]:
+        for i, content in enumerate(st.session_state.generated_content[-3:]):
             with st.expander(f"📩 {content['content_type']} para {content['target_user']} - {content['timestamp']}", expanded=False):
                 display_content_summary(content)
 
 def display_content_summary(content_data):
     """Mostrar resumen del contenido"""
-    content = content_data.get('content', {})
+    content = content_data['content']
     main_content = content.get('content', {})
     
     st.markdown(f"**Asunto:** {main_content.get('subject', 'N/A')}")
@@ -1891,3 +2260,560 @@ def display_generated_content(content_data):
     
     # Contenido del email/mensaje
     st.markdown("### 📨 Contenido del Mensaje")
+    
+    # Header del contenido
+    sender_name = main_content.get('sender_name', 'N/A')
+    sender_email = main_content.get('sender', 'N/A')
+    subject = main_content.get('subject', 'N/A')
+    
+    st.markdown(f"""
+    <div class="email-header">
+        <strong>De:</strong> {sender_name} &lt;{sender_email}&gt;<br>
+        <strong>Para:</strong> {target_user}<br>
+        <strong>Asunto:</strong> {subject}<br>
+        <strong>Fecha:</strong> {datetime.now().strftime('%d %b %Y, %H:%M')}<br>
+        <strong>Tipo:</strong> {content_type} | <strong>Escenario:</strong> {scenario}
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Cuerpo del mensaje
+    body_text = main_content.get('body', 'Sin contenido')
+    if isinstance(body_text, str):
+        body_text = body_text.replace('\n', '<br>')
+    else:
+        body_text = str(body_text).replace('\n', '<br>')
+    
+    st.markdown(f"""
+    <div class="email-container">
+        {body_text}
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Call to action
+    call_to_action = main_content.get('call_to_action')
+    if call_to_action:
+        st.markdown(f"""
+        <div style="background: #1e40af; color: white; padding: 1rem; border-radius: 6px; text-align: center; margin: 1rem 0;">
+            <strong>🎯 Acción Solicitada:</strong> {call_to_action}
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Análisis detallado
+    display_detailed_analysis(analysis, prediction, content)
+    
+    # Acciones
+    display_content_actions(content_data)
+
+def display_detailed_analysis(analysis, prediction, content):
+    """Mostrar análisis detallado del contenido"""
+    
+    st.markdown("### 🧠 Análisis Psicológico Detallado")
+    
+    # Vulnerabilidades explotadas
+    if analysis.get('target_vulnerabilities'):
+        st.markdown("**🎯 Vulnerabilidades Explotadas:**")
+        for vuln in analysis['target_vulnerabilities']:
+            st.markdown(f"• {vuln}")
+    
+    # Técnicas de persuasión
+    if analysis.get('persuasion_techniques'):
+        st.markdown("**🎭 Técnicas de Persuasión:**")
+        for technique in analysis['persuasion_techniques']:
+            if isinstance(technique, dict):
+                st.markdown(f"""
+                <div style="border-left: 4px solid #3b82f6; padding: 0.5rem; margin: 0.5rem 0; background: #eff6ff;">
+                    <strong>{technique.get('technique', 'Técnica')}</strong><br>
+                    <em>Aplicación:</em> {technique.get('application', 'No especificada')}<br>
+                    <em>Efectividad:</em> {technique.get('effectiveness_reason', 'No especificada')}
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.markdown(f"• {technique}")
+    
+    # Elementos específicos
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if analysis.get('emotional_triggers'):
+            st.markdown("**💭 Triggers Emocionales:**")
+            for trigger in analysis['emotional_triggers']:
+                st.markdown(f"• {trigger}")
+    
+    with col2:
+        if analysis.get('authority_elements'):
+            st.markdown("**👔 Elementos de Autoridad:**")
+            for element in analysis['authority_elements']:
+                st.markdown(f"• {element}")
+    
+    # Ganchos de personalización
+    if content.get('content', {}).get('personalization_hooks'):
+        st.markdown("**🎣 Ganchos de Personalización:**")
+        for hook in content['content']['personalization_hooks']:
+            st.markdown(f"• {hook}")
+    
+    # Análisis de riesgo
+    if prediction.get('potential_red_flags'):
+        st.markdown("**⚠️ Posibles Señales de Alerta:**")
+        for flag in prediction['potential_red_flags']:
+            st.markdown(f"• {flag}")
+    
+    # Razonamiento
+    if prediction.get('reasoning'):
+        st.markdown("**🔍 Análisis de Efectividad:**")
+        st.info(prediction['reasoning'])
+    
+    # Variaciones
+    if content.get('variations'):
+        st.markdown("### 🔄 Variaciones Alternativas")
+        for var in content['variations']:
+            st.markdown(f"""
+            <div style="border-left: 4px solid #059669; padding: 1rem; margin: 0.5rem 0; background: #f0fdf4;">
+                <strong>{var.get('variation_type', 'Variación')}</strong><br>
+                <em>Asunto:</em> {var.get('subject', 'No especificado')}<br>
+                <em>Diferencias:</em> {var.get('key_differences', 'No especificadas')}
+            </div>
+            """, unsafe_allow_html=True)
+    
+    # Acciones
+    display_content_actions(content_data)
+
+def display_content_actions(content_data):
+    """Mostrar acciones para el contenido"""
+    st.markdown("### 🔧 Acciones")
+    
+    # Verificar estructura de datos
+    if not content_data or not isinstance(content_data, dict):
+        st.error("No se pueden mostrar acciones: datos inválidos")
+        return
+    
+    # Obtener datos de manera segura
+    target_user = content_data.get('target_user', 'Usuario')
+    timestamp = content_data.get('timestamp', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    
+    # Crear ID único para evitar conflictos
+    safe_timestamp = timestamp.replace(':', '').replace('-', '').replace(' ', '_')
+    content_id = f"{target_user}_{safe_timestamp}".replace(' ', '_')
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        if st.button("📋 Copiar Contenido", key=f"copy_content_{content_id}"):
+            # Crear texto para copiar
+            main_content = content_data.get('content', {}).get('content', {})
+            copy_text = f"""
+Asunto: {main_content.get('subject', 'N/A')}
+De: {main_content.get('sender_name', 'N/A')} <{main_content.get('sender', 'N/A')}>
+Para: {target_user}
+
+{main_content.get('body', 'Sin contenido')}
+
+---
+Acción solicitada: {main_content.get('call_to_action', 'N/A')}
+Efectividad predicha: {content_data.get('content', {}).get('effectiveness_prediction', {}).get('overall_score', 0):.0%}
+Generado: {timestamp}
+            """.strip()
+            
+            st.text_area("Contenido para copiar:", copy_text, height=150, key=f"textarea_{content_id}")
+    
+    with col2:
+        if st.button("🔄 Regenerar", key=f"regen_{content_id}"):
+            st.info("Para regenerar, use el formulario de generación nuevamente con diferentes parámetros.")
+    
+    with col3:
+        # Crear datos para exportar
+        export_data = {
+            "contenido": content_data,
+            "analisis_completo": content_data.get('content', {}),
+            "timestamp": timestamp,
+            "efectividad": content_data.get('content', {}).get('effectiveness_prediction', {})
+        }
+        
+        safe_filename = f"contenido_analisis_{target_user}_{safe_timestamp}.json".replace(' ', '_')
+        
+        st.download_button(
+            label="💾 Exportar Análisis",
+            data=json.dumps(export_data, indent=2, ensure_ascii=False),
+            file_name=safe_filename,
+            mime="application/json",
+            key=f"export_{content_id}"
+        )
+
+def load_demo_data():
+    """Cargar datos de ejemplo completos para demostración"""
+    
+    # Limpiar datos existentes
+    st.session_state.completed_analyses = []
+    st.session_state.user_profiles = []
+    st.session_state.generated_content = []
+    
+    # Análisis OSINT de ejemplo
+    demo_osint = {
+        'type': 'Análisis OSINT (DEMO)',
+        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'company': 'TechCorp Demo',
+        'summary': {
+            "risk_score": 0.78,
+            "risk_level": "ALTO",
+            "vulnerabilities": [
+                {
+                    "type": "Exposición de Empleados en RRSS",
+                    "severity": "ALTA",
+                    "description": "45% del personal técnico comparte información sobre proyectos en LinkedIn",
+                    "evidence": "Perfiles públicos con detalles de stack tecnológico",
+                    "impact": "Posible ingeniería social dirigida y reconocimiento técnico"
+                },
+                {
+                    "type": "Subdominios Vulnerables",
+                    "severity": "MEDIA",
+                    "description": "5 subdominios con servicios desactualizados detectados",
+                    "evidence": "Escaneo automatizado reveló versiones antiguas",
+                    "impact": "Posible explotación de vulnerabilidades conocidas"
+                },
+                {
+                    "type": "Información Técnica Filtrada",
+                    "severity": "MEDIA",
+                    "description": "Stack tecnológico visible en ofertas de trabajo",
+                    "evidence": "Ofertas laborales con detalles específicos",
+                    "impact": "Facilita ataques dirigidos a infraestructura"
+                }
+            ],
+            "attack_vectors": [
+                {
+                    "vector": "Spear Phishing dirigido",
+                    "probability": 0.85,
+                    "impact": "Acceso a sistemas críticos mediante ingeniería social dirigida",
+                    "method": "Emails personalizados usando información pública de empleados"
+                },
+                {
+                    "vector": "Ingeniería social telefónica",
+                    "probability": 0.65,
+                    "impact": "Obtención de credenciales mediante llamadas dirigidas",
+                    "method": "Llamadas haciéndose pasar por proveedores conocidos"
+                }
+            ],
+            "employee_exposure": [
+                {
+                    "employee": "Juan Pérez - CTO",
+                    "risk_level": "ALTO",
+                    "exposure_type": "LinkedIn, GitHub, Twitter",
+                    "sensitive_info": "Proyectos actuales, stack tecnológico, estructura del equipo"
+                },
+                {
+                    "employee": "María González - DevOps Lead",
+                    "risk_level": "MEDIO",
+                    "exposure_type": "GitHub, conferencias técnicas",
+                    "sensitive_info": "Herramientas de infraestructura, procesos de deployment"
+                }
+            ],
+            "technical_findings": [
+                {
+                    "finding": "Subdominios con servicios expuestos",
+                    "risk": "MEDIO",
+                    "recommendation": "Auditoría y hardening de servicios públicos"
+                },
+                {
+                    "finding": "Información de empleados en conferencias",
+                    "risk": "BAJO",
+                    "recommendation": "Políticas de disclosure en eventos públicos"
+                }
+            ],
+            "industry_specific_risks": [
+                "Regulaciones GDPR para datos de clientes",
+                "Ataques dirigidos a empresas de tecnología",
+                "Competencia industrial puede usar información expuesta"
+            ],
+            "recommendations": [
+                {
+                    "priority": "ALTA",
+                    "category": "Concienciación",
+                    "action": "Implementar programa de entrenamiento en ingeniería social",
+                    "timeline": "30 días"
+                },
+                {
+                    "priority": "ALTA",
+                    "category": "Infraestructura",
+                    "action": "Auditar y asegurar todos los subdominios expuestos",
+                    "timeline": "15 días"
+                },
+                {
+                    "priority": "MEDIA",
+                    "category": "Políticas",
+                    "action": "Establecer políticas de publicación en redes sociales",
+                    "timeline": "60 días"
+                }
+            ]
+        }
+    }
+    
+    st.session_state.completed_analyses.append(demo_osint)
+    st.session_state.current_osint = demo_osint['summary']
+    
+    # Perfil de usuario de ejemplo
+    demo_profile = {
+        'user_name': 'Ana García (Demo)',
+        'department': 'Finanzas',
+        'analysis': {
+            "psychological_profile": {
+                "personality_summary": "Ana García es una profesional de Finanzas orientada a resultados con alta conciencia del cumplimiento. Muestra patrones de comportamiento colaborativo pero con tendencia a confiar en figuras de autoridad.",
+                "core_traits": ["Orientada a resultados", "Detallista", "Confiada", "Responsable"],
+                "behavioral_patterns": [
+                    "Responde rápidamente a solicitudes de autoridades",
+                    "Sigue procedimientos establecidos meticulosamente",
+                    "Comparte información cuando percibe legitimidad oficial"
+                ],
+                "decision_making_style": "Analítica pero susceptible a presión temporal de autoridades",
+                "stress_responses": [
+                    "Busca aprobación de superiores cuando hay presión",
+                    "Acelera decisiones cuando se menciona cumplimiento regulatorio"
+                ],
+                "technology_relationship": "Cómoda con herramientas financieras, cautelosa con nuevas tecnologías",
+                "social_behavior": "Profesional y reservada, pero colaborativa en temas de trabajo"
+            },
+            "vulnerability_assessment": {
+                "overall_risk_score": 0.72,
+                "risk_factors": [
+                    {
+                        "factor": "Autoridad percibida",
+                        "score": 0.85,
+                        "description": "Alta susceptibilidad a figuras de autoridad financiera y regulatoria",
+                        "mitigation": "Entrenamiento en verificación de identidad de autoridades"
+                    },
+                    {
+                        "factor": "Presión de cumplimiento",
+                        "score": 0.78,
+                        "description": "Respuesta acelerada ante menciones de auditorías o compliance",
+                        "mitigation": "Protocolos específicos para solicitudes de auditoría"
+                    }
+                ],
+                "psychological_vulnerabilities": [
+                    {
+                        "type": "Autoridad regulatoria",
+                        "severity": "ALTA",
+                        "description": "Alta susceptibilidad a figuras que se presentan como autoridades fiscales o regulatorias",
+                        "triggers": ["Auditorías", "Compliance", "Procesos fiscales", "Reportes financieros"],
+                        "exploitation_method": "Emails simulando comunicaciones oficiales de entidades regulatorias"
+                    },
+                    {
+                        "type": "Presión temporal en finanzas",
+                        "severity": "MEDIA",
+                        "description": "Vulnerabilidad a tácticas que crean urgencia en procesos financieros",
+                        "triggers": ["Deadlines fiscales", "Cierres contables", "Reportes urgentes"],
+                        "exploitation_method": "Crear escenarios de urgencia falsa relacionados con procesos financieros"
+                    }
+                ]
+            },
+            "attack_simulation": {
+                "most_effective_vectors": [
+                    {
+                        "technique": "Phishing de autoridad fiscal",
+                        "effectiveness_score": 0.82,
+                        "approach": "Emails simulando auditorías urgentes de autoridades fiscales con documentación aparentemente oficial",
+                        "psychological_basis": "Miedo a problemas legales/fiscales combinado con respeto a autoridad",
+                        "execution_example": "Email de 'Hacienda' solicitando verificación urgente de datos fiscales de la empresa"
+                    },
+                    {
+                        "technique": "Ingeniería social de compliance",
+                        "effectiveness_score": 0.75,
+                        "approach": "Llamadas telefónicas haciéndose pasar por auditores externos solicitando información",
+                        "psychological_basis": "Responsabilidad profesional y temor a incumplimiento",
+                        "execution_example": "Llamada de 'auditor externo' solicitando confirmación de datos para proceso de compliance"
+                    }
+                ],
+                "social_engineering_angles": [
+                    {
+                        "angle": "Autoridad fiscal/regulatoria",
+                        "success_probability": 0.8,
+                        "description": "Aprovechamiento de respeto natural a autoridades financieras y fiscales"
+                    },
+                    {
+                        "angle": "Urgencia en procesos contables",
+                        "success_probability": 0.65,
+                        "description": "Creación de escenarios de urgencia en procesos familiares de finanzas"
+                    }
+                ]
+            },
+            "personalized_training": {
+                "priority_areas": [
+                    {
+                        "area": "Verificación de autoridad fiscal",
+                        "priority": "ALTA",
+                        "reason": "Alta susceptibilidad a figuras de autoridad financiera identificada en el perfil",
+                        "training_approach": "Simulacros específicos con verificación de identidad de autoridades fiscales"
+                    },
+                    {
+                        "area": "Manejo de presión temporal en finanzas",
+                        "priority": "MEDIA",
+                        "reason": "Tendencia a acelerar decisiones bajo presión de compliance",
+                        "training_approach": "Protocolos de pausa y verificación en situaciones urgentes"
+                    }
+                ],
+                "recommended_simulations": [
+                    {
+                        "scenario": "Phishing de auditoría fiscal urgente",
+                        "frequency": "Mensual",
+                        "difficulty": "Alta",
+                        "focus": "Verificación de autoridades antes de proporcionar información"
+                    },
+                    {
+                        "scenario": "Llamada de auditor externo falso",
+                        "frequency": "Bimensual",
+                        "difficulty": "Media",
+                        "focus": "Protocolos de verificación telefónica"
+                    }
+                ]
+            }
+        },
+        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    }
+    
+    st.session_state.user_profiles.append(demo_profile)
+    st.session_state.current_profile = demo_profile
+    
+    # Contenido generado de ejemplo
+    demo_content = {
+        'target_user': 'Ana García (Demo)',
+        'content_type': 'Email de phishing',
+        'scenario': 'Auditoría fiscal',
+        'content': {
+            "content": {
+                "subject": "URGENTE: Verificación Fiscal Requerida - Finanzas",
+                "sender": "verificacion@hacienda-digital.gob.mx",
+                "sender_name": "Servicio de Administración Tributaria",
+                "body": """Estimada Ana García,
+
+Como responsable del área de Finanzas de TechCorp Demo, hemos identificado una discrepancia en su declaración fiscal del último trimestre que requiere verificación inmediata.
+
+De acuerdo con nuestros registros, su empresa presenta irregularidades en:
+- Declaración de IVA del Q3 2024
+- Retenciones de nómina no reportadas
+- Deducciones no comprobadas por $125,000 MXN
+
+Por disposiciones fiscales vigentes, debe proporcionar la siguiente documentación ANTES DE LAS 18:00 HRS DEL DÍA DE HOY:
+
+1. Estados financieros actualizados
+2. Comprobantes de retenciones del último trimestre  
+3. Confirmación de datos bancarios corporativos
+4. Autorización para revisión de cuentas
+
+El incumplimiento de este requerimiento puede resultar en:
+❌ Multas por $500,000 - $2,000,000 MXN
+❌ Congelamiento de cuentas bancarias corporativas
+❌ Proceso administrativo de ejecución
+
+Para evitar sanciones, complete inmediatamente el formulario de verificación en el enlace oficial:
+🔗 [VERIFICAR DATOS FISCALES - SISTEMA SAT]
+
+Número de expediente: SAT-2024-TechCorp-7845
+Fecha límite: HOY 18:00 hrs
+Responsable: Ana García - Área Finanzas
+
+Saludos oficiales,
+Lic. Roberto Martínez Sánchez
+Subdirector de Fiscalización
+Servicio de Administración Tributaria
+Tel: 55-4738-2100 ext. 2847""",
+                "call_to_action": "Completar verificación fiscal antes de las 18:00 hrs del día de hoy",
+                "urgency_indicators": [
+                    "Fecha límite específica (18:00 hrs)",
+                    "Amenaza de multas económicas concretas",
+                    "Número de expediente oficial",
+                    "Consecuencias graves mencionadas"
+                ],
+                "personalization_hooks": [
+                    "Nombre específico: Ana García",
+                    "Área específica: Finanzas", 
+                    "Empresa específica: TechCorp Demo",
+                    "Montos específicos de irregularidades",
+                    "Responsabilidad directa mencionada"
+                ]
+            },
+            "psychological_analysis": {
+                "target_vulnerabilities": [
+                    "Autoridad regulatoria",
+                    "Presión temporal en finanzas",
+                    "Responsabilidad profesional"
+                ],
+                "persuasion_techniques": [
+                    {
+                        "technique": "Autoridad gubernamental",
+                        "application": "Remitente presenta como Servicio de Administración Tributaria oficial",
+                        "effectiveness_reason": "Ana responde automáticamente a autoridades fiscales por su rol en Finanzas"
+                    },
+                    {
+                        "technique": "Miedo específico a sanciones",
+                        "application": "Menciona multas concretas de $500K-$2M y congelamiento de cuentas",
+                        "effectiveness_reason": "Como responsable de Finanzas, estos escenarios son su peor pesadilla profesional"
+                    },
+                    {
+                        "technique": "Urgencia temporal crítica",
+                        "application": "Deadline específico del mismo día a las 18:00 hrs",
+                        "effectiveness_reason": "Presión temporal reduce tiempo de análisis crítico en procesos fiscales"
+                    },
+                    {
+                        "technique": "Personalización detallada",
+                        "application": "Incluye nombre, área, empresa y montos específicos de irregularidades",
+                        "effectiveness_reason": "Alto nivel de personalización aumenta percepción de legitimidad"
+                    }
+                ],
+                "emotional_triggers": [
+                    "Miedo a sanciones económicas devastadoras",
+                    "Pánico por responsabilidad profesional",
+                    "Estrés por deadline inmediato",
+                    "Temor a consecuencias legales para la empresa"
+                ],
+                "authority_elements": [
+                    "Logo y nombre oficial del SAT",
+                    "Número de expediente oficial",
+                    "Nombre y cargo específico del funcionario",
+                    "Teléfono de contacto oficial",
+                    "Lenguaje formal gubernamental"
+                ],
+                "social_proof_elements": [
+                    "Procedimiento aparentemente estándar",
+                    "Referencias a disposiciones fiscales",
+                    "Proceso administrativo formal",
+                    "Sistema oficial de verificación"
+                ]
+            },
+            "effectiveness_prediction": {
+                "overall_score": 0.88,
+                "score_breakdown": {
+                    "personalization": 0.95,
+                    "authority": 0.92,
+                    "urgency": 0.85,
+                    "emotional_impact": 0.88
+                },
+                "success_probability": 0.82,
+                "reasoning": "Contenido extremadamente personalizado que explota las vulnerabilidades principales identificadas en el perfil de Ana García: autoridad fiscal, presión temporal y responsabilidad profesional. La combinación de amenazas económicas específicas, deadline crítico y personalización detallada crea un escenario de alta efectividad.",
+                "potential_red_flags": [
+                    "Email externo solicitando datos sensibles",
+                    "Urgencia artificial puede generar sospecha",
+                    "Solicitud de datos bancarios por email",
+                    "Falta de proceso oficial de verificación presencial"
+                ]
+            },
+            "variations": [
+                {
+                    "variation_type": "Menos agresivo",
+                    "subject": "Notificación de Revisión Fiscal - TechCorp Demo",
+                    "key_differences": "Elimina urgencia artificial, reduce amenazas, tono más informativo"
+                },
+                {
+                    "variation_type": "Más técnico",
+                    "subject": "Requerimiento Art. 42 CFF - Verificación Documental",
+                    "key_differences": "Lenguaje más técnico fiscal, referencias específicas a artículos legales"
+                }
+            ]
+        },
+        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    }
+    
+    st.session_state.generated_content.append(demo_content)
+    st.session_state.current_content = demo_content
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:
+        st.error(f"Error en la aplicación: {str(e)}")
+        st.info("Intente recargar la página o use el modo demo.")
