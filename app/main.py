@@ -2371,8 +2371,8 @@ if __name__ == "__main__":
         main()
     except Exception as e:
         st.error(f"Error en la aplicación: {str(e)}")
-        st.info("Intente recargar la página o use el modo demo."), '', content)
-        content = content.strip()
+        st.info("Intente recargar la página o use el modo demo.")
+        content = content.strip()  # o aplicar regex si es necesario
         
         # Si sigue vacío después de limpiar, retornar None
         if not content:
