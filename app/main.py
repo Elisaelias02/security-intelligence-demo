@@ -1890,4 +1890,4 @@ def display_generated_content(content_data):
             st.metric("Impacto Emocional", f"{breakdown.get('emotional_impact', 0):.0%}")
     
     # Contenido del email/mensaje
-    st.markdown("### 📨 Contenido del Mensaje
+    st.markdown("### 📨 Contenido del Mensaje)
