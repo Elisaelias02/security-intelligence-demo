@@ -82,57 +82,76 @@ def load_css():
     """, unsafe_allow_html=True)
 
 def main():
-    load_css()
-    
-    # Inicializar estado de la sesión
-    if 'demo_mode' not in st.session_state:
-        st.session_state.demo_mode = False
-    if 'completed_analyses' not in st.session_state:
-        st.session_state.completed_analyses = []
-    if 'user_profiles' not in st.session_state:
-        st.session_state.user_profiles = []
-    if 'generated_content' not in st.session_state:
-        st.session_state.generated_content = []
-    
-    # Header principal
-    st.markdown("""
-    <div class="main-header">
-        <h1>Sistema de Análisis de Vulnerabilidades</h1>
-        <p>Plataforma Profesional de Evaluación de Seguridad</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Configurar agente de IA
-    setup_ai_agent()
-    
-    # Menú principal
-    tab1, tab2, tab3, tab4 = st.tabs([
-        "Panel Principal",
-        "Análisis OSINT", 
-        "Perfilado de Usuario",
-        "Generación de Contenido"
-    ])
-    
-    with tab1:
-        show_dashboard()
-    
-    with tab2:
-        osint_analysis()
-    
-    with tab3:
-        user_profiling()
-    
-    with tab4:
-        content_generation()
-    
-    # Footer con información adicional
-    st.markdown("---")
-    st.markdown("""
-    <div style="text-align: center; color: #6b7280; font-size: 0.9rem; padding: 1rem;">
-        <p><strong>Sistema de Análisis de Vulnerabilidades</strong> - Plataforma educativa para evaluación de seguridad</p>
-        <p>⚠️ <strong>Uso Ético:</strong> Esta herramienta debe usarse únicamente para fines educativos y de concientización sobre seguridad.</p>
-    </div>
-    """, unsafe_allow_html=True)
+    """Función principal mejorada con manejo de errores"""
+    try:
+        load_css()
+        
+        # Inicializar estado de la sesión
+        if 'demo_mode' not in st.session_state:
+            st.session_state.demo_mode = False
+        if 'completed_analyses' not in st.session_state:
+            st.session_state.completed_analyses = []
+        if 'user_profiles' not in st.session_state:
+            st.session_state.user_profiles = []
+        if 'generated_content' not in st.session_state:
+            st.session_state.generated_content = []
+        
+        # Header principal
+        st.markdown("""
+        <div class="main-header">
+            <h1>Sistema de Análisis de Vulnerabilidades</h1>
+            <p>Plataforma Profesional de Evaluación de Seguridad</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Configurar agente de IA
+        setup_ai_agent()
+        
+        # Menú principal
+        tab1, tab2, tab3, tab4 = st.tabs([
+            "Panel Principal",
+            "Análisis OSINT", 
+            "Perfilado de Usuario",
+            "Generación de Contenido"
+        ])
+        
+        with tab1:
+            show_dashboard()
+        
+        with tab2:
+            osint_analysis()
+        
+        with tab3:
+            user_profiling()
+        
+        with tab4:
+            content_generation()
+        
+        # Footer con información adicional
+        st.markdown("---")
+        st.markdown("""
+        <div style="text-align: center; color: #6b7280; font-size: 0.9rem; padding: 1rem;">
+            <p><strong>Sistema de Análisis de Vulnerabilidades</strong> - Plataforma educativa para evaluación de seguridad</p>
+            <p>⚠️ <strong>Uso Ético:</strong> Esta herramienta debe usarse únicamente para fines educativos y de concientización sobre seguridad.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    except Exception as e:
+        st.error(f"❌ Error en la aplicación: {str(e)}")
+        st.info("💡 **Soluciones sugeridas:**")
+        st.markdown("""
+        1. **Recargar la página** (F5 o Ctrl+R)
+        2. **Usar el Modo Demo** en el sidebar
+        3. **Verificar la API key** si está usando Claude
+        4. **Limpiar caché** del navegador
+        """)
+        
+        # Botón de emergencia para reiniciar
+        if st.button("🔄 Reiniciar Aplicación", key="emergency_restart"):
+            # Limpiar todo el estado
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
+            st.rerun()
 
 def setup_ai_agent():
     """Configurar agente de IA REAL"""
@@ -311,7 +330,7 @@ def show_dashboard():
         if st.button("📊 Cargar Análisis de Ejemplo", key="load_demo_dashboard"):
             load_demo_data()
             st.success("✅ Datos de ejemplo cargados")
-            st.experimental_rerun()
+            st.rerun()
 
 def show_setup_instructions():
     """Mostrar instrucciones de configuración"""
@@ -535,6 +554,26 @@ Basa tu análisis en la información específica proporcionada. Si no hay inform
             
         except Exception as e:
             st.error(f"❌ Error en análisis: {str(e)}")
+            # Intentar con modelo de respaldo
+            if "not_found" in str(e).lower() or "404" in str(e):
+                st.info("🔄 Intentando con modelo de respaldo...")
+                try:
+                    response = st.session_state.anthropic_client.messages.create(
+                        model="claude-3-5-haiku-20241022",
+                        max_tokens=4000,
+                        temperature=0.3,
+                        messages=[{"role": "user", "content": prompt}]
+                    )
+                    content = response.content[0].text.strip()
+                    analysis_result = safe_json_parse(content) or generate_fallback_osint(company_name, industry, employee_info)
+                    save_osint_result(analysis_result, company_name)
+                    st.success("✅ Análisis OSINT completado (modelo de respaldo)")
+                    display_osint_results(analysis_result)
+                    return
+                except Exception:
+                    pass
+            
+            # Usar fallback final
             fallback_result = generate_fallback_osint(company_name, industry, employee_info)
             save_osint_result(fallback_result, company_name)
             display_osint_results(fallback_result)
@@ -843,7 +882,7 @@ def user_profiling():
     display_existing_profiles()
     
     # Mostrar último perfil si existe
-    if 'current_profile' in st.session_state:
+    if 'current_profile' in st.session_state and st.session_state.current_profile:
         st.markdown("---")
         st.markdown("### 🧠 Último Perfil Generado")
         display_profile_results(st.session_state.current_profile)
@@ -982,6 +1021,26 @@ Basa todo el análisis en las métricas específicas proporcionadas.
             
         except Exception as e:
             st.error(f"❌ Error generando perfil: {str(e)}")
+            # Intentar con modelo de respaldo
+            if "not_found" in str(e).lower() or "404" in str(e):
+                st.info("🔄 Intentando con modelo de respaldo...")
+                try:
+                    response = st.session_state.anthropic_client.messages.create(
+                        model="claude-3-5-haiku-20241022",
+                        max_tokens=4000,
+                        temperature=0.3,
+                        messages=[{"role": "user", "content": prompt}]
+                    )
+                    content = response.content[0].text.strip()
+                    profile_result = safe_json_parse(content) or generate_fallback_profile(user_name, department, seniority)
+                    save_profile_result(profile_result, user_name, department)
+                    st.success("✅ Perfil psicológico generado (modelo de respaldo)")
+                    display_profile_results(profile_result)
+                    return
+                except Exception:
+                    pass
+            
+            # Usar fallback final
             fallback_result = generate_fallback_profile(user_name, department, seniority)
             save_profile_result(fallback_result, user_name, department)
             display_profile_results(fallback_result)
@@ -1111,6 +1170,10 @@ def save_profile_result(result, user_name, department):
         'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     }
     
+    # Inicializar lista si no existe
+    if 'user_profiles' not in st.session_state:
+        st.session_state.user_profiles = []
+    
     st.session_state.user_profiles.append(profile_data)
     st.session_state.current_profile = profile_data
 
@@ -1139,9 +1202,21 @@ def display_profile_summary(profile):
 def display_profile_results(profile_data):
     """Mostrar resultados del perfilado mejorado"""
     
-    analysis = profile_data['analysis']
+    # Verificar estructura de datos
+    if not profile_data or not isinstance(profile_data, dict):
+        st.error("Error: Estructura de perfil inválida")
+        return
+    
+    analysis = profile_data.get('analysis', {})
+    user_name = profile_data.get('user_name', 'Usuario Desconocido')
+    department = profile_data.get('department', 'Departamento')
+    timestamp = profile_data.get('timestamp', 'Fecha desconocida')
     
     st.markdown("### Resultados del Perfilado")
+    
+    # Información básica
+    st.markdown(f"**Usuario:** {user_name} | **Departamento:** {department}")
+    st.markdown(f"**Análisis realizado:** {timestamp}")
     
     # Score de riesgo
     risk_score = analysis.get('vulnerability_assessment', {}).get('overall_risk_score', 0)
@@ -1361,7 +1436,7 @@ def content_generation():
     display_existing_content()
     
     # Mostrar último contenido si existe
-    if 'current_content' in st.session_state:
+    if 'current_content' in st.session_state and st.session_state.current_content:
         st.markdown("---")
         st.markdown("### 🎯 Último Contenido Generado")
         display_generated_content(st.session_state.current_content)
@@ -1480,13 +1555,33 @@ Usa TODA la información del perfil psicológico para crear contenido extremadam
             
             save_content_result(content_result, user_data, content_type, scenario)
             st.success("✅ Contenido ultra-personalizado generado")
-            display_generated_content(content_result)
+            display_generated_content(st.session_state.current_content)
             
         except Exception as e:
             st.error(f"❌ Error generando contenido: {str(e)}")
+            # Intentar con modelo de respaldo
+            if "not_found" in str(e).lower() or "404" in str(e):
+                st.info("🔄 Intentando con modelo de respaldo...")
+                try:
+                    response = st.session_state.anthropic_client.messages.create(
+                        model="claude-3-5-haiku-20241022",
+                        max_tokens=4000,
+                        temperature=0.4,
+                        messages=[{"role": "user", "content": prompt}]
+                    )
+                    content = response.content[0].text.strip()
+                    content_result = safe_json_parse(content) or generate_fallback_content(user_data, content_type, scenario, urgency)
+                    save_content_result(content_result, user_data, content_type, scenario)
+                    st.success("✅ Contenido generado (modelo de respaldo)")
+                    display_generated_content(st.session_state.current_content)
+                    return
+                except Exception:
+                    pass
+            
+            # Usar fallback final
             fallback_result = generate_fallback_content(user_data, content_type, scenario, urgency)
             save_content_result(fallback_result, user_data, content_type, scenario)
-            display_generated_content(fallback_result)
+            display_generated_content(st.session_state.current_content)
 
 def generate_demo_content(target_profile, content_type, scenario, urgency, 
                          sender_type, company_context, personalization_level):
@@ -1633,42 +1728,71 @@ Saludos urgentes,
 
 def generate_fallback_content(user_data, content_type, scenario, urgency):
     """Generar contenido de fallback básico"""
+    
+    user_name = user_data.get('user_name', 'Usuario')
+    department = user_data.get('department', 'Departamento')
+    
     return {
         "content": {
             "subject": f"{urgency.upper()}: {scenario} - Acción Requerida",
             "sender": "admin@empresa.com",
             "sender_name": "Administración",
-            "body": f"Estimado/a {user_data['user_name']},\n\nDebe completar {scenario.lower()} de manera {urgency.lower()}.\n\nSaludos,\nEquipo de Administración",
+            "body": f"Estimado/a {user_name},\n\nDebe completar {scenario.lower()} de manera {urgency.lower()}.\n\nSu departamento de {department} requiere esta acción.\n\nSaludos,\nEquipo de Administración",
             "call_to_action": f"Completar {scenario.lower()}",
             "urgency_indicators": ["Solicitud administrativa"],
-            "personalization_hooks": [f"Nombre: {user_data['user_name']}"]
+            "personalization_hooks": [f"Nombre: {user_name}", f"Departamento: {department}"]
         },
         "psychological_analysis": {
             "target_vulnerabilities": ["Autoridad básica"],
-            "persuasion_techniques": [{"technique": "Autoridad", "application": "Remitente administrativo", "effectiveness_reason": "Básico"}],
+            "persuasion_techniques": [
+                {
+                    "technique": "Autoridad", 
+                    "application": "Remitente administrativo", 
+                    "effectiveness_reason": "Respuesta básica a autoridad"
+                }
+            ],
             "emotional_triggers": ["Cumplimiento"],
             "authority_elements": ["Administración"],
             "social_proof_elements": ["Proceso estándar"]
         },
         "effectiveness_prediction": {
             "overall_score": 0.4,
-            "score_breakdown": {"personalization": 0.3, "authority": 0.5, "urgency": 0.4, "emotional_impact": 0.4},
+            "score_breakdown": {
+                "personalization": 0.3, 
+                "authority": 0.5, 
+                "urgency": 0.4, 
+                "emotional_impact": 0.4
+            },
             "success_probability": 0.3,
-            "reasoning": "Contenido básico sin personalización específica",
-            "potential_red_flags": ["Genérico", "Falta de detalles específicos"]
+            "reasoning": f"Contenido básico para {user_name} de {department} sin personalización específica",
+            "potential_red_flags": ["Contenido genérico", "Falta de detalles específicos"]
         },
-        "variations": []
+        "variations": [
+            {
+                "variation_type": "Más formal",
+                "subject": f"Notificación oficial: {scenario}",
+                "key_differences": "Tono más formal y oficial"
+            }
+        ]
     }
 
 def save_content_result(result, user_data, content_type, scenario):
     """Guardar resultado del contenido generado"""
+    
+    # Obtener nombre de usuario de manera segura
+    user_name = user_data.get('user_name', 'Usuario Desconocido') if isinstance(user_data, dict) else str(user_data)
+    
     content_data = {
-        'target_user': user_data['user_name'],
+        'target_user': user_name,
         'content_type': content_type,
         'scenario': scenario,
         'content': result,
         'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     }
+    
+    # Inicializar lista si no existe
+    if 'generated_content' not in st.session_state:
+        st.session_state.generated_content = []
     
     st.session_state.generated_content.append(content_data)
     st.session_state.current_content = content_data
@@ -1699,12 +1823,28 @@ def display_content_summary(content_data):
 def display_generated_content(content_data):
     """Mostrar contenido generado de manera mejorada"""
     
-    content = content_data['content']
+    # Verificar estructura de datos
+    if not content_data or not isinstance(content_data, dict):
+        st.error("Error: Estructura de datos inválida")
+        return
+    
+    # Obtener datos de manera segura
+    target_user = content_data.get('target_user', 'Usuario Desconocido')
+    content_type = content_data.get('content_type', 'Contenido')
+    scenario = content_data.get('scenario', 'Escenario')
+    timestamp = content_data.get('timestamp', 'Fecha desconocida')
+    
+    content = content_data.get('content', {})
     main_content = content.get('content', {})
     analysis = content.get('psychological_analysis', {})
     prediction = content.get('effectiveness_prediction', {})
     
     st.markdown("### 📧 Contenido Personalizado Generado")
+    
+    # Información básica
+    st.markdown(f"**Usuario objetivo:** {target_user}")
+    st.markdown(f"**Tipo:** {content_type} | **Escenario:** {scenario}")
+    st.markdown(f"**Generado:** {timestamp}")
     
     # Predicción de efectividad
     overall_score = prediction.get('overall_score', 0)
@@ -1738,19 +1878,26 @@ def display_generated_content(content_data):
     st.markdown("### 📨 Contenido del Mensaje")
     
     # Header del contenido
+    sender_name = main_content.get('sender_name', 'N/A')
+    sender_email = main_content.get('sender', 'N/A')
+    subject = main_content.get('subject', 'N/A')
+    
     st.markdown(f"""
     <div class="email-header">
-        <strong>De:</strong> {main_content.get('sender_name', 'N/A')} &lt;{main_content.get('sender', 'N/A')}&gt;<br>
-        <strong>Para:</strong> {content_data['target_user']}<br>
-        <strong>Asunto:</strong> {main_content.get('subject', 'N/A')}<br>
+        <strong>De:</strong> {sender_name} &lt;{sender_email}&gt;<br>
+        <strong>Para:</strong> {target_user}<br>
+        <strong>Asunto:</strong> {subject}<br>
         <strong>Fecha:</strong> {datetime.now().strftime('%d %b %Y, %H:%M')}<br>
-        <strong>Tipo:</strong> {content_data['content_type']} | <strong>Escenario:</strong> {content_data['scenario']}
+        <strong>Tipo:</strong> {content_type} | <strong>Escenario:</strong> {scenario}
     </div>
     """, unsafe_allow_html=True)
     
     # Cuerpo del mensaje
     body_text = main_content.get('body', 'Sin contenido')
-    body_text = body_text.replace('\n', '<br>')
+    if isinstance(body_text, str):
+        body_text = body_text.replace('\n', '<br>')
+    else:
+        body_text = str(body_text).replace('\n', '<br>')
     
     st.markdown(f"""
     <div class="email-container">
@@ -1759,15 +1906,19 @@ def display_generated_content(content_data):
     """, unsafe_allow_html=True)
     
     # Call to action
-    if main_content.get('call_to_action'):
+    call_to_action = main_content.get('call_to_action')
+    if call_to_action:
         st.markdown(f"""
         <div style="background: #1e40af; color: white; padding: 1rem; border-radius: 6px; text-align: center; margin: 1rem 0;">
-            <strong>🎯 Acción Solicitada:</strong> {main_content['call_to_action']}
+            <strong>🎯 Acción Solicitada:</strong> {call_to_action}
         </div>
         """, unsafe_allow_html=True)
     
     # Análisis detallado
     display_detailed_analysis(analysis, prediction, content)
+    
+    # Acciones
+    display_content_actions(content_data)
 
 def display_detailed_analysis(analysis, prediction, content):
     """Mostrar análisis detallado del contenido"""
@@ -1846,26 +1997,36 @@ def display_content_actions(content_data):
     """Mostrar acciones para el contenido"""
     st.markdown("### 🔧 Acciones")
     
+    # Verificar estructura de datos
+    if not content_data or not isinstance(content_data, dict):
+        st.error("No se pueden mostrar acciones: datos inválidos")
+        return
+    
+    # Obtener datos de manera segura
+    target_user = content_data.get('target_user', 'Usuario')
+    timestamp = content_data.get('timestamp', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    
     # Crear ID único para evitar conflictos
-    content_id = f"{content_data['target_user']}_{content_data['timestamp'].replace(':', '').replace('-', '').replace(' ', '')}"
+    safe_timestamp = timestamp.replace(':', '').replace('-', '').replace(' ', '_')
+    content_id = f"{target_user}_{safe_timestamp}".replace(' ', '_')
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
         if st.button("📋 Copiar Contenido", key=f"copy_content_{content_id}"):
             # Crear texto para copiar
-            main_content = content_data['content'].get('content', {})
+            main_content = content_data.get('content', {}).get('content', {})
             copy_text = f"""
 Asunto: {main_content.get('subject', 'N/A')}
 De: {main_content.get('sender_name', 'N/A')} <{main_content.get('sender', 'N/A')}>
-Para: {content_data['target_user']}
+Para: {target_user}
 
 {main_content.get('body', 'Sin contenido')}
 
 ---
 Acción solicitada: {main_content.get('call_to_action', 'N/A')}
-Efectividad predicha: {content_data['content'].get('effectiveness_prediction', {}).get('overall_score', 0):.0%}
-Generado: {content_data['timestamp']}
+Efectividad predicha: {content_data.get('content', {}).get('effectiveness_prediction', {}).get('overall_score', 0):.0%}
+Generado: {timestamp}
             """.strip()
             
             st.text_area("Contenido para copiar:", copy_text, height=150, key=f"textarea_{content_id}")
@@ -1878,15 +2039,17 @@ Generado: {content_data['timestamp']}
         # Crear datos para exportar
         export_data = {
             "contenido": content_data,
-            "analisis_completo": content_data['content'],
-            "timestamp": content_data['timestamp'],
-            "efectividad": content_data['content'].get('effectiveness_prediction', {})
+            "analisis_completo": content_data.get('content', {}),
+            "timestamp": timestamp,
+            "efectividad": content_data.get('content', {}).get('effectiveness_prediction', {})
         }
+        
+        safe_filename = f"contenido_analisis_{target_user}_{safe_timestamp}.json".replace(' ', '_')
         
         st.download_button(
             label="💾 Exportar Análisis",
             data=json.dumps(export_data, indent=2, ensure_ascii=False),
-            file_name=f"contenido_analisis_{content_data['target_user']}_{content_data['timestamp'].replace(':', '-').replace(' ', '_')}.json",
+            file_name=safe_filename,
             mime="application/json",
             key=f"export_{content_id}"
         )
