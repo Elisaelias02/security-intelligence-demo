@@ -2325,13 +2325,13 @@ def display_generated_content(content_data):
         </div>
         """, unsafe_allow_html=True)
     
-    # Análisis detallado
-    display_detailed_analysis(analysis, prediction, content)
+    # Análisis detallado (ahora recibe content_data)
+    display_detailed_analysis(analysis, prediction, content, content_data)
     
-    # Acciones
+    # Acciones finales
     display_content_actions(content_data)
 
-def display_detailed_analysis(analysis, prediction, content):
+def display_detailed_analysis(analysis, prediction, content, content_data):
     """Mostrar análisis detallado del contenido"""
     
     st.markdown("### 🧠 Análisis Psicológico Detallado")
@@ -2401,7 +2401,7 @@ def display_detailed_analysis(analysis, prediction, content):
             </div>
             """, unsafe_allow_html=True)
     
-    # Acciones
+    # Acciones también aquí 👇
     display_content_actions(content_data)
 
 def display_content_actions(content_data):
@@ -2463,6 +2463,8 @@ Generado: {timestamp}
             file_name=safe_filename,
             mime="application/json",
             key=f"export_{content_id}"
+        )
+
         )
 
 def load_demo_data():
