@@ -331,7 +331,6 @@ def show_setup_instructions():
     
     1. **Cuenta en Anthropic Console**: [console.anthropic.com](https://console.anthropic.com)
     2. **API Key de Anthropic**: Genera una clave en la consola  
-    3. **Créditos disponibles**: $5 gratis para cuentas nuevas
     
     **💡 Tip**: Usa el botón **"🧪 Modo Demo"** en el sidebar para probar la interfaz sin API key.
     """)
