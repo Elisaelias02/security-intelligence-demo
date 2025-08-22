@@ -2206,6 +2206,7 @@ def save_content_result(result, user_data, content_type, scenario):
     
     st.session_state.generated_content.append(content_data)
     st.session_state.current_content = content_data
+    return content_data
 
 def display_existing_content():
     """Mostrar contenido existente"""
