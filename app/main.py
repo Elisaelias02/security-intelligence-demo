@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import time
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import sys
 import os
 import re
@@ -199,10 +199,27 @@ def setup_ai_agent():
         elif api_key:
             setup_anthropic_client(api_key)
         
-        display_system_info()
+        st.markdown("### 🎯 Sistema Analisis de Inteligencia")
+        if 'anthropic_client' in st.session_state or st.session_state.get('demo_mode', False):
+            mode_text = "(DEMO)" if st.session_state.get('demo_mode', False) else ""
+            st.markdown(f"""
+            ✅ **Análisis OSINT ultra-detallado** {mode_text}  
+            ✅ **Perfilado psicológico avanzado** {mode_text}  
+            ✅ **Emails de phishing ULTRA-REALISTAS** {mode_text}  
+            ✅ **Evaluación de vectores de ataque** {mode_text}  
+            ✅ **Contenido indistinguible de emails reales** {mode_text}
+            """)
+        else:
+            st.markdown("""
+            ❌ Análisis OSINT automatizado  
+            ❌ Perfilado psicológico avanzado  
+            ❌ Generación de contenido adaptativo  
+            ❌ Evaluación de vectores de ataque  
+            ❌ Análisis contextual profundo
+            """)
 
 def test_anthropic_connection(api_key):
-    """Probar conexión con Anthropic"""
+    """Probar conexión con Anthropic usando modelo que funciona"""
     if not api_key.startswith('sk-ant-'):
         st.error("❌ Formato de API key incorrecto. Debe empezar con 'sk-ant-'")
         return
@@ -210,47 +227,19 @@ def test_anthropic_connection(api_key):
     try:
         with st.spinner("Probando conexión..."):
             client = anthropic.Anthropic(api_key=api_key)
+            # Usar directamente el modelo que funciona
             response = client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model="claude-3-5-haiku-20241022",
                 max_tokens=20,
                 messages=[{"role": "user", "content": "Responde solo: 'Conexión exitosa'"}]
             )
             st.session_state.anthropic_client = client
-            st.session_state.claude_model = "claude-3-5-sonnet-20241022"
+            st.session_state.claude_model = "claude-3-5-haiku-20241022"
             st.session_state.demo_mode = False
             st.success(f"✅ {response.content[0].text}")
     except Exception as e:
-        error_msg = str(e).lower()
-        if "not_found" in error_msg or "404" in error_msg:
-            try_fallback_models(api_key)
-        else:
-            st.error(f"❌ Error de conexión: {str(e)}")
-
-def try_fallback_models(api_key):
-    """Intentar modelos de respaldo"""
-    models = [
-        "claude-3-5-haiku-20241022",
-        "claude-3-opus-20240229",
-        "claude-3-sonnet-20240229"
-    ]
-    
-    for model in models:
-        try:
-            client = anthropic.Anthropic(api_key=api_key)
-            response = client.messages.create(
-                model=model,
-                max_tokens=20,
-                messages=[{"role": "user", "content": "test"}]
-            )
-            st.session_state.anthropic_client = client
-            st.session_state.claude_model = model
-            st.session_state.demo_mode = False
-            st.success(f"✅ Conectado con {model}")
-            return
-        except Exception:
-            continue
-    
-    st.error("❌ No se pudo conectar con ningún modelo disponible")
+        st.error(f"❌ Error de conexión: {str(e)}")
+        st.info("💡 Intente con el modo demo mientras tanto")
 
 def setup_anthropic_client(api_key):
     """Configurar cliente sin probar inmediatamente"""
@@ -258,7 +247,7 @@ def setup_anthropic_client(api_key):
         try:
             client = anthropic.Anthropic(api_key=api_key)
             st.session_state.anthropic_client = client
-            st.session_state.claude_model = "claude-3-5-sonnet-20241022"
+            st.session_state.claude_model = "claude-3-5-haiku-20241022"  # Usar modelo que funciona
             st.session_state.demo_mode = False
             st.info("🔑 API Key configurada. Use 'Probar API' para verificar.")
         except Exception as e:
@@ -530,7 +519,7 @@ Basa tu análisis en la información específica proporcionada. Si no hay inform
         
         try:
             response = st.session_state.anthropic_client.messages.create(
-                model=st.session_state.get('claude_model', 'claude-3-5-sonnet-20241022'),
+                model="claude-3-5-haiku-20241022",  # Usar modelo que funciona
                 max_tokens=4000,
                 temperature=0.3,
                 messages=[{"role": "user", "content": prompt}]
@@ -554,26 +543,7 @@ Basa tu análisis en la información específica proporcionada. Si no hay inform
             
         except Exception as e:
             st.error(f"❌ Error en análisis: {str(e)}")
-            # Intentar con modelo de respaldo
-            if "not_found" in str(e).lower() or "404" in str(e):
-                st.info("🔄 Intentando con modelo de respaldo...")
-                try:
-                    response = st.session_state.anthropic_client.messages.create(
-                        model="claude-3-5-haiku-20241022",
-                        max_tokens=4000,
-                        temperature=0.3,
-                        messages=[{"role": "user", "content": prompt}]
-                    )
-                    content = response.content[0].text.strip()
-                    analysis_result = safe_json_parse(content) or generate_fallback_osint(company_name, industry, employee_info)
-                    save_osint_result(analysis_result, company_name)
-                    st.success("✅ Análisis OSINT completado (modelo de respaldo)")
-                    display_osint_results(analysis_result)
-                    return
-                except Exception:
-                    pass
-            
-            # Usar fallback final
+            # Usar fallback inmediatamente
             fallback_result = generate_fallback_osint(company_name, industry, employee_info)
             save_osint_result(fallback_result, company_name)
             display_osint_results(fallback_result)
@@ -998,7 +968,7 @@ Basa todo el análisis en las métricas específicas proporcionadas.
         
         try:
             response = st.session_state.anthropic_client.messages.create(
-                model=st.session_state.get('claude_model', 'claude-3-5-sonnet-20241022'),
+                model="claude-3-5-haiku-20241022",  # Usar modelo que funciona
                 max_tokens=4000,
                 temperature=0.3,
                 messages=[{"role": "user", "content": prompt}]
@@ -1017,33 +987,14 @@ Basa todo el análisis en las métricas específicas proporcionadas.
             
             save_profile_result(profile_result, user_name, department)
             st.success("✅ Perfil psicológico generado")
-            display_profile_results(profile_result)
+            display_profile_results(st.session_state.current_profile)
             
         except Exception as e:
             st.error(f"❌ Error generando perfil: {str(e)}")
-            # Intentar con modelo de respaldo
-            if "not_found" in str(e).lower() or "404" in str(e):
-                st.info("🔄 Intentando con modelo de respaldo...")
-                try:
-                    response = st.session_state.anthropic_client.messages.create(
-                        model="claude-3-5-haiku-20241022",
-                        max_tokens=4000,
-                        temperature=0.3,
-                        messages=[{"role": "user", "content": prompt}]
-                    )
-                    content = response.content[0].text.strip()
-                    profile_result = safe_json_parse(content) or generate_fallback_profile(user_name, department, seniority)
-                    save_profile_result(profile_result, user_name, department)
-                    st.success("✅ Perfil psicológico generado (modelo de respaldo)")
-                    display_profile_results(profile_result)
-                    return
-                except Exception:
-                    pass
-            
-            # Usar fallback final
+            # Usar fallback inmediatamente
             fallback_result = generate_fallback_profile(user_name, department, seniority)
             save_profile_result(fallback_result, user_name, department)
-            display_profile_results(fallback_result)
+            display_profile_results(st.session_state.current_profile)
 
 def generate_demo_profile(user_name, department, seniority, social_activity, 
                          security_awareness, info_sharing, personality_traits):
@@ -1726,53 +1677,478 @@ Saludos urgentes,
         ]
     }
 
+def create_account_verification_email(user_name, department, company_context, urgency):
+    """Crear email de verificación de cuenta ultra-realista"""
+    return {
+        "subject": f"Verificación de cuenta requerida - {user_name} ({department})",
+        "sender": f"noreply@{company_context.lower().replace(' ', '')}.com",
+        "sender_name": "Sistema de Seguridad Corporativa",
+        "body": f"""Estimado/a {user_name},
+
+Por políticas de seguridad actualizadas de {company_context}, es necesario verificar periódicamente las cuentas corporativas.
+
+Su cuenta corporativa requiere re-verificación debido a:
+• Implementación de nuevas políticas de acceso
+• Migración al nuevo sistema de autenticación
+• Cumplimiento con certificación ISO 27001
+
+DATOS DE LA CUENTA:
+• Usuario: {user_name.lower().replace(' ', '.')}@{company_context.lower().replace(' ', '')}.com
+• Departamento: {department}
+• Último acceso: {datetime.now().strftime('%d/%m/%Y %H:%M')}
+• Nivel de acceso: Usuario departamental
+
+Para mantener el acceso a sus sistemas, complete la verificación en:
+[ENLACE DE VERIFICACIÓN]
+
+El proceso toma aproximadamente 3 minutos e incluye:
+1. Confirmación de datos personales
+2. Actualización de información de contacto
+3. Verificación de accesos departamentales
+4. Confirmación de políticas de seguridad
+
+IMPORTANTE: Las cuentas no verificadas serán deshabilitadas automáticamente el {(datetime.now() + timedelta(days=3)).strftime('%d/%m/%Y')}.
+
+Este es un mensaje automático del Sistema de Gestión de Identidades.
+No responda a este correo.
+
+Soporte Técnico: soporte@{company_context.lower().replace(' ', '')}.com
+Mesa de ayuda: ext. 4357""",
+        "call_to_action": "Verificar cuenta en el enlace proporcionado",
+        "urgency_indicators": [
+            "Deshabilitación automática en 3 días",
+            "Último acceso mostrado",
+            "Proceso de migración de sistema"
+        ],
+        "personalization_hooks": [
+            f"Email corporativo: {user_name.lower().replace(' ', '.')}@{company_context.lower().replace(' ', '')}.com",
+            f"Nivel de acceso específico",
+            f"Departamento mencionado: {department}"
+        ],
+        "realistic_details": [
+            "Sistema de gestión de identidades",
+            "Certificación ISO mencionada",
+            "Mesa de ayuda con extensión",
+            "Políticas de seguridad corporativa"
+        ]
+    }
+
+def create_tech_emergency_email(user_name, department, company_context, urgency):
+    """Crear email de emergencia técnica ultra-realista"""
+    return {
+        "subject": f"EMERGENCIA: Falla crítica en sistemas de {department} - Acción inmediata",
+        "sender": f"ops@{company_context.lower().replace(' ', '')}.com",
+        "sender_name": "Centro de Operaciones NOC",
+        "body": f"""ALERTA CRÍTICA - {user_name}
+
+El Centro de Operaciones de Red ha detectado una falla crítica que afecta directamente al departamento de {department}.
+
+DETALLES DEL INCIDENTE:
+• Ticket: INC-2025-{department[:3].upper()}-{datetime.now().strftime('%m%d')}-001
+• Severidad: CRÍTICA (P1)
+• Inicio: {datetime.now().strftime('%d/%m/%Y %H:%M')}
+• Sistemas afectados: Servidores de aplicaciones {department}
+• Impacto: Pérdida total de conectividad para {department}
+
+SÍNTOMAS REPORTADOS:
+✗ Base de datos de {department} inaccesible
+✗ Aplicaciones críticas fuera de línea
+✗ Pérdida de sincronización de archivos compartidos
+✗ Error en respaldo automático nocturno
+
+ROOT CAUSE ANALYSIS:
+Falla en controlador de dominio DCPROD-{department[:3].upper()}-02
+El servicio de autenticación está presentando errores intermitentes.
+
+ACCIÓN INMEDIATA REQUERIDA:
+Para acelerar la resolución y evitar pérdida de datos, necesitamos que verifique inmediatamente:
+
+1. Su acceso actual a sistemas críticos
+2. Estado de documentos importantes en curso
+3. Integridad de archivos locales vs servidor
+
+PROCESO DE RECUPERACIÓN:
+Acceda al portal de emergencia NOC: [ENLACE MALICIOSO]
+Use sus credenciales corporativas para:
+• Reportar estado de sus datos locales
+• Confirmar integridad de archivos críticos
+• Autorizar procedimiento de recuperación
+
+TIEMPO ESTIMADO DE RESOLUCIÓN:
+Sin su colaboración: 8-12 horas
+Con verificación inmediata: 2-3 horas
+
+El tiempo es CRÍTICO. Cada minuto de retraso extiende la ventana de recuperación.
+
+Centro de Operaciones NOC
+{company_context}
+Escalación 24/7: ext. 911
+noc.emergency@{company_context.lower().replace(' ', '')}.com""",
+        "call_to_action": "Verificar estado de datos en portal NOC inmediatamente",
+        "urgency_indicators": [
+            "Falla crítica P1",
+            "Pérdida total de conectividad",
+            "Tiempo crítico para recuperación",
+            "Escalación 24/7 mencionada"
+        ],
+        "personalization_hooks": [
+            f"Sistemas específicos de {department}",
+            f"Base de datos de {department}",
+            f"Controlador DCPROD-{department[:3].upper()}-02",
+            "Ticket con código departamental"
+        ],
+        "realistic_details": [
+            "Terminología NOC real",
+            "Ticket con formato corporativo",
+            "Severidad P1 (crítica)",
+            "Root cause analysis técnico",
+            "Centro de operaciones 24/7"
+        ]
+    }
+
+def create_executive_request_email(user_name, department, company_context, urgency):
+    """Crear email de solicitud ejecutiva ultra-realista"""
+    return {
+        "subject": f"Solicitud urgente de información - {department}",
+        "sender": f"direccion@{company_context.lower().replace(' ', '')}.com",
+        "sender_name": "Lic. Roberto Hernández - Director General",
+        "body": f"""Estimado/a {user_name},
+
+Espero te encuentres bien. Te contacto directamente debido a una situación que requiere atención inmediata.
+
+Hemos recibido una solicitud formal de información por parte de la Comisión Nacional Bancaria y de Valores (CNBV) relacionada con las operaciones del departamento de {department}.
+
+ANTECEDENTES:
+El día de ayer recibimos el oficio CNBV-2025-{department[:3].upper()}-847 solicitando información específica sobre:
+• Procedimientos operativos del área de {department}
+• Controles internos implementados
+• Documentación de procesos críticos
+• Registro de transacciones del último trimestre
+
+URGENCIA:
+Tenemos únicamente 48 horas para entregar la información completa. El incumplimiento podría resultar en:
+• Multa de hasta $50,000,000 pesos
+• Suspensión temporal de operaciones
+• Afectación a nuestra calificación regulatoria
+
+INFORMACIÓN REQUERIDA DE {department.upper()}:
+Necesito que prepares inmediatamente:
+1. Manual de procedimientos actualizado
+2. Matriz de autorización de {department}
+3. Reportes de actividad del Q4 2024
+4. Documentación de controles internos
+
+PROCESO:
+Para agilizar la entrega, he habilitado un portal seguro donde puedes cargar la documentación:
+[ENLACE EJECUTIVO]
+
+Por favor confirma recepción de este mensaje y proporciona un tiempo estimado para tener lista la información.
+
+Comprendo la urgencia que esto representa, pero es fundamental para mantener nuestro estatus regulatorio.
+
+Quedo atento a tu pronta respuesta.
+
+Saludos cordiales,
+
+Lic. Roberto Hernández Maldonado
+Director General
+{company_context}
+Teléfono directo: 55-1234-5678
+rhernandez@{company_context.lower().replace(' ', '')}.com
+
+"Construyendo el futuro juntos"
+
+CONFIDENCIAL: Este mensaje contiene información privilegiada y confidencial.""",
+        "call_to_action": "Preparar documentación del departamento y subirla al portal en 48 horas",
+        "urgency_indicators": [
+            "Solicitud formal CNBV",
+            "48 horas para entregar",
+            "Multa de $50,000,000 pesos",
+            "Suspensión de operaciones"
+        ],
+        "personalization_hooks": [
+            f"Solicitud específica sobre {department}",
+            f"Procedimientos operativos de {department}",
+            f"Matriz de autorización de {department}",
+            f"Oficio CNBV-2025-{department[:3].upper()}-847"
+        ],
+        "realistic_details": [
+            "Oficio con numeración oficial",
+            "Multa específica y realista",
+            "Terminología regulatoria correcta",
+            "Teléfono directo ejecutivo",
+            "Marca de confidencialidad"
+        ]
+    }
+
 def generate_fallback_content(user_data, content_type, scenario, urgency):
-    """Generar contenido de fallback básico"""
+    """Mantener función de fallback original mejorada"""
     
     user_name = user_data.get('user_name', 'Usuario')
     department = user_data.get('department', 'Departamento')
     
     return {
         "content": {
-            "subject": f"{urgency.upper()}: {scenario} - Acción Requerida",
+            "subject": f"{urgency.upper()}: {scenario} - Acción Requerida para {department}",
             "sender": "admin@empresa.com",
-            "sender_name": "Administración",
-            "body": f"Estimado/a {user_name},\n\nDebe completar {scenario.lower()} de manera {urgency.lower()}.\n\nSu departamento de {department} requiere esta acción.\n\nSaludos,\nEquipo de Administración",
-            "call_to_action": f"Completar {scenario.lower()}",
-            "urgency_indicators": ["Solicitud administrativa"],
-            "personalization_hooks": [f"Nombre: {user_name}", f"Departamento: {department}"]
+            "sender_name": "Administración Corporativa",
+            "body": f"""Estimado/a {user_name},
+
+Como responsable del área de {department}, necesitamos su atención inmediata para el proceso de {scenario.lower()}.
+
+Este procedimiento es obligatorio para todo el personal de {department} y debe completarse con carácter {urgency.lower()}.
+
+Pasos a seguir:
+1. Acceder al sistema corporativo
+2. Completar el proceso de {scenario.lower()}
+3. Confirmar finalización
+
+El incumplimiento puede afectar las operaciones normales de {department}.
+
+Saludos cordiales,
+Equipo de Administración Corporativa
+
+NOTA: Este es un proceso automatizado del sistema.""",
+            "call_to_action": f"Completar {scenario.lower()} inmediatamente",
+            "urgency_indicators": [f"Proceso {urgency.lower()}", f"Obligatorio para {department}"],
+            "personalization_hooks": [f"Responsable de {department}", f"Personal de {department}"]
         },
         "psychological_analysis": {
-            "target_vulnerabilities": ["Autoridad básica"],
+            "target_vulnerabilities": ["Autoridad corporativa", "Responsabilidad profesional"],
             "persuasion_techniques": [
                 {
-                    "technique": "Autoridad", 
-                    "application": "Remitente administrativo", 
-                    "effectiveness_reason": "Respuesta básica a autoridad"
+                    "technique": "Autoridad administrativa", 
+                    "application": "Remitente corporativo oficial", 
+                    "effectiveness_reason": f"Personal de {department} responde a administración"
                 }
             ],
-            "emotional_triggers": ["Cumplimiento"],
-            "authority_elements": ["Administración"],
-            "social_proof_elements": ["Proceso estándar"]
+            "emotional_triggers": ["Responsabilidad profesional", "Impacto en operaciones"],
+            "authority_elements": ["Administración Corporativa", "Proceso obligatorio"],
+            "social_proof_elements": [f"Procedimiento para todo {department}"]
         },
         "effectiveness_prediction": {
-            "overall_score": 0.4,
+            "overall_score": 0.65,
             "score_breakdown": {
-                "personalization": 0.3, 
-                "authority": 0.5, 
-                "urgency": 0.4, 
-                "emotional_impact": 0.4
+                "personalization": 0.7, 
+                "authority": 0.8, 
+                "urgency": 0.6, 
+                "emotional_impact": 0.5
             },
-            "success_probability": 0.3,
-            "reasoning": f"Contenido básico para {user_name} de {department} sin personalización específica",
-            "potential_red_flags": ["Contenido genérico", "Falta de detalles específicos"]
-        },
-        "variations": [
-            {
-                "variation_type": "Más formal",
-                "subject": f"Notificación oficial: {scenario}",
-                "key_differences": "Tono más formal y oficial"
-            }
+            "success_probability": 0.55,
+            "reasoning": f"Contenido mejorado para {user_name} de {department} con autoridad corporativa",
+            "potential_red_flags": ["Proceso automatizado mencionado", "Falta de detalles específicos"]
+        }
+    }
+
+def create_tax_audit_email(user_name, department, company_context, urgency):
+    """Crear email de auditoría fiscal ultra-realista"""
+    return {
+        "subject": f"URGENTE: Requerimiento Fiscal - {company_context} - {user_name}",
+        "sender": "notificaciones@sat.gob.mx",
+        "sender_name": "Lic. María Elena Rodríguez - SAT",
+        "body": f"""Estimado/a {user_name},
+
+Por medio del presente, el Servicio de Administración Tributaria le notifica que se ha iniciado un procedimiento de revisión fiscal para {company_context}, identificada con RFC [RFC-EMPRESA].
+
+Como responsable del área de {department}, usted ha sido designado como el contacto principal para este proceso.
+
+INFORMACIÓN DEL PROCEDIMIENTO:
+• Número de expediente: SAT-2025-{company_context[:4].upper()}-847293
+• Tipo de revisión: Revisión de gabinete
+• Período a revisar: Ejercicio fiscal 2024
+• Fecha de inicio: {datetime.now().strftime('%d de %B de %Y')}
+• Responsable: {user_name} - {department}
+
+DOCUMENTACIÓN REQUERIDA (ENTREGA INMEDIATA):
+1. Estados financieros dictaminados 2024
+2. Declaraciones anuales y mensuales 2024
+3. Comprobantes fiscales de gastos mayores a $50,000
+4. Conciliación entre contabilidad y declaraciones
+5. Balanza de comprobación al 31/12/2024
+
+IMPORTANTE: El incumplimiento en la entrega de documentación dentro de las siguientes 24 HORAS resultará en:
+❌ Multa de $186,000 a $371,000 pesos
+❌ Clausura temporal de las instalaciones
+❌ Embargo precautorio de cuentas bancarias
+
+Para evitar estas sanciones, debe:
+1. Acceder al portal SAT empresarial: [ENLACE FALSO]
+2. Cargar la documentación en formato PDF
+3. Confirmar recepción respondiendo este correo
+
+Este procedimiento es de carácter OBLIGATORIO conforme al Artículo 42 del Código Fiscal de la Federación.
+
+DATOS DE CONTACTO:
+Lic. María Elena Rodríguez Sánchez
+Administración Local de Auditoría Fiscal
+Tel: 55-4738-2100 ext. 2847
+Email: mrodriguez.alf@sat.gob.mx
+
+Quedamos en espera de su pronta respuesta.
+
+Atentamente,
+SERVICIO DE ADMINISTRACIÓN TRIBUTARIA
+Administración Local de Auditoría Fiscal""",
+        "call_to_action": "Acceder al portal SAT y subir documentación en las próximas 24 horas",
+        "urgency_indicators": [
+            "Plazo de 24 horas",
+            "Multas específicas mencionadas",
+            "Número de expediente oficial",
+            "Clausura temporal amenazada"
+        ],
+        "personalization_hooks": [
+            f"Nombre específico: {user_name}",
+            f"Área de responsabilidad: {department}",
+            f"Empresa específica: {company_context}",
+            "Montos de multa específicos",
+            "RFC de empresa mencionado"
+        ],
+        "realistic_details": [
+            "Número de expediente convincente",
+            "Artículo legal específico",
+            "Nombre y cargo del funcionario",
+            "Teléfono oficial del SAT",
+            "Proceso fiscalmente correcto"
+        ]
+    }
+
+def create_security_update_email(user_name, department, company_context, urgency):
+    """Crear email de actualización de seguridad ultra-realista"""
+    return {
+        "subject": f"CRÍTICO: Brecha de seguridad detectada - Acción inmediata requerida",
+        "sender": f"seguridad@{company_context.lower().replace(' ', '')}.com",
+        "sender_name": "Ing. Carlos Mendoza - CISO",
+        "body": f"""Estimado/a {user_name},
+
+El equipo de Ciberseguridad ha detectado actividad sospechosa relacionada con credenciales del departamento de {department}.
+
+DETALLES DEL INCIDENTE:
+• ID del incidente: SEC-2025-{department[:3].upper()}-4729
+• Hora de detección: {datetime.now().strftime('%d/%m/%Y %H:%M')}
+• Tipo de amenaza: Acceso no autorizado potencial
+• Sistemas afectados: Servidores de {department}
+• Nivel de riesgo: CRÍTICO
+
+INDICADORES DE COMPROMISO:
+• Múltiples intentos de acceso desde IP: 185.243.115.47 (Rusia)
+• Intento de acceso a archivos confidenciales de {department}
+• Uso de credenciales que coinciden con el patrón: {user_name[:2]}***
+
+ACCIÓN INMEDIATA REQUERIDA:
+Por políticas de seguridad corporativa, debe verificar inmediatamente la integridad de su cuenta.
+
+PASOS A SEGUIR (URGENTE):
+1. Acceder al portal de verificación: [ENLACE MALICIOSO]
+2. Confirmar su identidad con credenciales actuales
+3. Actualizar contraseña siguiendo políticas corporativas
+4. Responder confirmando que completó el proceso
+
+ADVERTENCIA: Si no completa la verificación en las próximas 2 HORAS:
+• Su cuenta será suspendida automáticamente
+• Se bloqueará el acceso a sistemas de {department}
+• Se escalará el incidente a Dirección General
+
+Este es un protocolo de seguridad automatizado activado por nuestro SOC (Security Operations Center).
+
+Para consultas urgentes:
+Ing. Carlos Mendoza - CISO
+Tel: ext. 1337
+Email: cmendoza.ciso@{company_context.lower().replace(' ', '')}.com
+
+Equipo de Ciberseguridad
+{company_context}""",
+        "call_to_action": "Verificar cuenta en portal de seguridad en las próximas 2 horas",
+        "urgency_indicators": [
+            "Incidente de seguridad activo",
+            "IP de atacante específica",
+            "Deadline de 2 horas",
+            "Suspensión automática amenazada"
+        ],
+        "personalization_hooks": [
+            f"Credenciales parciales: {user_name[:2]}***",
+            f"Sistemas específicos de {department}",
+            f"Archivos de {department} mencionados",
+            "ID de incidente personalizado"
+        ],
+        "realistic_details": [
+            "ID de incidente técnico convincente",
+            "IP de atacante real",
+            "Terminología de ciberseguridad correcta",
+            "Escalación a dirección mencionada",
+            "SOC y procesos reales"
+        ]
+    }
+
+def create_compliance_email(user_name, department, company_context, urgency):
+    """Crear email de compliance ultra-realista"""
+    return {
+        "subject": f"Acción requerida: Actualización de compliance {department} - {company_context}",
+        "sender": f"compliance@{company_context.lower().replace(' ', '')}.com",
+        "sender_name": "Lic. Ana Patricia Vásquez - Chief Compliance Officer",
+        "body": f"""Estimado/a {user_name},
+
+En seguimiento a la auditoría externa de KPMG y como parte del proceso de certificación ISO 27001, requerimos su colaboración inmediata.
+
+MARCO REGULATORIO:
+• Ley General de Protección de Datos Personales (LGPDP)
+• NOM-151-SCFI-2016 (Esquemas de ciberseguridad)
+• SOX Section 404 (para reportes financieros)
+• Lineamientos CNBV (sector financiero)
+
+ACCIONES REQUERIDAS PARA {department.upper()}:
+1. Actualización de matriz de riesgos departamental
+2. Certificación de controles de acceso
+3. Validación de procedimientos de {department}
+4. Confirmación de capacitación en protección de datos
+
+INFORMACIÓN ESPECÍFICA SOLICITADA:
+• Lista actualizada de usuarios con acceso a sistemas críticos
+• Inventario de datos personales bajo custodia de {department}
+• Bitácora de accesos del último trimestre
+• Certificación de destrucción segura de documentos
+
+TIMELINE CRÍTICO:
+La auditoría externa revisará específicamente el área de {department} el próximo VIERNES.
+
+El incumplimiento puede resultar en:
+• Observaciones en el dictamen de auditoría
+• Multas INAI hasta por $327,000,000 pesos
+• Pérdida de certificaciones ISO
+• Impacto en calificación crediticia corporativa
+
+PROCESO DE CUMPLIMIENTO:
+1. Acceder al portal de compliance: [ENLACE MALICIOSO]
+2. Completar cuestionario específico de {department}
+3. Cargar evidencias documentales
+4. Obtener certificado digital de cumplimiento
+
+Su colaboración es FUNDAMENTAL para mantener nuestras certificaciones.
+
+Cualquier duda, favor de contactarme directamente.
+
+Lic. Ana Patricia Vásquez Morales
+Chief Compliance Officer
+{company_context}
+Tel: ext. 1100 | avazquez.cco@{company_context.lower().replace(' ', '')}.com""",
+        "call_to_action": "Completar portal de compliance antes del viernes",
+        "urgency_indicators": [
+            "Auditoría externa el viernes",
+            "Multas INAI específicas",
+            "Certificaciones en riesgo",
+            "Impacto crediticio mencionado"
+        ],
+        "personalization_hooks": [
+            f"Revisión específica de {department}",
+            f"Procedimientos de {department}",
+            f"Datos bajo custodia de {department}",
+            "Usuario con acceso a sistemas críticos"
+        ],
+        "realistic_details": [
+            "Leyes y normas específicas reales",
+            "Montos de multa INAI reales",
+            "Proceso de auditoría convincente",
+            "Certificaciones mencionadas",
+            "Terminología legal correcta"
         ]
     }
 
