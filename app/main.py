@@ -2465,8 +2465,6 @@ Generado: {timestamp}
             key=f"export_{content_id}"
         )
 
-        )
-
 def load_demo_data():
     """Cargar datos de ejemplo completos para demostración"""
     
