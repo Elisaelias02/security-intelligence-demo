@@ -132,8 +132,8 @@ def main():
         st.markdown("---")
         st.markdown("""
         <div style="text-align: center; color: #6b7280; font-size: 0.9rem; padding: 1rem;">
-            <p><strong>Sistema de Análisis de Vulnerabilidades</strong> - Plataforma educativa para evaluación de seguridad</p>
-            <p>⚠️ <strong>Uso Ético:</strong> Esta herramienta debe usarse únicamente para fines educativos y de concientización sobre seguridad.</p>
+            <p><strong>Sistema de Análisis de Vulnerabilidades</strong> </p>
+            <p>⚠️ <strong>AEGIS SECURITY CONSULTANT</strong> </p>
         </div>
         """, unsafe_allow_html=True)
         
