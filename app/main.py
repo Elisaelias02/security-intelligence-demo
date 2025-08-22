@@ -372,7 +372,7 @@ def safe_json_parse(content):
         
         # Remover markdown
         content = re.sub(r'```json\s*', '', content)
-        content = re.sub(r'```\s*
+        content = re.sub(r'```[\s\S]*?```', '', content)
 
 def osint_analysis():
     """Análisis OSINT real mejorado"""
