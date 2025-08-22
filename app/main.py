@@ -2186,7 +2186,7 @@ Tel: ext. 1100 | avazquez.cco@{company_context.lower().replace(' ', '')}.com""",
         ]
     }
 
-def save_content_result(result, user_data, content_type, scenario):
+def save_content_result(result, user_data, content_type, scenario, content_data):
     """Guardar resultado del contenido generado"""
     
     # Obtener nombre de usuario de manera segura
