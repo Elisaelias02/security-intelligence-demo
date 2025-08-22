@@ -347,41 +347,56 @@ def display_recent_analyses():
                     st.write(analysis['summary'])
 
 def safe_json_parse(content):
-    """Parsear JSON de manera segura y robusta"""
+    """Parsear JSON de forma tolerante a errores comunes"""
     if not content or not isinstance(content, str):
         return None
-        
+
+    # Paso 1: limpieza básica
+    content = content.strip()
+    content = re.sub(r'```json\s*', '', content)
+    content = re.sub(r'```\s*$', '', content)
+
+    # Paso 2: extraer bloque con llaves
+    json_match = re.search(r'\{.*\}', content, re.DOTALL)
+    if json_match:
+        json_str = json_match.group(0)
+    else:
+        json_str = content
+
+    # Paso 3: normalizar espacios y saltos
+    json_str = json_str.replace('\n', ' ').replace('\r', ' ')
+    json_str = re.sub(r'\s+', ' ', json_str)
+
+    # Paso 4: intentar parseo normal
     try:
-        # Limpiar contenido
-        content = content.strip()
-        
-        # Remover markdown
-        content = re.sub(r'```json\s*', '', content)
-        content = re.sub(r'```\s*$', '', content)
-        
-        # Buscar primer bloque JSON entre llaves
-        json_match = re.search(r'\{.*?\}', content, re.DOTALL)
-        if json_match:
-            json_str = json_match.group(0)
-            
-            # Limpiar caracteres problemáticos
-            json_str = json_str.replace('\n', ' ').replace('\r', ' ')
-            json_str = re.sub(r'\s+', ' ', json_str).strip()
-            
-            # Intentar parsear
+        return json.loads(json_str)
+    except json.JSONDecodeError:
+        # Intentar reparaciones comunes
+        json_str = fix_common_json_errors(json_str)
+
+        try:
             return json.loads(json_str)
-        
-        # Si no hay llaves, intentar parsear directamente
-        return json.loads(content)
-        
-    except json.JSONDecodeError as e:
-        st.warning(f"Error JSON: {e}")
-        st.text(f"Contenido que falló: {content}")
-        return None
-    except Exception as e:
-        st.warning(f"Error parsing: {e}")
-        st.text(f"Contenido que falló: {content}")
-        return None
+        except json.JSONDecodeError:
+            # Intentar con ast.literal_eval (más permisivo)
+            try:
+                return ast.literal_eval(json_str)
+            except Exception as e:
+                st.warning(f"Error JSON incluso tras reparación: {e}")
+                st.text(f"Contenido: {json_str}")
+                return None
+
+def fix_common_json_errors(text):
+    """Corrige errores comunes en JSON generado por IA"""
+    # Quitar comas antes de cierre de objeto o array
+    text = re.sub(r',\s*([}\]])', r'\1', text)
+
+    # Asegurar que comillas sean dobles
+    text = re.sub(r"'", '"', text)
+
+    # Quitar caracteres no permitidos al final
+    text = re.sub(r'[\s,]+$', '', text)
+
+    return text
 
 
 def osint_analysis():
