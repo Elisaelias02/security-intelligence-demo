@@ -317,7 +317,7 @@ def show_dashboard():
     # Botón para cargar datos demo fuera de cualquier form
     if st.session_state.get('demo_mode'):
         st.markdown("### 🎯 Datos de Ejemplo")
-        if st.button("📊 Cargar Análisis de Ejemplo", key="load_demo_dashboard"):
+        if st.form("📊 Cargar Análisis de Ejemplo", key="load_demo_dashboard"):
             load_demo_data()
             st.success("✅ Datos de ejemplo cargados")
             st.rerun()
@@ -407,7 +407,7 @@ def osint_analysis():
         st.error("**Requiere conexión con Anthropic Claude o modo demo para análisis OSINT**")
         return
     
-    with st.button("osint_form", clear_on_submit=False):
+    with st.form("osint_form", clear_on_submit=False):
         st.markdown("**Información del Objetivo**")
         
         col1, col2 = st.columns(2)
@@ -444,7 +444,7 @@ def osint_analysis():
             key="osint_additional"
         )
         
-        submitted = st.button_submit_button("🔍 Iniciar Análisis OSINT", use_container_width=True)
+        submitted = _submit_button("🔍 Iniciar Análisis OSINT", use_container_width=True)
         
         if submitted:
             if company_name and domain:
@@ -798,7 +798,7 @@ def user_profiling():
         st.error("**Requiere conexión con Anthropic Claude o modo demo para perfilado avanzado**")
         return
     
-    with st.button("profile_form", clear_on_submit=False):
+    with st.form("profile_form", clear_on_submit=False):
         st.markdown("**Información del Usuario**")
         
         col1, col2 = st.columns(2)
@@ -858,7 +858,7 @@ def user_profiling():
             key="profile_context"
         )
         
-        submitted = st.button_submit_button("🧠 Generar Perfil Psicológico", use_container_width=True)
+        submitted = st.form_submit_button("🧠 Generar Perfil Psicológico", use_container_width=True)
         
         if submitted:
             if user_name and department:
@@ -1357,7 +1357,7 @@ def content_generation():
     
     target_profile = st.session_state.user_profiles[selected_profile_idx]
     
-    with st.button("content_form", clear_on_submit=False):
+    with st.form("content_form", clear_on_submit=False):
         st.markdown("**Configuración del Contenido**")
         
         col1, col2 = st.columns(2)
@@ -2423,7 +2423,7 @@ def display_content_actions(content_data):
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("📋 Copiar Contenido", key=f"copy_content_{content_id}"):
+        if st.form("📋 Copiar Contenido", key=f"copy_content_{content_id}"):
             # Crear texto para copiar
             main_content = content_data.get('content', {}).get('content', {})
             copy_text = f"""
