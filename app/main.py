@@ -148,7 +148,7 @@ def main():
         """)
         
         # Botón de emergencia para reiniciar
-        if st.button("🔄 Reiniciar Aplicación", key="emergency_restart"):
+        if st.form("🔄 Reiniciar Aplicación", key="emergency_restart"):
             # Limpiar todo el estado
             for key in list(st.session_state.keys()):
                 del st.session_state[key]
@@ -183,11 +183,11 @@ def setup_ai_agent():
         col1, col2 = st.columns(2)
         
         with col1:
-            demo_button = st.button("🧪 Modo Demo", key="demo_mode_button", help="Usar datos de ejemplo")
+            demo_button = st.form("🧪 Modo Demo", key="demo_mode_button", help="Usar datos de ejemplo")
         
         with col2:
             if api_key:
-                test_button = st.button("🔧 Probar API", key="test_connection_button", help="Probar conexión")
+                test_button = st.form("🔧 Probar API", key="test_connection_button", help="Probar conexión")
             else:
                 test_button = False
         
@@ -269,7 +269,7 @@ def display_system_info():
         st.warning("Configure API key o use modo demo")
     
     # Botón para limpiar caché fuera del form
-    if st.button("🧹 Limpiar Caché", key="clear_cache_main"):
+    if st.form("🧹 Limpiar Caché", key="clear_cache_main"):
         clear_session_cache()
         st.success("✅ Caché limpiado")
 
@@ -317,7 +317,7 @@ def show_dashboard():
     # Botón para cargar datos demo fuera de cualquier form
     if st.session_state.get('demo_mode'):
         st.markdown("### 🎯 Datos de Ejemplo")
-        if st.button("📊 Cargar Análisis de Ejemplo", key="load_demo_dashboard"):
+        if st.form("📊 Cargar Análisis de Ejemplo", key="load_demo_dashboard"):
             load_demo_data()
             st.success("✅ Datos de ejemplo cargados")
             st.rerun()
@@ -2423,7 +2423,7 @@ def display_content_actions(content_data):
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("📋 Copiar Contenido", key=f"copy_content_{content_id}"):
+        if st.form("📋 Copiar Contenido", key=f"copy_content_{content_id}"):
             # Crear texto para copiar
             main_content = content_data.get('content', {}).get('content', {})
             copy_text = f"""
@@ -2442,7 +2442,7 @@ Generado: {timestamp}
             st.text_area("Contenido para copiar:", copy_text, height=150, key=f"textarea_{content_id}")
     
     with col2:
-        if st.button("🔄 Regenerar", key=f"regen_{content_id}"):
+        if st.form("🔄 Regenerar", key=f"regen_{content_id}"):
             st.info("Para regenerar, use el formulario de generación nuevamente con diferentes parámetros.")
     
     with col3:
