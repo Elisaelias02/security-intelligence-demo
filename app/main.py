@@ -2422,11 +2422,10 @@ def display_content_actions(content_data):
     
     col1, col2, col3 = st.columns(3)
     
+    # --- Botón copiar ---
     with col1:
-        if st.button("📋 Copiar Contenido", key=f"copy_content_{content_id}"):
-            # Crear texto para copiar
-            main_content = content_data.get('content', {}).get('content', {})
-            copy_text = f"""
+        main_content = content_data.get('content', {}).get('content', {})
+        copy_text = f"""
 Asunto: {main_content.get('subject', 'N/A')}
 De: {main_content.get('sender_name', 'N/A')} <{main_content.get('sender', 'N/A')}>
 Para: {target_user}
@@ -2437,16 +2436,17 @@ Para: {target_user}
 Acción solicitada: {main_content.get('call_to_action', 'N/A')}
 Efectividad predicha: {content_data.get('content', {}).get('effectiveness_prediction', {}).get('overall_score', 0):.0%}
 Generado: {timestamp}
-            """.strip()
-            
-            st.text_area("Contenido para copiar:", copy_text, height=150, key=f"textarea_{content_id}")
-    
+        """.strip()
+        
+        st.text_area("📋 Contenido generado:", copy_text, height=180, key=f"textarea_{content_id}")
+
+    # --- Botón regenerar ---
     with col2:
         if st.button("🔄 Regenerar", key=f"regen_{content_id}"):
             st.info("Para regenerar, use el formulario de generación nuevamente con diferentes parámetros.")
     
+    # --- Botón exportar ---
     with col3:
-        # Crear datos para exportar
         export_data = {
             "contenido": content_data,
             "analisis_completo": content_data.get('content', {}),
@@ -2463,7 +2463,6 @@ Generado: {timestamp}
             mime="application/json",
             key=f"export_{content_id}"
         )
-
 def load_demo_data():
     """Cargar datos de ejemplo completos para demostración"""
     
